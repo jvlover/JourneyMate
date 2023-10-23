@@ -1,0 +1,30 @@
+
+server:
+  port: 9091
+
+spring:
+  application:
+    name: mate-service
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        # show_sql: true
+        format_sql: true
+    open-in-view: false
+
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3307/journeymate?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: ssafy
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+
+
+
