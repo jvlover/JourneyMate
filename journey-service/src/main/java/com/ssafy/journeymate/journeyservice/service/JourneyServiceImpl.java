@@ -5,12 +5,11 @@ import com.ssafy.journeymate.journeyservice.dto.request.JourneyModifyReq;
 import com.ssafy.journeymate.journeyservice.dto.request.JourneyRegistPostReq;
 import com.ssafy.journeymate.journeyservice.dto.response.JourneyGetRes;
 import com.ssafy.journeymate.journeyservice.exception.JourneyNotFoundException;
-import com.ssafy.journeymate.journeyservice.entity.JourneyEntity;
+import com.ssafy.journeymate.journeyservice.entity.Journey;
 import com.ssafy.journeymate.journeyservice.repository.JourneyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -26,8 +25,8 @@ public class JourneyServiceImpl implements JourneyService {
 
 
     @Override
-    public JourneyGetRes findJourney(Long journeyId) throws NotFoundException {
-        JourneyEntity journeyEntity = journeyRepository.findById(journeyId)
+    public JourneyGetRes findByJourneyId(Long journeyId) {
+        Journey journeyEntity = journeyRepository.findById(journeyId)
                 .orElseThrow(JourneyNotFoundException::new);
         JourneyGetRes journeyGetRes =new ModelMapper().map(journeyEntity, JourneyGetRes.class);
 
@@ -35,10 +34,20 @@ public class JourneyServiceImpl implements JourneyService {
     }
 
     @Override
+    public JourneyGetRes findByMateId(Long mateId) {
+        Journey journeyEntity = journeyRepository.findByMateId(mateId)
+                .orElseThrow(JourneyNotFoundException::new);
+        JourneyGetRes journeyGetRes =new ModelMapper().map(journeyEntity, JourneyGetRes.class);
+
+        return journeyGetRes;
+    }
+
+
+    @Override
     public JourneyGetRes registJourney(JourneyRegistPostReq registInfo) {
 
         ModelMapper mapper = new ModelMapper();
-        JourneyEntity journeyEntity = mapper.map(registInfo, JourneyEntity.class);
+        Journey journeyEntity = mapper.map(registInfo, Journey.class);
         journeyRepository.save(journeyEntity);
         JourneyGetRes journeyGetRes =mapper.map(journeyEntity, JourneyGetRes.class);
 

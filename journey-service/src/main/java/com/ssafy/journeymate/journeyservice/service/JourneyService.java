@@ -7,7 +7,8 @@ import com.ssafy.journeymate.journeyservice.dto.response.JourneyGetRes;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 
 public interface JourneyService {
-    JourneyGetRes findJourney(Long id) throws NotFoundException;
+    JourneyGetRes findByJourneyId(Long journeyId);
+    JourneyGetRes findByMateId(Long mateId);
     JourneyGetRes registJourney(JourneyRegistPostReq registInfo);
     boolean deleteJourney(JourneyDeletePutReq deleteInfo);
     boolean updateJourney(JourneyModifyReq modifyReq);

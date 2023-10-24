@@ -4,9 +4,6 @@ import com.ssafy.journeymate.journeyservice.dto.request.JourneyModifyReq;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -26,12 +23,8 @@ import org.hibernate.annotations.Where;
 @DynamicInsert  // INSERT 구문에서 null이 아닌 컬럼들만 실제로 insert
 @Where(clause = "is_deleted is 0")   // 일괄적으로 적용할 where 조건. 현재 clause는 soft delete를 위함
 @Entity
-@Table(name="journey")
-public class JourneyEntity  {
+public class Journey extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(nullable = false)
     private Long mateId;
