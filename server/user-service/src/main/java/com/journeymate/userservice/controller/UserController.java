@@ -1,10 +1,17 @@
 package com.journeymate.userservice.controller;
 
 import com.journeymate.userservice.dto.ResponseDto;
+import com.journeymate.userservice.dto.request.MateBridgeRegistPostReq;
 import com.journeymate.userservice.dto.request.UserRegistPostReq;
+import com.journeymate.userservice.dto.response.MateBridgeFindRes;
 import com.journeymate.userservice.dto.response.UserFindRes;
+import com.journeymate.userservice.entity.MateBridge;
 import com.journeymate.userservice.entity.User;
+import com.journeymate.userservice.service.MateBridgeService;
 import com.journeymate.userservice.service.UserService;
+import com.journeymate.userservice.util.BytesHexChanger;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,11 +29,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user-service")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
+    private final MateBridgeService mateBridgeService;
+
+    private final BytesHexChanger bytesHexChanger;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, MateBridgeService mateBridgeService,
+        BytesHexChanger bytesHexChanger) {
         this.userService = userService;
+        this.mateBridgeService = mateBridgeService;
+        this.bytesHexChanger = bytesHexChanger;
     }
 
     @PostMapping("/regist")
@@ -37,24 +50,31 @@ public class UserController {
 
         // TODO: 회원 있으면 login 없으면 registUser
         User res = userService.registUser(hexId, userRegistPostReq.getEmail(),
-            userRegistPostReq.getNicnkname());
+            userRegistPostReq.getNickname());
 
         return new ResponseEntity<>(new ResponseDto("로그인 완료!", res), HttpStatus.OK);
     }
 
+    @PostMapping("/mateBridge")
+    public ResponseEntity<ResponseDto> registMateBridge(@RequestBody
+    MateBridgeRegistPostReq mateBridgeRegistPostReq) {
 
-    @GetMapping("/findByid/{id}")
+        List<MateBridge> res = mateBridgeService.registMateBridge(mateBridgeRegistPostReq);
+
+        return new ResponseEntity<>(new ResponseDto("메이트 멤버 저장 완료!", res), HttpStatus.OK);
+    }
+
+
+    @GetMapping("/findById/{id}")
     public ResponseEntity<ResponseDto> findUserById(@PathVariable String id) {
 
-        byte[] hexId = userService.hexToBytes(id);
-
-        UserFindRes res = userService.FindUserById(hexId);
+        UserFindRes res = userService.FindUserById(bytesHexChanger.hexToBytes(id));
 
         return new ResponseEntity<>(new ResponseDto("회원 정보 반환!", res), HttpStatus.OK);
     }
 
 
-    @GetMapping("/findByemail/{email}")
+    @GetMapping("/findByEmail/{email}")
     public ResponseEntity<ResponseDto> findUserByEmail(@PathVariable String email) {
 
         UserFindRes res = userService.FindUserByEmail(email);
@@ -62,12 +82,31 @@ public class UserController {
         return new ResponseEntity<>(new ResponseDto("회원 정보 반환!", res), HttpStatus.OK);
     }
 
-    @GetMapping("/findBynickname/{nickname}")
+    @GetMapping("/findByNickname/{nickname}")
     public ResponseEntity<ResponseDto> findUserByNickname(@PathVariable String nickname) {
 
         UserFindRes res = userService.FindUserByNickname(nickname);
 
         return new ResponseEntity<>(new ResponseDto("회원 정보 반환!", res), HttpStatus.OK);
+    }
+
+    @GetMapping("/mateBridge/{mateId}")
+    public ResponseEntity<ResponseDto> findUserByMateId(@PathVariable Long mateId) {
+
+        List<MateBridge> mateBridges = mateBridgeService.FindMateBridgeByMateId(mateId);
+        MateBridgeFindRes res = new MateBridgeFindRes();
+        List<UserFindRes> users = new ArrayList<>();
+        String creator = "";
+        for (int i = 0; i < mateBridges.size(); i++) {
+            if (mateBridges.get(i).getIsCreator()) {
+                creator = bytesHexChanger.bytesToHex(mateBridges.get(i).getUser().getId());
+            }
+            users.add(userService.FindUserById(mateBridges.get(i).getUser().getId()));
+        }
+
+        res.setUsers(users);
+        res.setCreator(creator);
+        return new ResponseEntity<>(new ResponseDto("회원 정보 반환", res), HttpStatus.OK);
     }
 
     @PutMapping("/exit")
@@ -77,9 +116,16 @@ public class UserController {
     }
 
     @PutMapping("/modify")
-    public ResponseEntity<ResponseDto> modifyPrfile() {
+    public ResponseEntity<ResponseDto> modifyProfile() {
 
         return new ResponseEntity<>(new ResponseDto("회원 정보 수정 완료", true), HttpStatus.OK);
     }
 
+    @GetMapping("/duplicateCheck/{nickname}")
+    public ResponseEntity<ResponseDto> nicknameDuplicateCheck(@PathVariable String nickname) {
+
+        Boolean nicknameDuplicate = userService.NicknameDuplicateCheck(nickname);
+
+        return new ResponseEntity<>(new ResponseDto("닉네임 중복 확인", nicknameDuplicate), HttpStatus.OK);
+    }
 }

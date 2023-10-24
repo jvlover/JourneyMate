@@ -14,11 +14,11 @@ public interface UserService {
 
     Boolean NicknameDuplicateCheck(String nickname);
 
-    Boolean UserCheck(byte[] hexId);
+    Boolean UserCheck(byte[] bytesId);
 
     Boolean Login();
 
-    UserFindRes FindUserById(byte[] hexId);
+    UserFindRes FindUserById(byte[] bytesId);
 
     UserFindRes FindUserByEmail(String email);
 
@@ -28,10 +28,7 @@ public interface UserService {
 
     byte[] createUUID();
 
-    byte[] hexToBytes(String id);
+    void deleteUser(byte[] bytesId);
 
-    String bytesToHex(byte[] hexId);
-
-    void deleteUser(byte[] id);
 
 }

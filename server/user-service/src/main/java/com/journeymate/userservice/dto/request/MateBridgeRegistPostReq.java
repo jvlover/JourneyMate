@@ -1,15 +1,17 @@
 package com.journeymate.userservice.dto.request;
 
-import javax.validation.constraints.Email;
+import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
-public class UserRegistPostReq {
+public class MateBridgeRegistPostReq {
 
-    @Email
-    String email;
+    Long mateId;
 
-    String nickname;
+    List<String> users;
+
+    String creator;
+
 }

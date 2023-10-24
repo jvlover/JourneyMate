@@ -1,11 +1,11 @@
 package com.journeymate.userservice.dto.response;
 
 import java.time.LocalDateTime;
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@NoArgsConstructor
 public class UserFindRes {
 
     private String id;
@@ -14,13 +14,10 @@ public class UserFindRes {
 
     private String nickname;
 
-    private String imageUrl;
+    private String imgUrl;
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
-    private String accessToken;
-
-    private String refreshToken;
 }

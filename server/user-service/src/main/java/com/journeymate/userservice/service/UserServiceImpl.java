@@ -6,7 +6,7 @@ import com.journeymate.userservice.dto.response.UserFindRes;
 import com.journeymate.userservice.entity.User;
 import com.journeymate.userservice.exception.UserNotFoundException;
 import com.journeymate.userservice.repository.UserRepository;
-import java.nio.ByteBuffer;
+import com.journeymate.userservice.util.BytesHexChanger;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -17,34 +17,23 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
     private final UserRepository userRepository;
+    private final BytesHexChanger bytesHexChanger;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, BytesHexChanger bytesHexChanger) {
         this.userRepository = userRepository;
+        this.bytesHexChanger = bytesHexChanger;
     }
-
-//    public UserDto getUserByUserId(String userId) {
-//        User user = userRepository.findByUserId(userId);
-//        if(user ==null) throw new UsernameNotFoundException("User not found");
-//
-//        UserDto userDto = new ModelMapper().map(user,UserDto.class);
-//        List<ResponseOrder> orders = new ArrayList<>();
-//        userDto.setOrders(orders);
-//
-//        return userDto;
-//    }
 
     @Override
     public User registUser(byte[] hexId, String email, String nickname) {
 
         User user = User.builder().id(hexId).email(email).nickname(nickname).build();
 
-        System.out.println(user.toString());
-        userRepository.save(user);
+        User res = userRepository.save(user);
 
-        return user;
+        return res;
 
     }
 
@@ -65,9 +54,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean UserCheck(byte[] hexId) {
+    public Boolean UserCheck(byte[] bytesId) {
 
-        if (userRepository.findById(hexId).isPresent()) {
+        if (userRepository.findById(bytesId).isPresent()) {
             return true;
         } else {
             return false;
@@ -80,11 +69,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserFindRes FindUserById(byte[] hexId) {
+    public UserFindRes FindUserById(byte[] bytesId) {
 
-        User user = userRepository.findById(hexId).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findById(bytesId).orElseThrow(UserNotFoundException::new);
 
         UserFindRes res = new ModelMapper().map(user, UserFindRes.class);
+
+        res.setId(bytesHexChanger.bytesToHex(user.getId()));
 
         return res;
     }
@@ -96,6 +87,8 @@ public class UserServiceImpl implements UserService {
 
         UserFindRes res = new ModelMapper().map(user, UserFindRes.class);
 
+        res.setId(bytesHexChanger.bytesToHex(user.getId()));
+
         return res;
     }
 
@@ -106,13 +99,16 @@ public class UserServiceImpl implements UserService {
 
         UserFindRes res = new ModelMapper().map(user, UserFindRes.class);
 
+        res.setId(bytesHexChanger.bytesToHex(user.getId()));
+
         return res;
     }
 
     @Override
     public void modifyProfile(UserModifyProfilePutReq userModifyProfilePutReq) {
 
-        User user = userRepository.findById(hexToBytes(userModifyProfilePutReq.getId()))
+        User user = userRepository.findById(
+                bytesHexChanger.hexToBytes(userModifyProfilePutReq.getId()))
             .orElseThrow(UserNotFoundException::new);
 
         user.modifyProfile(userModifyProfilePutReq.getNickname(),
@@ -129,35 +125,13 @@ public class UserServiceImpl implements UserService {
             uuidV1Parts[2] + uuidV1Parts[1] + uuidV1Parts[0] + uuidV1Parts[3] + uuidV1Parts[4];
 
         String sequentialUuidV1 = String.join("", sequentialUUID);
-        return hexToBytes(sequentialUuidV1);
-    }
-
-    // String 을 byte[]로
-    public byte[] hexToBytes(String id) {
-
-        ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
-        bb.putLong(Long.parseUnsignedLong(id.substring(0, 16), 16));
-        bb.putLong(Long.parseUnsignedLong(id.substring(16), 16));
-        return bb.array();
-    }
-
-    //byte[]를 String으로
-    @Override
-    public String bytesToHex(byte[] hexId) {
-
-        char[] hexChars = new char[hexId.length * 2];
-        for (int i = 0; i < hexId.length; i++) {
-            int v = hexId[i] & 0xFF;
-            hexChars[i * 2] = HEX_ARRAY[v >>> 4];
-            hexChars[i * 2 + 1] = HEX_ARRAY[v & 0x0F];
-        }
-        return new String(hexChars).toLowerCase();
+        return bytesHexChanger.hexToBytes(sequentialUuidV1);
     }
 
     @Override
-    public void deleteUser(byte[] hexId) {
+    public void deleteUser(byte[] bytesId) {
 
-        User user = userRepository.findById(hexId).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findById(bytesId).orElseThrow(UserNotFoundException::new);
 
         user.deleteUser();
     }

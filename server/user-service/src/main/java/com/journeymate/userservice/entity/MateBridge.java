@@ -3,19 +3,20 @@ package com.journeymate.userservice.entity;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.annotations.Where;
 
 @Getter
 @ToString
@@ -23,24 +24,19 @@ import org.hibernate.annotations.Where;
 @AllArgsConstructor
 @Builder
 @DynamicInsert
-@Where(clause = "is_deleted = '0'")
 @Entity
-@Table(name = "users")
-public class User {
+public class MateBridge {
 
     @Id
-    @Column(columnDefinition = "BINARY(16)")
-    private byte[] id;
+    @GeneratedValue
+    private Long id;
 
-    @Column(nullable = false, length = 40)
-    private String email;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")   // DB table에 적용될 FK column 이름
+    private User user;
 
-    @Column(nullable = false, length = 50)
-    private String nickname;
-
-    @Column(nullable = false)
-    @ColumnDefault("'noImage'")
-    private String imgUrl;
+    @Column
+    private Long mateId;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -51,13 +47,14 @@ public class User {
     @Column(nullable = false, columnDefinition = "TINYINT default 0")
     private Boolean isDeleted;
 
-    public void deleteUser() {
+    @Column(nullable = false, columnDefinition = "TINYINT default 0")
+    private Boolean isCreator;
+
+    public void deleteBridge() {
         this.isDeleted = true;
     }
 
-    public void modifyProfile(String nickname, String imgUrl) {
-        this.nickname = nickname;
-        this.imgUrl = imgUrl;
+    public void setCreator() {
+        this.isCreator = true;
     }
-
 }
