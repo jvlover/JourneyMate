@@ -1,4 +1,4 @@
-package com.ssafy.journeymate.journeyservice.jpa;
+package com.ssafy.journeymate.journeyservice.entity;
 
 import com.ssafy.journeymate.journeyservice.dto.request.JourneyModifyReq;
 import java.time.LocalDateTime;

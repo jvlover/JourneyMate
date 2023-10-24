@@ -1,5 +1,6 @@
-package com.ssafy.journeymate.journeyservice.jpa;
+package com.ssafy.journeymate.journeyservice.repository;
 
+import com.ssafy.journeymate.journeyservice.entity.JourneyEntity;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
