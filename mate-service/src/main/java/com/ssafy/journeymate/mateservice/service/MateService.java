@@ -1,12 +1,14 @@
 package com.ssafy.journeymate.mateservice.service;
 
-import com.ssafy.journeymate.mateservice.dto.request.MateDeleteReq;
-import com.ssafy.journeymate.mateservice.dto.request.MateDetailReq;
-import com.ssafy.journeymate.mateservice.dto.request.MateRegistPostReq;
-import com.ssafy.journeymate.mateservice.dto.request.MateUpdatePostReq;
-import com.ssafy.journeymate.mateservice.dto.response.MateDetailRes;
-import com.ssafy.journeymate.mateservice.dto.response.MateRegistPostRes;
-import com.ssafy.journeymate.mateservice.dto.response.MateUpdatePostRes;
+import com.ssafy.journeymate.mateservice.dto.request.docs.DocsRegistReq;
+import com.ssafy.journeymate.mateservice.dto.request.mate.MateDeleteReq;
+import com.ssafy.journeymate.mateservice.dto.request.mate.MateDetailReq;
+import com.ssafy.journeymate.mateservice.dto.request.mate.MateRegistPostReq;
+import com.ssafy.journeymate.mateservice.dto.request.mate.MateUpdatePostReq;
+import com.ssafy.journeymate.mateservice.dto.response.docs.DocsRegistRes;
+import com.ssafy.journeymate.mateservice.dto.response.mate.MateDetailRes;
+import com.ssafy.journeymate.mateservice.dto.response.mate.MateRegistPostRes;
+import com.ssafy.journeymate.mateservice.dto.response.mate.MateUpdatePostRes;
 import com.ssafy.journeymate.mateservice.exception.MateNotFoundException;
 
 public interface MateService {
@@ -18,6 +20,10 @@ public interface MateService {
 
     public boolean deleteMate(MateDeleteReq mateDeleteReq);
 
-    public MateDetailRes getMateDetail(MateDetailReq mateDetailReq);
+    public MateDetailRes getMateDetail(Long mateId);
+
+    public DocsRegistRes registDocs(DocsRegistReq docsRegistReq);
+
+
 
 }

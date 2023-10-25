@@ -25,5 +25,12 @@ public class BaseEntity {
     @Column(name = "edit_date")
     private LocalDateTime modifyDate;
 
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
+
+    public void deleteMate(){
+        this.isDeleted = true;
+    }
+
 
 }

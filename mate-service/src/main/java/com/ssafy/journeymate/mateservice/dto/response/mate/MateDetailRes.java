@@ -1,5 +1,4 @@
-package com.ssafy.journeymate.mateservice.dto.response;
-
+package com.ssafy.journeymate.mateservice.dto.response.mate;
 
 import lombok.Builder;
 import lombok.Data;
@@ -7,9 +6,11 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @Data
 @Builder
-public class MateUpdatePostRes {
+public class MateDetailRes {
+
     private Long mateId;
     private String name;
     private LocalDateTime startDate;

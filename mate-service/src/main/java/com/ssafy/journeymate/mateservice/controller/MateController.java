@@ -1,11 +1,12 @@
 package com.ssafy.journeymate.mateservice.controller;
 
 
-import com.ssafy.journeymate.mateservice.dto.request.MateDeleteReq;
-import com.ssafy.journeymate.mateservice.dto.request.MateRegistPostReq;
-import com.ssafy.journeymate.mateservice.dto.request.MateUpdatePostReq;
-import com.ssafy.journeymate.mateservice.dto.response.MateRegistPostRes;
-import com.ssafy.journeymate.mateservice.dto.response.MateUpdatePostRes;
+import com.ssafy.journeymate.mateservice.dto.request.mate.MateDeleteReq;
+import com.ssafy.journeymate.mateservice.dto.request.mate.MateRegistPostReq;
+import com.ssafy.journeymate.mateservice.dto.request.mate.MateUpdatePostReq;
+import com.ssafy.journeymate.mateservice.dto.response.mate.MateDetailRes;
+import com.ssafy.journeymate.mateservice.dto.response.mate.MateRegistPostRes;
+import com.ssafy.journeymate.mateservice.dto.response.mate.MateUpdatePostRes;
 import com.ssafy.journeymate.mateservice.exception.MateNotFoundException;
 import com.ssafy.journeymate.mateservice.exception.UnauthorizedRoleException;
 import com.ssafy.journeymate.mateservice.service.MateService;
@@ -54,6 +55,17 @@ public class MateController {
     public ResponseEntity<?> deleteMate(@RequestBody MateDeleteReq mateDeleteReq) throws UnauthorizedRoleException {
             mateService.deleteMate(mateDeleteReq);
             return ResponseEntity.ok(null);
+    }
+
+
+    /**
+     * 그룹 상세 정보
+     * @param mateId
+     * @return
+     */
+    @GetMapping("/{mateId}")
+    public ResponseEntity<MateDetailRes> mateInfo(@PathVariable Long mateId){
+        return ResponseEntity.ok(mateService.getMateDetail(mateId));
     }
 
 

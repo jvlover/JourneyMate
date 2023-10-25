@@ -1,16 +1,19 @@
-package com.ssafy.journeymate.mateservice.dto.request;
+package com.ssafy.journeymate.mateservice.dto.response.mate;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-
 @NoArgsConstructor
 @Data
-public class MateRegistPostReq {
+@Builder
+@AllArgsConstructor
+public class MateRegistPostRes {
 
     private String name;
     private String destination;
@@ -18,5 +21,6 @@ public class MateRegistPostReq {
     private LocalDateTime endDate;
     private List<String> users;
     private String creator;
-
+    private LocalDateTime createDate;
+    private Long mateId;
 }

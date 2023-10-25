@@ -5,11 +5,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -33,14 +32,14 @@ public class Mate extends BaseEntity{
     @Column(nullable = false, updatable = false)
     private LocalDateTime endDate;
 
-    @Column
-    private Boolean isDeleted;
+
 
     @Column(nullable = false)
     private String creator;
 
-    public void deleteMate(){
-        this.isDeleted = true;
-    }
+    @OneToMany(mappedBy = "mate")
+    private List<Docs> docs = new ArrayList<>();
+
+
 
 }

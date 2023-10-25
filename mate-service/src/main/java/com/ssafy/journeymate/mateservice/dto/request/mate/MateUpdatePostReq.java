@@ -1,4 +1,4 @@
-package com.ssafy.journeymate.mateservice.dto.request;
+package com.ssafy.journeymate.mateservice.dto.request.mate;
 
 import lombok.Data;
 

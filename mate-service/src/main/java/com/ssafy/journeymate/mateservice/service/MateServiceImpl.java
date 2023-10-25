@@ -1,13 +1,15 @@
 package com.ssafy.journeymate.mateservice.service;
 
 
-import com.ssafy.journeymate.mateservice.dto.request.MateDeleteReq;
-import com.ssafy.journeymate.mateservice.dto.request.MateDetailReq;
-import com.ssafy.journeymate.mateservice.dto.request.MateRegistPostReq;
-import com.ssafy.journeymate.mateservice.dto.request.MateUpdatePostReq;
-import com.ssafy.journeymate.mateservice.dto.response.MateDetailRes;
-import com.ssafy.journeymate.mateservice.dto.response.MateRegistPostRes;
-import com.ssafy.journeymate.mateservice.dto.response.MateUpdatePostRes;
+import com.ssafy.journeymate.mateservice.dto.request.docs.DocsRegistReq;
+import com.ssafy.journeymate.mateservice.dto.request.mate.MateDeleteReq;
+import com.ssafy.journeymate.mateservice.dto.request.mate.MateDetailReq;
+import com.ssafy.journeymate.mateservice.dto.request.mate.MateRegistPostReq;
+import com.ssafy.journeymate.mateservice.dto.request.mate.MateUpdatePostReq;
+import com.ssafy.journeymate.mateservice.dto.response.docs.DocsRegistRes;
+import com.ssafy.journeymate.mateservice.dto.response.mate.MateDetailRes;
+import com.ssafy.journeymate.mateservice.dto.response.mate.MateRegistPostRes;
+import com.ssafy.journeymate.mateservice.dto.response.mate.MateUpdatePostRes;
 import com.ssafy.journeymate.mateservice.entity.Mate;
 import com.ssafy.journeymate.mateservice.exception.MateNotFoundException;
 import com.ssafy.journeymate.mateservice.exception.UnauthorizedRoleException;
@@ -111,13 +113,14 @@ public class MateServiceImpl implements MateService{
 
     /**
      * 여행 그룹 상세 조회
-     * @param mateDetailReq
+     * @param mateId
      * @return
      */
     @Override
-    public MateDetailRes getMateDetail(MateDetailReq mateDetailReq) {
+    public MateDetailRes getMateDetail(Long mateId) {
 
-        Mate mate = mateRepository.findById(mateDetailReq.getMateId()).orElseThrow(MateNotFoundException::new);
+        Mate mate = mateRepository.findById(mateId).orElseThrow(MateNotFoundException::new);
+
 
         return MateDetailRes.builder()
                 .mateId(mate.getId())
@@ -127,6 +130,18 @@ public class MateServiceImpl implements MateService{
                 .createDate(mate.getCreateDate())
                 .creator(mate.getCreator())
                 .build();
+    }
+
+    /**
+     * 여행 그룹 문서 저장
+     * @param docsRegistReq
+     * @return
+     */
+    @Override
+    public DocsRegistRes registDocs(DocsRegistReq docsRegistReq) {
+
+        
+        return null;
     }
 
 }
