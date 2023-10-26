@@ -10,6 +10,7 @@ import java.util.List;
 @Data
 @Builder
 public class MateUpdatePostRes {
+
     private Long mateId;
     private String name;
     private LocalDateTime startDate;

@@ -28,7 +28,7 @@ public class BaseEntity {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
-    public void deleteMate(){
+    public void deleteMate() {
         this.isDeleted = true;
     }
 

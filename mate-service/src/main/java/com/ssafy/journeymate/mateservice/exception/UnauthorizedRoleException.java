@@ -1,8 +1,8 @@
 package com.ssafy.journeymate.mateservice.exception;
 
-public class UnauthorizedRoleException extends BaseException{
+public class UnauthorizedRoleException extends BaseException {
 
-    public UnauthorizedRoleException(){
+    public UnauthorizedRoleException() {
         super(ErrorCode.UNAUTHORIZED_ROLE);
     }
 }

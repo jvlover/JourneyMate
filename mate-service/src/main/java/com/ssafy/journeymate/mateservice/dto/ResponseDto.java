@@ -1,4 +1,4 @@
-package com.ssafy.journeymate.mateservice.dto.response;
+package com.ssafy.journeymate.mateservice.dto;
 
 
 import lombok.AllArgsConstructor;

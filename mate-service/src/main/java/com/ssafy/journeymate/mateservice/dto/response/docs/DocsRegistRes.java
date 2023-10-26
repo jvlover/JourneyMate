@@ -4,6 +4,7 @@ package com.ssafy.journeymate.mateservice.dto.response.docs;
 import com.ssafy.journeymate.mateservice.dto.response.file.FileResposeDto;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,6 +18,6 @@ public class DocsRegistRes {
     private String content;
     private Long docsId;
     private LocalDateTime createDate;
-    private List<FileResposeDto> imageFileInfo;
+    private List<FileResposeDto> imgFileInfo;
 
 }

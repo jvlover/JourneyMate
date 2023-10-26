@@ -40,7 +40,11 @@ public enum ErrorCode {
         this.message = message;
     }
 
-    public String getMessage(){
+    public String getMessage() {
         return message;
+    }
+
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
     }
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class MateDeleteReq {
+
     private Long mateId;
     private String creator;
 }

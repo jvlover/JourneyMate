@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class MateServiceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MateServiceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MateServiceApplication.class, args);
+    }
 
 }

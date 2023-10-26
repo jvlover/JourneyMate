@@ -7,5 +7,5 @@ import lombok.Data;
 public class FileResposeDto {
 
     private String filename;
-    private String fileUrl;
+    private String imgUrl;
 }

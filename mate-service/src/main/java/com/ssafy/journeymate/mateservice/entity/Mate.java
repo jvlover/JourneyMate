@@ -9,13 +9,15 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Builder
 @Getter
 @Setter
+@Where(clause = "is_deleted = 0")
 @Table(name = "mate")
-public class Mate extends BaseEntity{
+public class Mate extends BaseEntity {
 
     @Id
     private Long id;
@@ -33,13 +35,11 @@ public class Mate extends BaseEntity{
     private LocalDateTime endDate;
 
 
-
     @Column(nullable = false)
     private String creator;
 
     @OneToMany(mappedBy = "mate")
     private List<Docs> docs = new ArrayList<>();
-
 
 
 }

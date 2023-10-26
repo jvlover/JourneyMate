@@ -5,5 +5,6 @@ import lombok.Data;
 
 @Data
 public class MateDetailReq {
+
     private Long mateId;
 }
