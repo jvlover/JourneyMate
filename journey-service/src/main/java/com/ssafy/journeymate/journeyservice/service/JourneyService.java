@@ -14,7 +14,4 @@ public interface JourneyService {
     boolean updateJourney(JourneyModifyReq modifyReq);
 
 
-
-
-
 }

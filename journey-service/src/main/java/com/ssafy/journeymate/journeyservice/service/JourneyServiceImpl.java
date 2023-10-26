@@ -1,5 +1,6 @@
 package com.ssafy.journeymate.journeyservice.service;
 
+import com.ssafy.journeymate.journeyservice.client.CategoryServiceClient;
 import com.ssafy.journeymate.journeyservice.dto.request.JourneyDeletePutReq;
 import com.ssafy.journeymate.journeyservice.dto.request.JourneyModifyReq;
 import com.ssafy.journeymate.journeyservice.dto.request.JourneyRegistPostReq;
@@ -17,10 +18,12 @@ import org.springframework.stereotype.Service;
 public class JourneyServiceImpl implements JourneyService {
 
     JourneyRepository journeyRepository;
+    CategoryServiceClient categoryServiceClient;
 
     @Autowired
-    public JourneyServiceImpl(JourneyRepository journeyRepository) {
+    public JourneyServiceImpl(JourneyRepository journeyRepository, CategoryServiceClient categoryServiceClient) {
         this.journeyRepository = journeyRepository;
+        this.categoryServiceClient = categoryServiceClient;
     }
 
 

@@ -37,11 +37,25 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
 
-	//  querydsl
+	/*  querydsl  */
 	implementation 'com.querydsl:querydsl-jpa:5.0.0'
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0"
 	annotationProcessor "javax.annotation:javax.annotation-api"
 	annotationProcessor "javax.persistence:javax.persistence-api"
+
+	/* config를 */
+	implementation 'org.springframework.cloud:spring-cloud-starter-config'
+	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+//	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	/* microservice간 통신을 위한 feign */
+	implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+
+	/* mariadb 설정 */
+ 	implementation("org.mariadb.jdbc:mariadb-java-client:2.7.2")
+
+
 }
 
 dependencyManagement {
