@@ -2,7 +2,10 @@ package com.ssafy.journeymate.mateservice.util;
 
 
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,20 +33,25 @@ public class FileUtil {
      * @param multipartFile
      * @return
      */
-    public String uploadFile(MultipartFile multipartFile) throws IOException {
+    public FileUploadResult uploadFile(MultipartFile multipartFile) throws IOException {
 
         ObjectMetadata objectMetadata = new ObjectMetadata();
 
         String originalFileName = multipartFile.getOriginalFilename();
+        String savedFileName = getFileName(originalFileName);
 
         objectMetadata.setContentLength(multipartFile.getSize());
         objectMetadata.setContentType(multipartFile.getContentType());
 
-        String file = "static/" + getFileName(originalFileName);
+        String file = "static/" + savedFileName;
 
-        amazonS3Client.putObject(bucket, file, multipartFile.getInputStream(), objectMetadata);
+        PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, file, multipartFile.getInputStream(), objectMetadata)
+            .withCannedAcl(CannedAccessControlList.PublicRead);
+        amazonS3Client.putObject(putObjectRequest);
 
-        return amazonS3Client.getUrl(bucket, file).toString();
+        String uploadUrl = amazonS3Client.getUrl(bucket, file).toString();
+
+        return new FileUploadResult(uploadUrl, savedFileName);
     }
 
     /**
@@ -61,6 +69,18 @@ public class FileUtil {
      * @return
      */
     public String getFileName(String originalFileName){
-        return UUID.randomUUID() + originalFileName;
+        return originalFileName + "_" + System.currentTimeMillis();
+    }
+
+    @Getter
+    public static class FileUploadResult{
+        private String imgUrl;
+        private String fileName;
+
+        public FileUploadResult(String imgUrl, String fileName){
+            this.imgUrl = imgUrl;
+            this.fileName = fileName;
+        }
     }
 }
+

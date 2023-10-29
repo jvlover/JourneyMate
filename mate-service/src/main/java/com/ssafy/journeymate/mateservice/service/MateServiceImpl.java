@@ -1,23 +1,44 @@
 package com.ssafy.journeymate.mateservice.service;
 
 
-import com.ssafy.journeymate.mateservice.dto.request.docs.DocsRegistReq;
+import com.ssafy.journeymate.mateservice.dto.request.content.ContentDeleteReq;
+import com.ssafy.journeymate.mateservice.dto.request.content.ContentRegistPostReq;
+import com.ssafy.journeymate.mateservice.dto.request.docs.DocsDeleteReq;
+import com.ssafy.journeymate.mateservice.dto.request.docs.DocsRegistPostReq;
+import com.ssafy.journeymate.mateservice.dto.request.docs.DocsUpdateReq;
 import com.ssafy.journeymate.mateservice.dto.request.mate.MateDeleteReq;
 import com.ssafy.journeymate.mateservice.dto.request.mate.MateRegistPostReq;
 import com.ssafy.journeymate.mateservice.dto.request.mate.MateUpdatePostReq;
-import com.ssafy.journeymate.mateservice.dto.response.docs.DocsRegistRes;
+import com.ssafy.journeymate.mateservice.dto.response.content.ContentListRes;
+import com.ssafy.journeymate.mateservice.dto.response.content.ContentRegistPostRes;
+import com.ssafy.journeymate.mateservice.dto.response.content.ContentRegistPostRes.content;
+import com.ssafy.journeymate.mateservice.dto.response.docs.DocsDetailRes;
+import com.ssafy.journeymate.mateservice.dto.response.docs.DocsListRes;
+import com.ssafy.journeymate.mateservice.dto.response.docs.DocsListRes.DocsInfo;
+import com.ssafy.journeymate.mateservice.dto.response.docs.DocsRegistPostRes;
+import com.ssafy.journeymate.mateservice.dto.response.docs.DocsUpdateRes;
+import com.ssafy.journeymate.mateservice.dto.response.file.FileResposeDto;
 import com.ssafy.journeymate.mateservice.dto.response.mate.MateDetailRes;
 import com.ssafy.journeymate.mateservice.dto.response.mate.MateRegistPostRes;
 import com.ssafy.journeymate.mateservice.dto.response.mate.MateUpdatePostRes;
+import com.ssafy.journeymate.mateservice.entity.Contents;
 import com.ssafy.journeymate.mateservice.entity.Docs;
+import com.ssafy.journeymate.mateservice.entity.DocsImg;
 import com.ssafy.journeymate.mateservice.entity.Mate;
+import com.ssafy.journeymate.mateservice.exception.DocsNotFoundException;
+import com.ssafy.journeymate.mateservice.exception.ImageNotFoundException;
+import com.ssafy.journeymate.mateservice.exception.ImageUploadException;
 import com.ssafy.journeymate.mateservice.exception.MateNotFoundException;
 import com.ssafy.journeymate.mateservice.exception.UnauthorizedRoleException;
+import com.ssafy.journeymate.mateservice.repository.ContentsRepository;
 import com.ssafy.journeymate.mateservice.repository.DocsImgRepository;
 import com.ssafy.journeymate.mateservice.repository.DocsRepository;
 import com.ssafy.journeymate.mateservice.repository.MateRepository;
 import com.ssafy.journeymate.mateservice.util.FileUtil;
+import com.ssafy.journeymate.mateservice.util.FileUtil.FileUploadResult;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +52,8 @@ public class MateServiceImpl implements MateService {
     private final DocsRepository docsRepository;
 
     private final DocsImgRepository docsImgRepository;
+
+    private final ContentsRepository contentsRepository;
 
     private FileUtil fileUtil;
 
@@ -61,7 +84,7 @@ public class MateServiceImpl implements MateService {
             .destination(savedMate.getDestination())
             .startDate(savedMate.getStartDate())
             .endDate(savedMate.getEndDate())
-            .createDate(savedMate.getCreateDate())
+            .createdDate(savedMate.getCreateDate())
             .creator(savedMate.getCreator())
             .build();
 
@@ -99,8 +122,8 @@ public class MateServiceImpl implements MateService {
             .name(saveMate.getName())
             .startDate(saveMate.getStartDate())
             .endDate(saveMate.getEndDate())
-            .createDate(saveMate.getCreateDate())
-            .modifyDate(saveMate.getModifyDate())
+            .createdDate(saveMate.getCreateDate())
+            .updatedDate(saveMate.getModifyDate())
             .creator(saveMate.getCreator())
             .build();
 
@@ -120,7 +143,7 @@ public class MateServiceImpl implements MateService {
             .orElseThrow(MateNotFoundException::new);
 
         if (mate.getCreator().equals(mateDeleteReq.getCreator())) {
-            mate.deleteMate();
+            mate.delete();
         } else {
             throw new UnauthorizedRoleException();
         }
@@ -143,12 +166,13 @@ public class MateServiceImpl implements MateService {
             .name(mate.getName())
             .startDate(mate.getStartDate())
             .endDate(mate.getEndDate())
-            .createDate(mate.getCreateDate())
+            .createdDate(mate.getCreateDate())
             .creator(mate.getCreator())
             .build();
     }
 
     /**
+     * TODO : 회원 닉네임 조회 호출
      * 여행 그룹 문서 저장
      *
      * @param docsRegistReq
@@ -156,32 +180,400 @@ public class MateServiceImpl implements MateService {
      * @return
      */
     @Override
-    public DocsRegistRes registDocs(DocsRegistReq docsRegistReq, MultipartFile imgFile)
+    public DocsRegistPostRes registDocs(DocsRegistPostReq docsRegistReq,
+        List<MultipartFile> imgFile)
         throws MateNotFoundException, IOException {
 
         Mate mate = mateRepository.findById(docsRegistReq.getMateId())
             .orElseThrow(MateNotFoundException::new);
-        Docs.DocsBuilder docs = Docs.builder()
+
+        Docs docs = Docs.builder()
             .mate(mate)
             .title(docsRegistReq.getTitle())
             .content(docsRegistReq.getContent())
-            .userId(docsRegistReq.getUserId());
+            .userId(docsRegistReq.getUserId())
+            .build();
 
-        if (imgFile.isEmpty()) {
-            docs.imageExist(false).build();
+        Docs savedDocs = docsRepository.save(docs);
 
-            Docs savedDacs = docsRepository.save(docs);
+        /*
+          닉네임 호출 추후 nickname 추가
+         */
+
+        DocsRegistPostRes.DocsRegistPostResBuilder docsRegistRes = DocsRegistPostRes.builder()
+            .docsId(savedDocs.getId())
+            .title(savedDocs.getTitle())
+            .content(savedDocs.getContent())
+            .createdDate(savedDocs.getCreateDate());
+
+        if (imgFile != null) {
+
+            savedDocs.setImageExist(true);
+
+            List<FileResposeDto> imgFiles = new ArrayList<>();
+
+            for (MultipartFile multipartFile : imgFile) {
+                FileUploadResult fileUploadResult = fileUtil.uploadFile(multipartFile);
+
+                DocsImg docsImg = DocsImg.builder()
+                    .docs(savedDocs)
+                    .fileName(fileUploadResult.getFileName())
+                    .imgUrl(fileUploadResult.getImgUrl())
+                    .build();
+
+                docsImgRepository.save(docsImg);
+
+                FileResposeDto fileResposeDto = FileResposeDto.builder()
+                    .filename(fileUploadResult.getFileName())
+                    .imgUrl(fileUploadResult.getImgUrl())
+                    .build();
+
+                imgFiles.add(fileResposeDto);
+
+            }
+            docsRegistRes.imgFileInfo(imgFiles);
+        }
+
+        return docsRegistRes.build();
+    }
+
+    /**
+     * TODO : 회원 닉네임 추가
+     * 여행 그룹 문서 수정
+     *
+     * @param docsUpdateReq
+     * @param imgFile
+     * @return
+     * @throws ImageUploadException
+     * @throws DocsNotFoundException
+     * @throws UnauthorizedRoleException
+     */
+    @Override
+    public DocsUpdateRes updateDocs(DocsUpdateReq docsUpdateReq, List<MultipartFile> imgFile)
+        throws ImageUploadException, DocsNotFoundException, UnauthorizedRoleException {
+
+        Docs docs = docsRepository.findById(docsUpdateReq.getDocsId()).orElseThrow(
+            DocsNotFoundException::new);
+
+        DocsUpdateRes.DocsUpdateResBuilder updateResBuilder = DocsUpdateRes
+            .builder()
+            .docsId(docs.getId())
+            .createdDate(docs.getCreateDate());
+
+        // 작성자만 수정 가능
+        if (docs.getUserId().equals(docsUpdateReq.getUserId())) {
+
+            if (!docs.getTitle().equals(docsUpdateReq.getTitle())) {
+                docs.setTitle(docsUpdateReq.getTitle());
+            }
+            if (!docs.getContent().equals(docsUpdateReq.getContent())) {
+                docs.setContent(docsUpdateReq.getContent());
+            }
+
+            List<DocsImg> docsImgs = docsImgRepository.findByDocs_id(docs.getId()).orElse(null);
+
+            // 사진의 경우 기존 사진들 삭제 - delete 호출, s3 삭제, 새로운 사진으로 저장
+            if (imgFile != null) {
+
+                docs.setImageExist(true);
+
+                // 새로 저장할 파일 이름
+                List<FileUploadResult> uploadedFiles = new ArrayList<>();
+
+                // 업로드 이미지 dto
+                List<FileResposeDto> imgFiles = new ArrayList<>();
+
+                try {
+                    for (MultipartFile multipartFile : imgFile) {
+                        FileUploadResult fileUploadResult = fileUtil.uploadFile(multipartFile);
+
+                        uploadedFiles.add(fileUploadResult);
+                    }
+
+                } catch (IOException e) {
+                    for (FileUploadResult img : uploadedFiles) {
+                        e.printStackTrace();
+                        fileUtil.deleteFile(img.getFileName());
+                        throw new ImageUploadException();
+                    }
+                }
+
+                for (FileUploadResult file : uploadedFiles) {
+                    DocsImg docsImg = DocsImg.builder()
+                        .docs(docs)
+                        .imgUrl(file.getImgUrl())
+                        .fileName(file.getFileName())
+                        .build();
+
+                    DocsImg savedDocsImg = docsImgRepository.save(docsImg);
+
+                    FileResposeDto fileResposeDto = FileResposeDto.builder()
+                        .filename(savedDocsImg.getFileName())
+                        .imgUrl(savedDocsImg.getImgUrl())
+                        .build();
+
+                    imgFiles.add(fileResposeDto);
+
+                }
+
+                updateResBuilder.imgFileInfo(imgFiles);
+
+            } else {
+                docs.setImageExist(false);
+            }
+
+            if (docsImgs != null) {
+                for (DocsImg img : docsImgs) {
+                    img.delete();
+                    fileUtil.deleteFile(img.getFileName());
+                }
+            }
 
         } else {
-            docs.imageExist(true).build();
+            throw new UnauthorizedRoleException();
+        }
 
-            String fileUrl =  fileUtil.uploadFile(imgFile);
-            String fileName = fileUtil.getFileName(imgFile.getOriginalFilename());
+        updateResBuilder.title(docs.getTitle())
+            .content(docs.getContent());
 
+        return updateResBuilder.build();
+    }
+
+    /**
+     * 문서 삭제
+     *
+     * @param docsDeleteReq
+     * @return
+     * @throws DocsNotFoundException
+     */
+    @Override
+    public boolean deleteDocs(DocsDeleteReq docsDeleteReq)
+        throws DocsNotFoundException, UnauthorizedRoleException {
+
+        Docs docs = docsRepository.findById(docsDeleteReq.getDocsId())
+            .orElseThrow(DocsNotFoundException::new);
+
+        if (docs.getUserId().equals(docsDeleteReq.getUserId())) {
+
+            List<DocsImg> docsImgs = docsImgRepository.findByDocs_id(docs.getId()).orElse(null);
+
+            if (docsImgs != null) {
+                for (DocsImg img : docsImgs) {
+                    img.delete();
+                }
+            }
+
+            docs.delete();
+        } else {
+            throw new UnauthorizedRoleException();
+        }
+        return true;
+    }
+
+
+    /**
+     * TODO : 회원 닉네임 호출
+     * 여행 그룹 문서 상세 조회
+     *
+     * @param docsId
+     * @return
+     * @throws DocsNotFoundException
+     */
+    @Override
+    public DocsDetailRes getDocsDetail(Long docsId)
+        throws DocsNotFoundException, ImageNotFoundException {
+
+        Docs docs = docsRepository.findById(docsId).orElseThrow(DocsNotFoundException::new);
+
+        DocsDetailRes.DocsDetailResBuilder docsDetailRes = DocsDetailRes.builder()
+            .title(docs.getTitle())
+            .content(docs.getContent())
+            .createdDate(docs.getCreateDate())
+            .docsId(docs.getId());
+
+        if (docs.getImageExist()) {
+
+            List<DocsImg> docsImgs = docsImgRepository.findByDocs_id(docs.getId()).orElseThrow(
+                ImageNotFoundException::new);
+
+            List<FileResposeDto> imgFiles = new ArrayList<>();
+
+            for (DocsImg img : docsImgs) {
+                FileResposeDto fileResposeDto = FileResposeDto.builder()
+                    .filename(img.getFileName())
+                    .imgUrl(img.getImgUrl())
+                    .build();
+
+                imgFiles.add(fileResposeDto);
+            }
+
+            docsDetailRes.imgFileInfo(imgFiles);
+
+        }
+        return docsDetailRes.build();
+    }
+
+    /**
+     * 여행 그룹 문서 전체 조회
+     *
+     * @param mateId
+     * @return
+     * @throws MateNotFoundException
+     */
+    @Override
+    public DocsListRes getDocsList(Long mateId)
+        throws MateNotFoundException, ImageNotFoundException {
+
+        List<Docs> docs = docsRepository.findByMate_id(mateId)
+            .orElseThrow(MateNotFoundException::new);
+
+        List<DocsInfo> docsInfoList = new ArrayList<>();
+
+        for (Docs doc : docs) {
+
+            DocsListRes.DocsInfo.DocsInfoBuilder docsInfo = DocsListRes.DocsInfo.builder()
+                .title(doc.getTitle())
+                .docsId(doc.getId())
+                .createdDate(doc.getCreateDate());
+
+            if (doc.getImageExist()) {
+
+                List<FileResposeDto> imgFiles = new ArrayList<>();
+
+                List<DocsImg> docsImgs = docsImgRepository.findByDocs_id(doc.getId())
+                    .orElseThrow(ImageNotFoundException::new);
+
+                for (DocsImg img : docsImgs) {
+                    FileResposeDto fileResposeDto = FileResposeDto.builder()
+                        .filename(img.getFileName())
+                        .imgUrl(img.getImgUrl())
+                        .build();
+
+                    imgFiles.add(fileResposeDto);
+                }
+
+                docsInfo.imgFileInfo(imgFiles);
+            }
+            docsInfoList.add(docsInfo.build());
+        }
+
+        DocsListRes docsListRes = DocsListRes.builder()
+            .docsInfoList(docsInfoList)
+            .build();
+
+        return docsListRes;
+    }
+
+    /**
+     * 여행 그룹 콘텐츠 저장
+     *
+     * @param contentRegistPostReq
+     * @param imgFile
+     * @return
+     */
+    @Override
+    public ContentRegistPostRes registContent(ContentRegistPostReq contentRegistPostReq,
+        List<MultipartFile> imgFile) throws ImageUploadException, MateNotFoundException {
+
+        Mate mate = mateRepository.findById(contentRegistPostReq.getMateId())
+            .orElseThrow(MateNotFoundException::new);
+
+        List<content> contentList = new ArrayList<>();
+
+        for (MultipartFile multipartFile : imgFile) {
+            try {
+                FileUploadResult fileUploadResult = fileUtil.uploadFile(multipartFile);
+                Contents.ContentsBuilder contents = Contents.builder()
+                    .mate(mate)
+                    .userId(contentRegistPostReq.getUserId())
+                    .fileName(fileUploadResult.getFileName())
+                    .imgUrl(fileUploadResult.getImgUrl());
+
+                if (multipartFile.getContentType().startsWith("video/")) {
+                    contents.type(true);
+                } else {
+                    contents.type(false);
+                }
+
+                Contents savedContent = contentsRepository.save(contents.build());
+
+                ContentRegistPostRes.content content = ContentRegistPostRes.content.builder()
+                    .contentId(savedContent.getId())
+                    .createdDate(savedContent.getCreateDate())
+                    .creatorId(savedContent.getUserId())
+                    .fileName(savedContent.getFileName())
+                    .imgUrl(savedContent.getImgUrl())
+                    .build();
+
+                contentList.add(content);
+
+            } catch (IOException e) {
+                throw new ImageUploadException();
+            }
 
         }
 
-        return null;
+        ContentRegistPostRes contentRegistPostRes = ContentRegistPostRes.builder()
+            .contentInfo(contentList).build();
+
+        return contentRegistPostRes;
+
     }
+
+    /**
+     * 여행 그룹 콘텐츠 삭제
+     *
+     * @param contentDeleteReq
+     * @return
+     */
+    @Override
+    public void deleteContent(ContentDeleteReq contentDeleteReq) throws ImageNotFoundException {
+
+        for (Long contentId : contentDeleteReq.getContents()) {
+            Contents contents = contentsRepository.findById(contentId)
+                .orElseThrow(ImageNotFoundException::new);
+
+            contents.delete();
+            fileUtil.deleteFile(contents.getFileName());
+        }
+    }
+
+    /**
+     * 여행 그룹 콘텐츠 조회
+     *
+     * @param mateId
+     * @return
+     */
+    @Override
+    public ContentListRes getContentDetail(Long mateId) {
+
+        List<Contents> contentList = contentsRepository.findByMate_id(mateId);
+
+        List<ContentListRes.content> contentInfo = new ArrayList<>();
+
+        if (contentList != null) {
+            for (Contents c : contentList) {
+
+                ContentListRes.content content = ContentListRes.content.builder()
+                    .contentId(c.getId())
+                    .creatorId(c.getUserId())
+                    .createdDate(c.getCreateDate())
+                    .fileName(c.getFileName())
+                    .imgUrl(c.getImgUrl())
+                    .type(c.getType())
+                    .build();
+
+                contentInfo.add(content);
+            }
+
+        }
+
+        ContentListRes contentListRes = ContentListRes.builder()
+            .contentInfo(contentInfo)
+            .build();
+
+        return contentListRes;
+    }
+
 
 }

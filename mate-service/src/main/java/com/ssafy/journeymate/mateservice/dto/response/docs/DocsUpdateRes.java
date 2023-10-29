@@ -1,23 +1,23 @@
 package com.ssafy.journeymate.mateservice.dto.response.docs;
 
-
 import com.ssafy.journeymate.mateservice.dto.response.file.FileResposeDto;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+
 
 @Data
 @Builder
-public class DocsRegistRes {
-
+@Getter
+public class DocsUpdateRes {
     private String nickname;
     private String title;
     private String content;
     private Long docsId;
-    private LocalDateTime createDate;
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
     private List<FileResposeDto> imgFileInfo;
 
 }

@@ -21,6 +21,6 @@ public class MateRegistPostRes {
     private LocalDateTime endDate;
     private List<String> users;
     private String creator;
-    private LocalDateTime createDate;
+    private LocalDateTime createdDate;
     private Long mateId;
 }

@@ -17,6 +17,6 @@ public class MateDetailRes {
     private LocalDateTime endDate;
     private List<String> users;
     private String creator;
-    private LocalDateTime createDate;
-    private LocalDateTime modifyDate;
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
 }

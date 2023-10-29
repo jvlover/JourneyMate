@@ -17,10 +17,10 @@ import org.hibernate.annotations.Where;
 @Getter
 @Setter
 @Builder
-@Table(name = "docs")
+@Table(name = "contents")
 @Where(clause = "is_deleted = 0")
 @RequiredArgsConstructor
-public class Docs extends BaseEntity {
+public class Contents extends BaseEntity {
 
     @Id
     private Long id;
@@ -32,13 +32,11 @@ public class Docs extends BaseEntity {
     @Column(name = "user_id", nullable = false)
     private String userId;
 
-    @Column(nullable = false)
-    private String title;
+    private String fileName;
 
-    @Column(nullable = false)
-    private String content;
+    @Column(name = "img_url")
+    private String imgUrl;
 
-    @Column(name = "image_exist")
-    private Boolean imageExist;
+    private Boolean type;
 
 }
