@@ -55,6 +55,9 @@ dependencies {
 	/* mariadb 설정 */
 	implementation("org.mariadb.jdbc:mariadb-java-client:2.7.2")
 
+	/* kafka 설정 */
+	implementation("org.springframework.kafka:spring-kafka")
+
 
 }
 
