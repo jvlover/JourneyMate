@@ -190,6 +190,7 @@ public class MateController {
 
     /**
      * 여행 그룹 콘텐츠 저장
+     *
      * @param contentRegistPostReq
      * @param imgFile
      * @return
@@ -198,32 +199,36 @@ public class MateController {
     public ResponseEntity<ResponseDto> registContent(
         @ModelAttribute ContentRegistPostReq contentRegistPostReq,
         @RequestParam(name = "imgFile", required = true) List<MultipartFile> imgFile) {
-        ContentRegistPostRes contentRegistPostRes = mateService.registContent(contentRegistPostReq, imgFile);
-        return new ResponseEntity<>(new ResponseDto("콘텐츠를 저장했습니다.", contentRegistPostRes), HttpStatus.OK);
+        ContentRegistPostRes contentRegistPostRes = mateService.registContent(contentRegistPostReq,
+            imgFile);
+        return new ResponseEntity<>(new ResponseDto("콘텐츠를 저장했습니다.", contentRegistPostRes),
+            HttpStatus.OK);
     }
 
     /**
      * 여행 그룹 콘텐츠 삭제
+     *
      * @param contentDeleteReq
      * @return
      */
     @DeleteMapping("/contents")
-    public ResponseEntity<ResponseDto> deleteContent(@RequestBody ContentDeleteReq contentDeleteReq){
+    public ResponseEntity<ResponseDto> deleteContent(
+        @RequestBody ContentDeleteReq contentDeleteReq) {
         mateService.deleteContent(contentDeleteReq);
         return new ResponseEntity<>(new ResponseDto("콘텐츠를 삭제했습니다.", null), HttpStatus.OK);
     }
 
     /**
      * 여행 그룹 콘텐츠 조회
+     *
      * @param mateId
      * @return
      */
     @GetMapping("/contents/list/{mateId}")
-    public ResponseEntity<ResponseDto> contentDetailInfo(@PathVariable Long mateId){
+    public ResponseEntity<ResponseDto> contentDetailInfo(@PathVariable Long mateId) {
         ContentListRes contentListRes = mateService.getContentDetail(mateId);
         return new ResponseEntity<>(new ResponseDto("콘텐츠를 조회했습니다", contentListRes), HttpStatus.OK);
     }
-
 
 
 }

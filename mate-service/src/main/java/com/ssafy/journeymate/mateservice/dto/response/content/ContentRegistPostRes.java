@@ -16,11 +16,11 @@ public class ContentRegistPostRes {
     List<content> contentInfo;
 
 
-
     @Data
     @Builder
     @Getter
-    public static class content{
+    public static class content {
+
         private String creatorId;
         private Long contentId;
         private LocalDateTime createdDate;

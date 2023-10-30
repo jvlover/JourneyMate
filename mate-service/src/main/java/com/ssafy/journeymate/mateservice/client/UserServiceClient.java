@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @FeignClient(name = "user-service")
 public interface UserServiceClient {
 
-    @GetMapping("/user-service/findbyNickname/{nickname}")
-    
+//    @GetMapping("/user-service/findbyNickname/{nickname}")
+
 
 }

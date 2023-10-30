@@ -16,7 +16,7 @@ import org.hibernate.annotations.Where;
 @Where(clause = "is_deleted = 0")
 @Table(name = "docs_img")
 @RequiredArgsConstructor
-public class DocsImg extends BaseEntity{
+public class DocsImg extends BaseEntity {
 
     @Id
     private Long id;

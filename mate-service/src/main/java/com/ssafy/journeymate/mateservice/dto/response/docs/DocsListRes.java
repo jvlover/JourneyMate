@@ -19,7 +19,8 @@ public class DocsListRes {
     @Data
     @Builder
     @Getter
-    public static class DocsInfo{
+    public static class DocsInfo {
+
         private String title;
         private Long docsId;
         private LocalDateTime createdDate;

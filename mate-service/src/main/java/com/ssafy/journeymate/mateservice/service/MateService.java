@@ -56,7 +56,8 @@ public interface MateService {
     public DocsListRes getDocsList(Long mateId)
         throws MateNotFoundException, ImageNotFoundException;
 
-    public ContentRegistPostRes registContent(ContentRegistPostReq contentRegistPostReq, List<MultipartFile> imgFile);
+    public ContentRegistPostRes registContent(ContentRegistPostReq contentRegistPostReq,
+        List<MultipartFile> imgFile);
 
     public void deleteContent(ContentDeleteReq contentDeleteReq);
 

@@ -12,6 +12,7 @@ import lombok.Getter;
 @Builder
 @Getter
 public class DocsUpdateRes {
+
     private String nickname;
     private String title;
     private String content;

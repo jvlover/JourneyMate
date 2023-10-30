@@ -45,7 +45,8 @@ public class FileUtil {
 
         String file = "static/" + savedFileName;
 
-        PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, file, multipartFile.getInputStream(), objectMetadata)
+        PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, file,
+            multipartFile.getInputStream(), objectMetadata)
             .withCannedAcl(CannedAccessControlList.PublicRead);
         amazonS3Client.putObject(putObjectRequest);
 
@@ -65,19 +66,21 @@ public class FileUtil {
 
     /**
      * 파일 이름 가져오기
+     *
      * @param originalFileName
      * @return
      */
-    public String getFileName(String originalFileName){
+    public String getFileName(String originalFileName) {
         return originalFileName + "_" + System.currentTimeMillis();
     }
 
     @Getter
-    public static class FileUploadResult{
+    public static class FileUploadResult {
+
         private String imgUrl;
         private String fileName;
 
-        public FileUploadResult(String imgUrl, String fileName){
+        public FileUploadResult(String imgUrl, String fileName) {
             this.imgUrl = imgUrl;
             this.fileName = fileName;
         }
