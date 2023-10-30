@@ -70,4 +70,8 @@ public class Journey extends BaseEntity {
         this.isDeleted = 0;
     }
 
+    public void updateCategoryJourney() {
+
+    }
+
 }

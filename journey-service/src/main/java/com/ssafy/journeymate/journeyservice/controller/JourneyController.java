@@ -3,6 +3,8 @@ package com.ssafy.journeymate.journeyservice.controller;
 
 import com.ssafy.journeymate.journeyservice.dto.ResponseDto;
 import com.ssafy.journeymate.journeyservice.dto.response.JourneyGetRes;
+import com.ssafy.journeymate.journeyservice.messagequeue.JourneyProducer;
+import com.ssafy.journeymate.journeyservice.messagequeue.KafkaProducer;
 import com.ssafy.journeymate.journeyservice.service.JourneyService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,36 +23,43 @@ public class JourneyController {
 
     private Environment env;
     private JourneyService journeyService;
+    private KafkaProducer kafkaProducer;
 
+    private JourneyProducer journeyProducer;
 
     @Autowired
-    public JourneyController(Environment env, JourneyService journeyService) {
+    public JourneyController(Environment env, JourneyService journeyService, KafkaProducer kafkaProducer,
+                             JourneyProducer journeyProducer) {
         this.env = env;
         this.journeyService = journeyService;
+        this.kafkaProducer = kafkaProducer;
+        this.journeyProducer = journeyProducer;
     }
 
 
     /* 테스트용 */
     @GetMapping("/health_check")
-    public String status(){
+    public String status() {
 
         return String.format("It's Working in User Service"
-                +", port(local.sever.port)=" + env.getProperty("local.server.port"))
-                +", port(sever.port)=" + env.getProperty("server.port")
-                +", token secret=" + env.getProperty("token.secret")
-                +", token expiration time=" + env.getProperty("token.expiration_time");
+                + ", port(local.sever.port)=" + env.getProperty("local.server.port"))
+                + ", port(sever.port)=" + env.getProperty("server.port")
+                + ", token secret=" + env.getProperty("token.secret")
+                + ", token expiration time=" + env.getProperty("token.expiration_time");
     }
 
     @PostMapping("/regist")
     public ResponseEntity<ResponseDto> registJourney() {
 
+        /* send data to the kafka  new JourneyGetRes()는 임시로 적어놓음 */
+        kafkaProducer.sendJourney("journey-item-topic", new JourneyGetRes());
+        journeyProducer.sendJourney("journey", new JourneyGetRes());
 
         return new ResponseEntity<>(new ResponseDto("일정 등록 완료", null), HttpStatus.OK);
     }
 
     @PutMapping("/delete/{journeyId}")
     public ResponseEntity<ResponseDto> deleteJourney() {
-
 
         return new ResponseEntity<>(new ResponseDto("일정 삭제 완료", null), HttpStatus.OK);
     }
@@ -82,7 +91,6 @@ public class JourneyController {
     @GetMapping("/journey/categoryicon/{categoryId}")
     public ResponseEntity<ResponseDto> getCategoryIcon() {
 
-        
         return new ResponseEntity<>(new ResponseDto("카테고리 아이콘입니다.", null), HttpStatus.OK);
     }
 
