@@ -1,5 +1,5 @@
 server:
-  port: 8887
+  port: 8888
 
 spring:
   application:
@@ -15,9 +15,7 @@ spring:
     config:
       server:
         git:
-          uri: [your git repository]
-#          username:
-#          password:
+          uri: https://github.com/jvlover/journeymate-config.git
 
 management:
   endpoints:
