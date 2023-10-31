@@ -1,6 +1,8 @@
 package ssafy.journeymate.categoryservice.categoryservice.controller;
 
 
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -9,11 +11,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ssafy.journeymate.categoryservice.categoryservice.dto.ResponseDto;
+import ssafy.journeymate.categoryservice.categoryservice.dto.request.CategoryModifyPutReq;
+import ssafy.journeymate.categoryservice.categoryservice.dto.request.CategoryRegistPostReq;
+import ssafy.journeymate.categoryservice.categoryservice.dto.request.ItemModifyPutReq;
+import ssafy.journeymate.categoryservice.categoryservice.dto.request.ItemRegistPostReq;
+import ssafy.journeymate.categoryservice.categoryservice.dto.response.CategoryGetRes;
+import ssafy.journeymate.categoryservice.categoryservice.dto.response.ItemGetRes;
 import ssafy.journeymate.categoryservice.categoryservice.service.CategoryService;
 
+@Slf4j
 @RestController
 @RequestMapping("/category-service")
 public class CategoryController {
@@ -29,58 +39,99 @@ public class CategoryController {
 
     /* 테스트용 */
     @GetMapping("/health_check")
-    public String status(){
+    public String status() {
 
         return String.format("It's Working in User Service"
-                +", port(local.sever.port)=" + env.getProperty("local.server.port"))
-                +", port(sever.port)=" + env.getProperty("server.port")
-                +", token secret=" + env.getProperty("token.secret")
-                +", token expiration time=" + env.getProperty("token.expiration_time");
+                + ", port(local.sever.port)=" + env.getProperty("local.server.port"))
+                + ", port(sever.port)=" + env.getProperty("server.port")
+                + ", token secret=" + env.getProperty("token.secret")
+                + ", token expiration time=" + env.getProperty("token.expiration_time");
     }
 
 
     @GetMapping("/{categoryId}")
-    public ResponseEntity<ResponseDto> getCategory(@PathVariable Long categoryId) {
+    public ResponseEntity<ResponseDto> getCategoryById(@PathVariable Long categoryId) {
 
-        return new ResponseEntity<>(new ResponseDto("카테고리 정보 조회 완료", null), HttpStatus.OK);
+        log.info("CategoryController_getCategoryById_start: " + categoryId);
+
+        CategoryGetRes categoryGetRes = categoryService.findCategoryById(categoryId);
+
+        log.info("CategoryController_getCategoryById_end: " + categoryGetRes.toString());
+
+        return new ResponseEntity<>(new ResponseDto("카테고리 정보 조회 완료", categoryGetRes), HttpStatus.OK);
+    }
+
+    @GetMapping("/findByName/{categoryName}")
+    public ResponseEntity<ResponseDto> getCategoryByName(@PathVariable String categoryName) {
+
+        log.info("CategoryController_getCategoryByName_start: " + categoryName);
+
+        CategoryGetRes categoryGetRes = categoryService.findCategoryByName(categoryName);
+
+        log.info("CategoryController_getCategoryById_end: " + categoryGetRes.toString());
+
+        return new ResponseEntity<>(new ResponseDto("카테고리 정보 조회 완료", categoryGetRes), HttpStatus.OK);
     }
 
     @GetMapping("/{categoryId}/items")
     public ResponseEntity<ResponseDto> getCategoryItems(@PathVariable Long categoryId) {
 
-        return new ResponseEntity<>(new ResponseDto("카테고리 내 아이템 목록 조회 완료", null), HttpStatus.OK);
+        log.info("CategoryController_getCategoryItems_start: " + categoryId);
+
+        List<ItemGetRes> items = categoryService.findItemsByCategory(categoryId);
+
+        log.info("CategoryController_getCategoryItems_end: " + items.toString());
+
+        return new ResponseEntity<>(new ResponseDto("카테고리 내 아이템 목록 조회 완료", items), HttpStatus.OK);
     }
 
     @PostMapping("/regist")
-    public ResponseEntity<ResponseDto> registCategory() {
+    public ResponseEntity<ResponseDto> registCategory(@RequestBody CategoryRegistPostReq categoryRegistPostReq) {
 
+        log.info("CategoryController_getCategoryItems_start: " + categoryRegistPostReq.toString());
 
-        return new ResponseEntity<>(new ResponseDto("카테고리 등록 완료", null), HttpStatus.OK);
+        CategoryGetRes categoryGetRes = categoryService.registCategory(categoryRegistPostReq);
+
+        log.info("CategoryController_getCategoryItems_end: " + categoryGetRes.toString());
+
+        return new ResponseEntity<>(new ResponseDto("카테고리 등록 완료", categoryGetRes), HttpStatus.OK);
     }
 
     @PostMapping("/additems")
-    public ResponseEntity<ResponseDto> registCategoryItem() {
+    public ResponseEntity<ResponseDto> registCategoryItem(@RequestBody ItemRegistPostReq itemRegistPostReq) {
 
+        log.info("CategoryController_registCategoryItem_start: " + itemRegistPostReq.toString());
 
-        return new ResponseEntity<>(new ResponseDto("카테고리 아이템 등록 완료", null), HttpStatus.OK);
+        ItemGetRes itemGetRes = categoryService.registItem(itemRegistPostReq);
+
+        log.info("CategoryController_registCategoryItem_end: " + itemGetRes.toString());
+
+        return new ResponseEntity<>(new ResponseDto("카테고리 아이템 등록 완료", itemGetRes), HttpStatus.OK);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ResponseDto> updateCategory() {
+    public ResponseEntity<ResponseDto> updateCategory(@RequestBody CategoryModifyPutReq categoryModifyPutReq) {
 
+        log.info("CategoryController_updateCategory_start: " + categoryModifyPutReq.toString());
 
-        return new ResponseEntity<>(new ResponseDto("카테고리 업데이트 완료", null), HttpStatus.OK);
+        Boolean check = categoryService.modifyCategory(categoryModifyPutReq);
+
+        log.info("CategoryController_updateCategory_end: " + check);
+
+        return new ResponseEntity<>(new ResponseDto("카테고리 업데이트 완료", check), HttpStatus.OK);
     }
 
-    @PutMapping("/updateitems")
-    public ResponseEntity<ResponseDto> updateCategoryItem() {
+    @PutMapping("/updateitem")
+    public ResponseEntity<ResponseDto> updateCategoryItem(@RequestBody ItemModifyPutReq itemModifyPutReq) {
 
+        log.info("CategoryController_updateCategoryItem_start: " + itemModifyPutReq.toString());
 
-        return new ResponseEntity<>(new ResponseDto("카테고리 아이템 업데이트 완료", null), HttpStatus.OK);
+        Boolean check = categoryService.modifyItem(itemModifyPutReq);
+
+        log.info("CategoryController_updateCategoryItem_start: " + check);
+
+        return new ResponseEntity<>(new ResponseDto("카테고리 아이템 업데이트 완료", check), HttpStatus.OK);
     }
-
-
-
 
 
 }

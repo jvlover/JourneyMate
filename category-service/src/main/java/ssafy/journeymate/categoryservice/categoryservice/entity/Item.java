@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.DynamicInsert;
+import ssafy.journeymate.categoryservice.categoryservice.dto.request.ItemModifyPutReq;
 
 @Getter // Getter 자동 생성
 @ToString   // toString 메소드 자동 생성
@@ -33,5 +34,12 @@ public class Item extends BaseEntity {
 
     @Column(nullable = false)
     private int num;
+
+    public void modify(Category category, String name, int num) {
+
+        this.category = category;
+        this.name = name;
+        this.num = num;
+    }
 
 }
