@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ssafy.journeymate.categoryservice.categoryservice.dto.request.CategoryModifyPutReq;
 import ssafy.journeymate.categoryservice.categoryservice.dto.request.CategoryRegistPostReq;
@@ -24,8 +25,14 @@ import ssafy.journeymate.categoryservice.categoryservice.repository.ItemReposito
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
-    CategoryRepository categoryRepository;
-    ItemRepository itemRepository;
+    private final CategoryRepository categoryRepository;
+    private final ItemRepository itemRepository;
+
+    @Autowired
+    public CategoryServiceImpl(CategoryRepository categoryRepository, ItemRepository itemRepository) {
+        this.categoryRepository = categoryRepository;
+        this.itemRepository = itemRepository;
+    }
 
 
     @Override
@@ -136,6 +143,8 @@ public class CategoryServiceImpl implements CategoryService {
                 .category(category)
                 .name(itemRegistPostReq.getName())
                 .num(itemRegistPostReq.getNum()).build();
+
+        itemRepository.save(item);
 
         ItemGetRes itemGetRes = new ModelMapper().map(item, ItemGetRes.class);
 
