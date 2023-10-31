@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    active: test
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: false
+    add-properties: false
+  freemarker:
+    cache: false
+  jwt:
+    secret: govlepel@$&
+  thymeleaf:
+    cache: false
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/mydatabase
