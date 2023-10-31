@@ -1,12 +1,16 @@
 package com.ssafy.journeymate.mateservice.entity;
 
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.*;
 import org.hibernate.annotations.Where;
 
 @Entity
@@ -15,11 +19,9 @@ import org.hibernate.annotations.Where;
 @Builder
 @Where(clause = "is_deleted = 0")
 @Table(name = "docs_img")
+@AllArgsConstructor
+@NoArgsConstructor
 public class DocsImg extends BaseEntity {
-
-    @Id
-    @GeneratedValue
-    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "docs_id")

@@ -3,14 +3,13 @@ package com.ssafy.journeymate.mateservice.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Where;
 
@@ -20,12 +19,9 @@ import org.hibernate.annotations.Where;
 @Builder
 @Table(name = "docs")
 @Where(clause = "is_deleted = 0")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Docs extends BaseEntity {
-
-    @Id
-    @GeneratedValue
-    private Long id;
-
 
     @ManyToOne
     @JoinColumn(name = "mate_id")
@@ -40,7 +36,7 @@ public class Docs extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    @Column(name = "image_exist")
+    @Column(name = "image_exist", columnDefinition = "TINYINT default '0'")
     private Boolean imageExist;
 
 }

@@ -20,5 +20,4 @@ public class DocsUpdateRes {
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
     private List<FileResposeDto> imgFileInfo;
-
 }
