@@ -4,7 +4,7 @@ package ssafy.journeymate.categoryservice.categoryservice.dto.response;
 import lombok.Data;
 
 @Data
-public class ItemRegisGetRes {
+public class ItemGetRes {
 
     String name;
     Integer num;
