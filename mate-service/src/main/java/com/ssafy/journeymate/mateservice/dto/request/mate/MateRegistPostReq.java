@@ -1,12 +1,10 @@
 package com.ssafy.journeymate.mateservice.dto.request.mate;
 
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import javax.validation.constraints.Pattern;
+import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 
 

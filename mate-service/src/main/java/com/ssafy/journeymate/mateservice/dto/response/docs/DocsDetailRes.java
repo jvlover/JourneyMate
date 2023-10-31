@@ -19,5 +19,4 @@ public class DocsDetailRes {
     private Long docsId;
     private LocalDateTime createdDate;
     private List<FileResposeDto> imgFileInfo;
-
 }

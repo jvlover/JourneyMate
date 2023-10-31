@@ -1,11 +1,9 @@
 package com.ssafy.journeymate.mateservice.dto.response.mate;
 
-import java.time.LocalDate;
-import lombok.Builder;
-import lombok.Data;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.Builder;
+import lombok.Data;
 
 
 @Data
@@ -19,5 +17,4 @@ public class MateDetailRes {
     private List<String> users;
     private String creator;
     private LocalDateTime createdDate;
-    private LocalDateTime updatedDate;
 }

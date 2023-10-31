@@ -11,5 +11,4 @@ public class DocsUpdateReq {
     private String userId;
     private String content;
     private Long docsId;
-
 }

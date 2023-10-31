@@ -7,6 +7,5 @@ import lombok.Data;
 public class DocsDeleteReq {
 
     private Long docsId;
-    private Long userId;
-
+    private String userId;
 }

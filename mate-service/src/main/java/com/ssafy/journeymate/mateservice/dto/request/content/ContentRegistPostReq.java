@@ -8,5 +8,4 @@ public class ContentRegistPostReq {
 
     private Long mateId;
     private String userId;
-
 }

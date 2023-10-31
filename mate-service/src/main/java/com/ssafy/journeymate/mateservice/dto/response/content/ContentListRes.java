@@ -1,7 +1,6 @@
 package com.ssafy.journeymate.mateservice.dto.response.content;
 
 
-import com.ssafy.journeymate.mateservice.dto.response.content.ContentRegistPostRes.content;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
@@ -15,7 +14,6 @@ public class ContentListRes {
 
     List<content> contentInfo;
 
-
     @Data
     @Builder
     @Getter
@@ -28,5 +26,4 @@ public class ContentListRes {
         private String fileName;
         private Boolean type;
     }
-
 }

@@ -37,7 +37,6 @@ import com.ssafy.journeymate.mateservice.repository.MateRepository;
 import com.ssafy.journeymate.mateservice.util.FileUtil;
 import com.ssafy.journeymate.mateservice.util.FileUtil.FileUploadResult;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.transaction.Transactional;
@@ -60,7 +59,7 @@ public class MateServiceImpl implements MateService {
 
     private final ContentsRepository contentsRepository;
 
-    private FileUtil fileUtil;
+    private final FileUtil fileUtil;
 
 
     /**
@@ -228,8 +227,6 @@ public class MateServiceImpl implements MateService {
             for (MultipartFile multipartFile : imgFile) {
                 FileUploadResult fileUploadResult = fileUtil.uploadFile(multipartFile);
 
-                log.info("multipart file : {}", multipartFile);
-
                 DocsImg docsImg = DocsImg.builder()
                     .docs(savedDocs)
                     .fileName(fileUploadResult.getFileName())
@@ -348,8 +345,11 @@ public class MateServiceImpl implements MateService {
             throw new UnauthorizedRoleException();
         }
 
-        updateResBuilder.title(docs.getTitle())
-            .content(docs.getContent());
+        Docs savedDocs = docsRepository.save(docs);
+
+        updateResBuilder.title(savedDocs.getTitle())
+            .content(savedDocs.getContent())
+            .updatedDate(savedDocs.getUpdatedDate());
 
         return updateResBuilder.build();
     }
@@ -374,8 +374,10 @@ public class MateServiceImpl implements MateService {
 
             if (docsImgs != null) {
                 for (DocsImg img : docsImgs) {
+
                     img.delete();
                 }
+                log.info("사진 삭제 완료");
             }
 
             docs.delete();

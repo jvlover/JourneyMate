@@ -1,7 +1,6 @@
 package com.ssafy.journeymate.mateservice.dto.response.content;
 
 
-import com.ssafy.journeymate.mateservice.dto.response.file.FileResposeDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
@@ -15,7 +14,6 @@ public class ContentRegistPostRes {
 
     List<content> contentInfo;
 
-
     @Data
     @Builder
     @Getter
@@ -27,5 +25,4 @@ public class ContentRegistPostRes {
         private String imgUrl;
         private String fileName;
     }
-
 }

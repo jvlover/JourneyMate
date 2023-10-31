@@ -15,7 +15,6 @@ public class DocsListRes {
 
     private List<DocsInfo> docsInfoList;
 
-
     @Data
     @Builder
     @Getter
@@ -26,5 +25,4 @@ public class DocsListRes {
         private LocalDateTime createdDate;
         private List<FileResposeDto> imgFileInfo;
     }
-
 }

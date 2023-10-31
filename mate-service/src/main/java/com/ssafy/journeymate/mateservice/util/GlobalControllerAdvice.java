@@ -2,7 +2,6 @@ package com.ssafy.journeymate.mateservice.util;
 
 
 import com.ssafy.journeymate.mateservice.dto.ResponseDto;
-import com.ssafy.journeymate.mateservice.dto.response.file.FileResposeDto;
 import com.ssafy.journeymate.mateservice.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
