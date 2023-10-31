@@ -37,14 +37,19 @@ import com.ssafy.journeymate.mateservice.repository.MateRepository;
 import com.ssafy.journeymate.mateservice.util.FileUtil;
 import com.ssafy.journeymate.mateservice.util.FileUtil.FileUploadResult;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class MateServiceImpl implements MateService {
 
     private final MateRepository mateRepository;
@@ -68,6 +73,8 @@ public class MateServiceImpl implements MateService {
     @Override
     public MateRegistPostRes registMate(MateRegistPostReq mateRegistPostReq) {
 
+        log.info("회원 등록입니다");
+
         Mate mate = Mate.builder().name(mateRegistPostReq.getName())
             .destination(mateRegistPostReq.getDestination())
             .creator(mateRegistPostReq.getCreator())
@@ -84,7 +91,7 @@ public class MateServiceImpl implements MateService {
             .destination(savedMate.getDestination())
             .startDate(savedMate.getStartDate())
             .endDate(savedMate.getEndDate())
-            .createdDate(savedMate.getCreateDate())
+            .createdDate(savedMate.getCreatedDate())
             .creator(savedMate.getCreator())
             .build();
 
@@ -101,8 +108,10 @@ public class MateServiceImpl implements MateService {
      * @return
      */
     @Override
-    public MateUpdatePostRes updateMate(MateUpdatePostReq mateUpdatePostReq)
+    public MateUpdatePostRes modifyMate(MateUpdatePostReq mateUpdatePostReq)
         throws MateNotFoundException {
+
+        log.info("mate ID : {}", mateUpdatePostReq.getMateId());
 
         Mate mate = mateRepository.findById(mateUpdatePostReq.getMateId())
             .orElseThrow(MateNotFoundException::new);
@@ -122,8 +131,8 @@ public class MateServiceImpl implements MateService {
             .name(saveMate.getName())
             .startDate(saveMate.getStartDate())
             .endDate(saveMate.getEndDate())
-            .createdDate(saveMate.getCreateDate())
-            .updatedDate(saveMate.getModifyDate())
+            .createdDate(saveMate.getCreatedDate())
+            .updatedDate(saveMate.getUpdatedDate())
             .creator(saveMate.getCreator())
             .build();
 
@@ -166,7 +175,7 @@ public class MateServiceImpl implements MateService {
             .name(mate.getName())
             .startDate(mate.getStartDate())
             .endDate(mate.getEndDate())
-            .createdDate(mate.getCreateDate())
+            .createdDate(mate.getCreatedDate())
             .creator(mate.getCreator())
             .build();
     }
@@ -187,6 +196,8 @@ public class MateServiceImpl implements MateService {
         Mate mate = mateRepository.findById(docsRegistReq.getMateId())
             .orElseThrow(MateNotFoundException::new);
 
+        log.info("Mate ID {}", docsRegistReq.getMateId());
+
         Docs docs = Docs.builder()
             .mate(mate)
             .title(docsRegistReq.getTitle())
@@ -204,7 +215,7 @@ public class MateServiceImpl implements MateService {
             .docsId(savedDocs.getId())
             .title(savedDocs.getTitle())
             .content(savedDocs.getContent())
-            .createdDate(savedDocs.getCreateDate());
+            .createdDate(savedDocs.getCreatedDate());
 
         if (imgFile != null) {
 
@@ -212,8 +223,12 @@ public class MateServiceImpl implements MateService {
 
             List<FileResposeDto> imgFiles = new ArrayList<>();
 
+            log.info("Multipart");
+
             for (MultipartFile multipartFile : imgFile) {
                 FileUploadResult fileUploadResult = fileUtil.uploadFile(multipartFile);
+
+                log.info("multipart file : {}", multipartFile);
 
                 DocsImg docsImg = DocsImg.builder()
                     .docs(savedDocs)
@@ -249,7 +264,7 @@ public class MateServiceImpl implements MateService {
      * @throws UnauthorizedRoleException
      */
     @Override
-    public DocsUpdateRes updateDocs(DocsUpdateReq docsUpdateReq, List<MultipartFile> imgFile)
+    public DocsUpdateRes modifyDocs(DocsUpdateReq docsUpdateReq, List<MultipartFile> imgFile)
         throws ImageUploadException, DocsNotFoundException, UnauthorizedRoleException {
 
         Docs docs = docsRepository.findById(docsUpdateReq.getDocsId()).orElseThrow(
@@ -258,7 +273,7 @@ public class MateServiceImpl implements MateService {
         DocsUpdateRes.DocsUpdateResBuilder updateResBuilder = DocsUpdateRes
             .builder()
             .docsId(docs.getId())
-            .createdDate(docs.getCreateDate());
+            .createdDate(docs.getCreatedDate());
 
         // 작성자만 수정 가능
         if (docs.getUserId().equals(docsUpdateReq.getUserId())) {
@@ -388,7 +403,7 @@ public class MateServiceImpl implements MateService {
         DocsDetailRes.DocsDetailResBuilder docsDetailRes = DocsDetailRes.builder()
             .title(docs.getTitle())
             .content(docs.getContent())
-            .createdDate(docs.getCreateDate())
+            .createdDate(docs.getCreatedDate())
             .docsId(docs.getId());
 
         if (docs.getImageExist()) {
@@ -434,7 +449,7 @@ public class MateServiceImpl implements MateService {
             DocsListRes.DocsInfo.DocsInfoBuilder docsInfo = DocsListRes.DocsInfo.builder()
                 .title(doc.getTitle())
                 .docsId(doc.getId())
-                .createdDate(doc.getCreateDate());
+                .createdDate(doc.getCreatedDate());
 
             if (doc.getImageExist()) {
 
@@ -499,7 +514,7 @@ public class MateServiceImpl implements MateService {
 
                 ContentRegistPostRes.content content = ContentRegistPostRes.content.builder()
                     .contentId(savedContent.getId())
-                    .createdDate(savedContent.getCreateDate())
+                    .createdDate(savedContent.getCreatedDate())
                     .creatorId(savedContent.getUserId())
                     .fileName(savedContent.getFileName())
                     .imgUrl(savedContent.getImgUrl())
@@ -557,7 +572,7 @@ public class MateServiceImpl implements MateService {
                 ContentListRes.content content = ContentListRes.content.builder()
                     .contentId(c.getId())
                     .creatorId(c.getUserId())
-                    .createdDate(c.getCreateDate())
+                    .createdDate(c.getCreatedDate())
                     .fileName(c.getFileName())
                     .imgUrl(c.getImgUrl())
                     .type(c.getType())

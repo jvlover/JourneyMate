@@ -3,6 +3,7 @@ package com.ssafy.journeymate.mateservice.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -19,14 +20,15 @@ import org.hibernate.annotations.Where;
 @Builder
 @Table(name = "docs")
 @Where(clause = "is_deleted = 0")
-@RequiredArgsConstructor
 public class Docs extends BaseEntity {
 
     @Id
+    @GeneratedValue
     private Long id;
 
+
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "mate_id")
     private Mate mate;
 
     @Column(name = "user_id", nullable = false)

@@ -74,9 +74,9 @@ public class MateController {
      * @throws MateNotFoundException
      */
     @PutMapping("/update")
-    public ResponseEntity<ResponseDto> updateMate(
+    public ResponseEntity<ResponseDto> modifyMate(
         @ModelAttribute MateUpdatePostReq mateUpdatePostReq) throws MateNotFoundException {
-        MateUpdatePostRes mateUpdatePostRes = mateService.updateMate(mateUpdatePostReq);
+        MateUpdatePostRes mateUpdatePostRes = mateService.modifyMate(mateUpdatePostReq);
         return new ResponseEntity<>(new ResponseDto("회원 그룹 수정 완료", mateUpdatePostRes),
             HttpStatus.OK);
     }
@@ -104,7 +104,7 @@ public class MateController {
      * @return
      */
     @GetMapping("/{mateId}")
-    public ResponseEntity<ResponseDto> mateInfo(@PathVariable Long mateId)
+    public ResponseEntity<ResponseDto> loadMateInfo(@PathVariable Long mateId)
         throws MateNotFoundException {
 
         MateDetailRes mateDetailRes = mateService.getMateDetail(mateId);
@@ -131,12 +131,12 @@ public class MateController {
 
 
     @PutMapping("/docs")
-    public ResponseEntity<ResponseDto> updateDocs(
+    public ResponseEntity<ResponseDto> modifyDocs(
         @ModelAttribute DocsUpdateReq docsUpdatePostReq,
         @RequestParam(name = "imgFile", required = false) List<MultipartFile> imgFile)
         throws ImageUploadException, DocsNotFoundException, UnauthorizedRoleException {
 
-        DocsUpdateRes docsUpdateRes = mateService.updateDocs(docsUpdatePostReq, imgFile);
+        DocsUpdateRes docsUpdateRes = mateService.modifyDocs(docsUpdatePostReq, imgFile);
         return new ResponseEntity<>(new ResponseDto("문서를 수정했습니다", docsUpdateRes), HttpStatus.OK);
     }
 
@@ -166,7 +166,7 @@ public class MateController {
      * @throws ImageNotFoundException
      */
     @GetMapping("/docs/{docsId}")
-    public ResponseEntity<ResponseDto> docsDetailInfo(@PathVariable Long docsId)
+    public ResponseEntity<ResponseDto> loadDocsDetailInfo(@PathVariable Long docsId)
         throws DocsNotFoundException, ImageNotFoundException {
         DocsDetailRes docsDetailRes = mateService.getDocsDetail(docsId);
         return new ResponseEntity<>(new ResponseDto("문서 상세 조회", docsDetailRes), HttpStatus.OK);
@@ -181,7 +181,7 @@ public class MateController {
      * @throws ImageNotFoundException
      */
     @GetMapping("/docs/list/{mateId}")
-    public ResponseEntity<ResponseDto> docsListInfo(@PathVariable Long mateId)
+    public ResponseEntity<ResponseDto> loadDocsListInfo(@PathVariable Long mateId)
         throws MateNotFoundException, ImageNotFoundException {
         DocsListRes docsListRes = mateService.getDocsList(mateId);
         return new ResponseEntity<>(new ResponseDto("문서 전체 조회", docsListRes), HttpStatus.OK);
@@ -225,7 +225,7 @@ public class MateController {
      * @return
      */
     @GetMapping("/contents/list/{mateId}")
-    public ResponseEntity<ResponseDto> contentDetailInfo(@PathVariable Long mateId) {
+    public ResponseEntity<ResponseDto> loadContentDetailInfo(@PathVariable Long mateId) {
         ContentListRes contentListRes = mateService.getContentDetail(mateId);
         return new ResponseEntity<>(new ResponseDto("콘텐츠를 조회했습니다", contentListRes), HttpStatus.OK);
     }

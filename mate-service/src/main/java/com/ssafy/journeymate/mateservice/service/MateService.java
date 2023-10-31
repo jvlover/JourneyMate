@@ -31,7 +31,7 @@ public interface MateService {
 
     public MateRegistPostRes registMate(MateRegistPostReq mateRegistPostReq);
 
-    public MateUpdatePostRes updateMate(MateUpdatePostReq mateUpdatePostRes)
+    public MateUpdatePostRes modifyMate(MateUpdatePostReq mateUpdatePostRes)
         throws MateNotFoundException;
 
     public boolean deleteMate(MateDeleteReq mateDeleteReq)
@@ -43,7 +43,7 @@ public interface MateService {
         List<MultipartFile> imgFile)
         throws IOException;
 
-    public DocsUpdateRes updateDocs(DocsUpdateReq docsUpdateReq, List<MultipartFile> imgFile)
+    public DocsUpdateRes modifyDocs(DocsUpdateReq docsUpdateReq, List<MultipartFile> imgFile)
         throws ImageUploadException, DocsNotFoundException, UnauthorizedRoleException;
 
 

@@ -1,6 +1,6 @@
 
 server:
-  port: 9091
+  port: 8080
 
 spring:
   application:
@@ -8,15 +8,10 @@ spring:
   config:
     import : secret/application-secret.yml
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        # show_sql: true
-        format_sql: true
-    open-in-view: false
 
+
+
+#
 eureka:
   client:
     register-with-eureka: false

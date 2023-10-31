@@ -28,7 +28,6 @@ public enum ErrorCode {
 
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "이미지를 찾을 수 없습니다."),
 
-
     /**
      * 서버 에러 (서버 장애 상황)
      */

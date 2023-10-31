@@ -15,14 +15,14 @@ import org.hibernate.annotations.Where;
 @Builder
 @Where(clause = "is_deleted = 0")
 @Table(name = "docs_img")
-@RequiredArgsConstructor
 public class DocsImg extends BaseEntity {
 
     @Id
+    @GeneratedValue
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "docs_id")
     private Docs docs;
 
     private String fileName;
