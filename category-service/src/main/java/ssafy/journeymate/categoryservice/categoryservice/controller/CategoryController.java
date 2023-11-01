@@ -44,7 +44,6 @@ public class CategoryController {
         return "health_check";
     }
 
-
     @GetMapping("/{categoryId}")
     public ResponseEntity<ResponseDto> getCategoryById(@PathVariable Long categoryId) {
 
@@ -128,6 +127,5 @@ public class CategoryController {
 
         return new ResponseEntity<>(new ResponseDto("카테고리 아이템 업데이트 완료", check), HttpStatus.OK);
     }
-
 
 }

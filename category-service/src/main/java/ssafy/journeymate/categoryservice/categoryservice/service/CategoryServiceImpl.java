@@ -89,7 +89,6 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category category = categoryRepository.findById(categoryUpdatePutReq.getId()).orElseThrow();
         category.modifyCategory(categoryUpdatePutReq);
-        categoryRepository.save(category);
         log.info("CategoryService_modifyCategory_end: " + categoryUpdatePutReq.toString());
 
         return true;
@@ -161,9 +160,7 @@ public class CategoryServiceImpl implements CategoryService {
         Item item = itemRepository.findById(itemModifyPutReq.getId()).orElseThrow(ItemNotFoundException::new);
         Category category = categoryRepository.findById(itemModifyPutReq.getCategoryId())
                 .orElseThrow(CategoryNotFoundException::new);
-
         item.modify(category, itemModifyPutReq.getName(), itemModifyPutReq.getNum());
-        itemRepository.save(item);
 
         log.info("CategoryService_modifyItem_end: " + itemModifyPutReq.toString());
 
