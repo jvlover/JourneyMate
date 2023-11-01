@@ -11,6 +11,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.Where;
+import ssafy.journeymate.categoryservice.categoryservice.dto.request.CategoryModifyPutReq;
 
 @Getter // Getter 자동 생성
 @ToString   // toString 메소드 자동 생성
@@ -21,11 +22,18 @@ import org.hibernate.annotations.Where;
 @Entity
 public class Category extends BaseEntity {
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String icon;
+
+    public void modifyCategory(CategoryModifyPutReq categoryModifyPutReq) {
+
+        this.name = categoryModifyPutReq.getName();
+        this.icon = categoryModifyPutReq.getIcon();
+
+    }
 
 
 }

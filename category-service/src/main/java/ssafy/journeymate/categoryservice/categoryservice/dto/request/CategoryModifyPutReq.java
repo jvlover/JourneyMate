@@ -4,9 +4,9 @@ package ssafy.journeymate.categoryservice.categoryservice.dto.request;
 import lombok.Data;
 
 @Data
-public class CategoryUpdatePutReq {
+public class CategoryModifyPutReq {
 
-    Integer id;
+    Long id;
     String name;
     String icon;
 
