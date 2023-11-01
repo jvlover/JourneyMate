@@ -1,6 +1,9 @@
 package com.ssafy.journeymate.mateservice.service;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.journeymate.mateservice.client.UserServiceClient;
 import com.ssafy.journeymate.mateservice.dto.ResponseDto;
 import com.ssafy.journeymate.mateservice.dto.request.client.MateBridgeRegistPostReq;
@@ -39,6 +42,7 @@ import com.ssafy.journeymate.mateservice.repository.DocsRepository;
 import com.ssafy.journeymate.mateservice.repository.MateRepository;
 import com.ssafy.journeymate.mateservice.util.FileUtil;
 import com.ssafy.journeymate.mateservice.util.FileUtil.FileUploadResult;
+import com.ssafy.journeymate.mateservice.util.UserIdUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,11 +68,12 @@ public class MateServiceImpl implements MateService {
 
     private final UserServiceClient userServiceClient;
 
+    private final UserIdUtil userIdUtil;
+
     private final FileUtil fileUtil;
 
 
     /**
-     * TODO : 브릿지 테이블은 다른 DB 에 존재 (mate bridge 테이블에 유저 아이디, 그룹 아이디, 그룹 생성자여부 저장)
      * 여행 그룹 저장
      *
      * @param mateRegistPostReq
@@ -94,14 +99,28 @@ public class MateServiceImpl implements MateService {
             .user(mateRegistPostReq.getUsers().stream().toList())
             .build();
 
+        log.info("user-service : user 정보 request");
         ResponseDto responseDto = userServiceClient.registMateBridge(mateBridgeRegistPostReq);
 
         List<String> users = new ArrayList<>();
 
+        ObjectMapper objectMapper = new ObjectMapper();
 
+        JsonNode data = null;
+        try {
+            data = objectMapper.readTree(responseDto.toString()).get("data");
+        } catch (JsonProcessingException e) {
+            log.error("JSON 데이터를 가져오는 과정에서 에러가 발생했습니다. ");
+        }
 
-
-        // users 는 mate bridge 에 존재 이후 관련 api 호출 필요
+        if (data.isArray()) {
+            for (JsonNode item : data) {
+                JsonNode user = item.get("user");
+                String nickname = user.get("nickname").asText();
+                log.info("여행 그룹에 속한 회원 닉네임 입니다. ", nickname);
+                users.add(nickname);
+            }
+        }
 
         return MateRegistPostRes.builder().mateId(savedMate.getId())
             .name(savedMate.getName())
@@ -110,12 +129,13 @@ public class MateServiceImpl implements MateService {
             .endDate(savedMate.getEndDate())
             .createdDate(savedMate.getCreatedDate())
             .creator(savedMate.getCreator())
+            .users(users)
             .build();
     }
 
 
     /**
-     * TODO : 브릿지 테이블은 다른 DB 에 존재 (브릿지 테이블에 그룹원 수정되면 유저 아이디 수정 필요)
+     * TODO : 브릿지 테이블 수정 URL 필요
      * 그룹 수정
      *
      * @param mateUpdatePostReq
@@ -180,9 +200,27 @@ public class MateServiceImpl implements MateService {
      * @return
      */
     @Override
-    public MateDetailRes getMateDetail(Long mateId) throws MateNotFoundException {
+    public MateDetailRes getMateDetail(Long mateId)
+        throws MateNotFoundException, JsonProcessingException {
 
         Mate mate = mateRepository.findById(mateId).orElseThrow(MateNotFoundException::new);
+
+        log.info("여행 그룹에 포함된 user 정보 조회");
+
+        ResponseDto responseDto = userServiceClient.getMateBridgeUsers(mateId);
+
+        List<String> users = new ArrayList<>();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode data = objectMapper.readTree(responseDto.getData().toString()).get("users");
+
+        if (data.isArray()) {
+            for (JsonNode item : data) {
+                String nickname = item.get("nickname").asText();
+                log.info("여행 그룹에 속한 회원 닉네임 입니다. ", nickname);
+                users.add(nickname);
+            }
+        }
 
         return MateDetailRes.builder()
             .mateId(mate.getId())
@@ -191,11 +229,11 @@ public class MateServiceImpl implements MateService {
             .endDate(mate.getEndDate())
             .createdDate(mate.getCreatedDate())
             .creator(mate.getCreator())
+            .users(users)
             .build();
     }
 
     /**
-     * TODO : 회원 닉네임 조회 호출
      * 여행 그룹 문서 저장
      *
      * @param docsRegistReq
@@ -222,14 +260,13 @@ public class MateServiceImpl implements MateService {
 
         Docs savedDocs = docsRepository.save(docs);
 
-        /*
-          닉네임 호출 추후 nickname 추가
-         */
+        String nickname = getNickName(docsRegistReq.getUserId());
 
         DocsRegistPostRes.DocsRegistPostResBuilder docsRegistRes = DocsRegistPostRes.builder()
             .docsId(savedDocs.getId())
             .title(savedDocs.getTitle())
             .content(savedDocs.getContent())
+            .nickname(nickname)
             .createdDate(savedDocs.getCreatedDate());
 
         if (imgFile != null) {
@@ -263,8 +300,8 @@ public class MateServiceImpl implements MateService {
         return docsRegistRes.build();
     }
 
+
     /**
-     * TODO : 회원 닉네임 추가
      * 여행 그룹 문서 수정
      *
      * @param docsUpdateReq
@@ -281,9 +318,12 @@ public class MateServiceImpl implements MateService {
         Docs docs = docsRepository.findById(docsUpdateReq.getDocsId()).orElseThrow(
             DocsNotFoundException::new);
 
+        String nickname = getNickName(docsUpdateReq.getUserId());
+
         DocsUpdateRes.DocsUpdateResBuilder updateResBuilder = DocsUpdateRes
             .builder()
             .docsId(docs.getId())
+            .nickname(nickname)
             .createdDate(docs.getCreatedDate());
 
         // 작성자만 수정 가능
@@ -316,7 +356,8 @@ public class MateServiceImpl implements MateService {
 
                         log.info("이미지 파일 개수 {}", imgFile.size());
 
-                        log.info("multipart original filename {}", multipartFile.getOriginalFilename());
+                        log.info("multipart original filename {}",
+                            multipartFile.getOriginalFilename());
 
                         FileUploadResult fileUploadResult = fileUtil.uploadFile(multipartFile);
 
@@ -413,7 +454,6 @@ public class MateServiceImpl implements MateService {
 
 
     /**
-     * TODO : 회원 닉네임 호출
      * 여행 그룹 문서 상세 조회
      *
      * @param docsId
@@ -426,9 +466,12 @@ public class MateServiceImpl implements MateService {
 
         Docs docs = docsRepository.findById(docsId).orElseThrow(DocsNotFoundException::new);
 
+        String nickname = getNickName(docs.getUserId());
+
         DocsDetailRes.DocsDetailResBuilder docsDetailRes = DocsDetailRes.builder()
             .title(docs.getTitle())
             .content(docs.getContent())
+            .nickname(nickname)
             .createdDate(docs.getCreatedDate())
             .docsId(docs.getId());
 
@@ -614,6 +657,24 @@ public class MateServiceImpl implements MateService {
             .build();
 
         return contentListRes;
+    }
+
+    private String getNickName(String userId) {
+
+        log.info("user service 호출 : 아이디로 유저 찾기");
+        ResponseDto responseDto = userServiceClient.getUserInfo(userId);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode data = null;
+        try {
+            data = objectMapper.readTree(responseDto.getData().toString());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            log.error("JSON 데이터를 가져오는 과정에서 에러가 발생했습니다. ");
+        }
+        String nickname = data.get("nickname").asText();
+
+        return nickname;
     }
 
 

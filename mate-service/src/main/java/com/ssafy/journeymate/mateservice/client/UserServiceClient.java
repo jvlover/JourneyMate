@@ -18,6 +18,6 @@ public interface UserServiceClient {
     ResponseDto getMateBridgeUsers(@PathVariable Long mateId);
 
     @GetMapping("/user-service/findbyId/{id}")
-    ResponseDto getUserInfo(@PathVariable byte[] id);
+    ResponseDto getUserInfo(@PathVariable String id);
 
 }

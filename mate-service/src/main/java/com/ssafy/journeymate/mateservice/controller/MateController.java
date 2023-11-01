@@ -248,7 +248,8 @@ public class MateController {
     @PostMapping("/contents")
     public ResponseEntity<ResponseDto> registContent(
         @ModelAttribute ContentRegistPostReq contentRegistPostReq,
-        @RequestParam(name = "imgFile", required = true) List<MultipartFile> imgFile)  throws ImageUploadException, MateNotFoundException{
+        @RequestParam(name = "imgFile", required = true) List<MultipartFile> imgFile)
+        throws ImageUploadException, MateNotFoundException {
 
         log.info("MateController_registContent_start : " + contentRegistPostReq.toString());
 
