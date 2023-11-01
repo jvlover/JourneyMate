@@ -37,8 +37,8 @@ pipeline {
             steps {
                 script {
                     try {
-                        h 'docker stop discovery-service'
-                        sh 'docker rm discovery-service'
+                        sh 'docker stop journeymate-discovery-service'
+                        sh 'docker rm journeymate-discovery-service'
                     } catch (e) {
                         echo 'fail to stop and remove container'
                     }
