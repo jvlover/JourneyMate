@@ -41,7 +41,7 @@ public interface MateService {
 
     public DocsRegistPostRes registDocs(DocsRegistPostReq docsRegistReq,
         List<MultipartFile> imgFile)
-        throws IOException;
+        throws MateNotFoundException, IOException;
 
     public DocsUpdateRes modifyDocs(DocsUpdateReq docsUpdateReq, List<MultipartFile> imgFile)
         throws ImageUploadException, DocsNotFoundException, UnauthorizedRoleException;
@@ -57,9 +57,9 @@ public interface MateService {
         throws MateNotFoundException, ImageNotFoundException;
 
     public ContentRegistPostRes registContent(ContentRegistPostReq contentRegistPostReq,
-        List<MultipartFile> imgFile);
+        List<MultipartFile> imgFile) throws ImageUploadException, MateNotFoundException;
 
-    public void deleteContent(ContentDeleteReq contentDeleteReq);
+    public void deleteContent(ContentDeleteReq contentDeleteReq) throws ImageNotFoundException;
 
     public ContentListRes getContentDetail(Long mateId);
 

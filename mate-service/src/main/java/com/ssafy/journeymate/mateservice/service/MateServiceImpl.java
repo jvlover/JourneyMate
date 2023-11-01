@@ -93,9 +93,6 @@ public class MateServiceImpl implements MateService {
             .createdDate(savedMate.getCreatedDate())
             .creator(savedMate.getCreator())
             .build();
-
-//        return new ModelMapper().map(savedMate, MateRegistPostRes.class);
-
     }
 
 
@@ -116,10 +113,10 @@ public class MateServiceImpl implements MateService {
             .orElseThrow(MateNotFoundException::new);
 
         if (!mate.getName().equals(mateUpdatePostReq.getName())) {
-            mate.setName(mateUpdatePostReq.getName());
+            mate.modifyName(mateUpdatePostReq.getName());
         }
         if (!mate.getDestination().equals(mateUpdatePostReq.getDestination())) {
-            mate.setDestination(mateUpdatePostReq.getDestination());
+            mate.modifyDestination(mateUpdatePostReq.getDestination());
         }
         // users 는 mate bridge 에 존재 이후 수정 추가 필요
 
@@ -202,6 +199,7 @@ public class MateServiceImpl implements MateService {
             .title(docsRegistReq.getTitle())
             .content(docsRegistReq.getContent())
             .userId(docsRegistReq.getUserId())
+            .imageExist(imgFile != null)
             .build();
 
         Docs savedDocs = docsRepository.save(docs);
@@ -217,8 +215,6 @@ public class MateServiceImpl implements MateService {
             .createdDate(savedDocs.getCreatedDate());
 
         if (imgFile != null) {
-
-            savedDocs.setImageExist(true);
 
             List<FileResposeDto> imgFiles = new ArrayList<>();
 
@@ -276,18 +272,20 @@ public class MateServiceImpl implements MateService {
         if (docs.getUserId().equals(docsUpdateReq.getUserId())) {
 
             if (!docs.getTitle().equals(docsUpdateReq.getTitle())) {
-                docs.setTitle(docsUpdateReq.getTitle());
+                docs.modifyTitle(docsUpdateReq.getTitle());
             }
             if (!docs.getContent().equals(docsUpdateReq.getContent())) {
-                docs.setContent(docsUpdateReq.getContent());
+                docs.modifyContent(docsUpdateReq.getContent());
             }
 
             List<DocsImg> docsImgs = docsImgRepository.findByDocs_id(docs.getId()).orElse(null);
 
             // 사진의 경우 기존 사진들 삭제 - delete 호출, s3 삭제, 새로운 사진으로 저장
-            if (imgFile != null) {
+            if (imgFile != null && !imgFile.isEmpty()) {
 
-                docs.setImageExist(true);
+                log.info("입력 받은 이미지 파일이 존재합니다.");
+
+                docs.modifyImageExist(true);
 
                 // 새로 저장할 파일 이름
                 List<FileUploadResult> uploadedFiles = new ArrayList<>();
@@ -297,9 +295,16 @@ public class MateServiceImpl implements MateService {
 
                 try {
                     for (MultipartFile multipartFile : imgFile) {
+
+                        log.info("이미지 파일 개수 {}", imgFile.size());
+
+                        log.info("multipart original filename {}", multipartFile.getOriginalFilename());
+
                         FileUploadResult fileUploadResult = fileUtil.uploadFile(multipartFile);
 
                         uploadedFiles.add(fileUploadResult);
+
+                        log.info("S3 업로드 완료");
                     }
 
                 } catch (IOException e) {
@@ -331,7 +336,8 @@ public class MateServiceImpl implements MateService {
                 updateResBuilder.imgFileInfo(imgFiles);
 
             } else {
-                docs.setImageExist(false);
+                docs.modifyImageExist(false);
+                log.info("입력 받은 이미지 파일이 존재하지 않습니다.");
             }
 
             if (docsImgs != null) {

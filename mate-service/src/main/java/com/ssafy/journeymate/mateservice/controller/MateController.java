@@ -61,7 +61,12 @@ public class MateController {
     public ResponseEntity<ResponseDto> registMate(
         @ModelAttribute MateRegistPostReq mateRegistPostReq) {
 
+        log.info("MateController_registMate_start : " + mateRegistPostReq.toString());
+
         MateRegistPostRes mateRegistPostRes = mateService.registMate(mateRegistPostReq);
+
+        log.info("MateController_registMate_end : " + mateRegistPostRes.toString());
+
         return new ResponseEntity<>(new ResponseDto("회원 그룹 생성 완료", mateRegistPostRes),
             HttpStatus.OK);
     }
@@ -76,7 +81,13 @@ public class MateController {
     @PutMapping("/update")
     public ResponseEntity<ResponseDto> modifyMate(
         @ModelAttribute MateUpdatePostReq mateUpdatePostReq) throws MateNotFoundException {
+
+        log.info("MateController_modifyMate_start : " + mateUpdatePostReq.toString());
+
         MateUpdatePostRes mateUpdatePostRes = mateService.modifyMate(mateUpdatePostReq);
+
+        log.info("MateController_modifyMate_end : " + mateUpdatePostRes.toString());
+
         return new ResponseEntity<>(new ResponseDto("회원 그룹 수정 완료", mateUpdatePostRes),
             HttpStatus.OK);
     }
@@ -92,7 +103,13 @@ public class MateController {
     @DeleteMapping("/delete")
     public ResponseEntity<ResponseDto> deleteMate(@RequestBody MateDeleteReq mateDeleteReq)
         throws MateNotFoundException, UnauthorizedRoleException {
+
+        log.info("MateController_deleteMate_start : " + mateDeleteReq.toString());
+
         mateService.deleteMate(mateDeleteReq);
+
+        log.info("MateController_deleteMate_end : ");
+
         return new ResponseEntity<>(new ResponseDto("회원 그룹 삭제 완료", null), HttpStatus.OK);
     }
 
@@ -107,7 +124,12 @@ public class MateController {
     public ResponseEntity<ResponseDto> loadMateInfo(@PathVariable Long mateId)
         throws MateNotFoundException {
 
+        log.info("MateController_loadMateInfo_start : " + mateId);
+
         MateDetailRes mateDetailRes = mateService.getMateDetail(mateId);
+
+        log.info("MateController_loadMateInfo_end : " + mateDetailRes.toString());
+
         return new ResponseEntity<>(new ResponseDto("그룹의 상세 정보입니다", mateDetailRes), HttpStatus.OK);
     }
 
@@ -122,9 +144,14 @@ public class MateController {
     @PostMapping("/docs")
     public ResponseEntity<ResponseDto> registDocs(@ModelAttribute DocsRegistPostReq docsRegistReq,
         @RequestParam(name = "imgFile", required = false) List<MultipartFile> imgFile)
-        throws IOException {
+        throws MateNotFoundException, IOException {
+
+        log.info("MateController_registDocs_start : " + docsRegistReq.toString());
 
         DocsRegistPostRes docsRegistRes = mateService.registDocs(docsRegistReq, imgFile);
+
+        log.info("MateController_registDocs_end : " + docsRegistRes.toString());
+
         return new ResponseEntity<>(new ResponseDto("문서를 저장했습니다", docsRegistRes), HttpStatus.OK);
 
     }
@@ -136,7 +163,12 @@ public class MateController {
         @RequestParam(name = "imgFile", required = false) List<MultipartFile> imgFile)
         throws ImageUploadException, DocsNotFoundException, UnauthorizedRoleException {
 
+        log.info("MateController_modifyDocs_start : " + docsUpdatePostReq.toString());
+
         DocsUpdateRes docsUpdateRes = mateService.modifyDocs(docsUpdatePostReq, imgFile);
+
+        log.info("MateController_modifyDocs_end : " + docsUpdateRes.toString());
+
         return new ResponseEntity<>(new ResponseDto("문서를 수정했습니다", docsUpdateRes), HttpStatus.OK);
     }
 
@@ -152,7 +184,13 @@ public class MateController {
     @DeleteMapping("/docs")
     public ResponseEntity<ResponseDto> deleteDocs(@RequestBody DocsDeleteReq docsDeleteReq)
         throws DocsNotFoundException, UnauthorizedRoleException {
+
+        log.info("MateController_deleteDocs_start : " + docsDeleteReq.toString());
+
         mateService.deleteDocs(docsDeleteReq);
+
+        log.info("MateController_deleteDocs_end : ");
+
         return new ResponseEntity<>(new ResponseDto("문서 삭제 완료", null), HttpStatus.OK);
     }
 
@@ -168,7 +206,13 @@ public class MateController {
     @GetMapping("/docs/{docsId}")
     public ResponseEntity<ResponseDto> loadDocsDetailInfo(@PathVariable Long docsId)
         throws DocsNotFoundException, ImageNotFoundException {
+
+        log.info("MateController_loadDocsDetailInfo_start : " + docsId);
+
         DocsDetailRes docsDetailRes = mateService.getDocsDetail(docsId);
+
+        log.info("MateController_loadDocsDetailInfo_end : " + docsDetailRes.toString());
+
         return new ResponseEntity<>(new ResponseDto("문서 상세 조회", docsDetailRes), HttpStatus.OK);
     }
 
@@ -183,7 +227,13 @@ public class MateController {
     @GetMapping("/docs/list/{mateId}")
     public ResponseEntity<ResponseDto> loadDocsListInfo(@PathVariable Long mateId)
         throws MateNotFoundException, ImageNotFoundException {
+
+        log.info("MateController_loadDocsListInfo_start : " + mateId);
+
         DocsListRes docsListRes = mateService.getDocsList(mateId);
+
+        log.info("MateController_loadDocsListInfo_end : " + docsListRes.toString());
+
         return new ResponseEntity<>(new ResponseDto("문서 전체 조회", docsListRes), HttpStatus.OK);
     }
 
@@ -198,9 +248,15 @@ public class MateController {
     @PostMapping("/contents")
     public ResponseEntity<ResponseDto> registContent(
         @ModelAttribute ContentRegistPostReq contentRegistPostReq,
-        @RequestParam(name = "imgFile", required = true) List<MultipartFile> imgFile) {
+        @RequestParam(name = "imgFile", required = true) List<MultipartFile> imgFile)  throws ImageUploadException, MateNotFoundException{
+
+        log.info("MateController_registContent_start : " + contentRegistPostReq.toString());
+
         ContentRegistPostRes contentRegistPostRes = mateService.registContent(contentRegistPostReq,
             imgFile);
+
+        log.info("MateController_registContent_end : " + contentRegistPostRes.toString());
+
         return new ResponseEntity<>(new ResponseDto("콘텐츠를 저장했습니다.", contentRegistPostRes),
             HttpStatus.OK);
     }
@@ -213,8 +269,14 @@ public class MateController {
      */
     @DeleteMapping("/contents")
     public ResponseEntity<ResponseDto> deleteContent(
-        @RequestBody ContentDeleteReq contentDeleteReq) {
+        @RequestBody ContentDeleteReq contentDeleteReq) throws ImageNotFoundException {
+
+        log.info("MateController_deleteContent_start : " + contentDeleteReq.toString());
+
         mateService.deleteContent(contentDeleteReq);
+
+        log.info("MateController_deleteContent_end : ");
+
         return new ResponseEntity<>(new ResponseDto("콘텐츠를 삭제했습니다.", null), HttpStatus.OK);
     }
 
@@ -226,7 +288,13 @@ public class MateController {
      */
     @GetMapping("/contents/list/{mateId}")
     public ResponseEntity<ResponseDto> loadContentDetailInfo(@PathVariable Long mateId) {
+
+        log.info("MateController_loadContentDetailInfo_start : " + mateId);
+
         ContentListRes contentListRes = mateService.getContentDetail(mateId);
+
+        log.info("MateController_loadContentDetailInfo_end : " + contentListRes.toString());
+
         return new ResponseEntity<>(new ResponseDto("콘텐츠를 조회했습니다", contentListRes), HttpStatus.OK);
     }
 

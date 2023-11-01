@@ -36,7 +36,7 @@ public class BaseEntity {
     private LocalDateTime updatedDate;
 
     @Column(name = "is_deleted", columnDefinition = "TINYINT default '0'")
-    private boolean isDeleted;
+    private Boolean isDeleted;
 
     public void delete() {
         this.isDeleted = true;

@@ -24,7 +24,7 @@ import org.hibernate.annotations.Where;
 @Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Where(clause = "is_deleted = 0")
+@Where(clause = "is_deleted = '0'")
 @Table(name = "mate")
 public class Mate extends BaseEntity {
 
@@ -48,6 +48,14 @@ public class Mate extends BaseEntity {
 
     @OneToMany(mappedBy = "mate")
     private List<Contents> contents = new ArrayList<>();
+
+    public void modifyDestination(String destination){
+        this.destination = destination;
+    }
+
+    public void modifyName(String name){
+        this.name = name;
+    }
 
 
 }
