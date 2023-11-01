@@ -49,6 +49,8 @@ import java.util.List;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -68,7 +70,8 @@ public class MateServiceImpl implements MateService {
 
     private final UserServiceClient userServiceClient;
 
-    private final UserIdUtil userIdUtil;
+
+    private CircuitBreakerFactory circuitBreakerFactory;
 
     private final FileUtil fileUtil;
 
@@ -100,25 +103,28 @@ public class MateServiceImpl implements MateService {
             .build();
 
         log.info("user-service : user 정보 request");
-        ResponseDto responseDto = userServiceClient.registMateBridge(mateBridgeRegistPostReq);
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("user-regist-circuitbreaker");
+        ResponseDto responseDto = circuitBreaker.run(()-> userServiceClient.registMateBridge(mateBridgeRegistPostReq), throwable -> null);
 
         List<String> users = new ArrayList<>();
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        if(responseDto != null){
+            ObjectMapper objectMapper = new ObjectMapper();
 
-        JsonNode data = null;
-        try {
-            data = objectMapper.readTree(responseDto.toString()).get("data");
-        } catch (JsonProcessingException e) {
-            log.error("JSON 데이터를 가져오는 과정에서 에러가 발생했습니다. ");
-        }
+            JsonNode data = null;
+            try {
+                data = objectMapper.readTree(responseDto.toString()).get("data");
+            } catch (JsonProcessingException e) {
+                log.error("JSON 데이터를 가져오는 과정에서 에러가 발생했습니다. ");
+            }
 
-        if (data.isArray()) {
-            for (JsonNode item : data) {
-                JsonNode user = item.get("user");
-                String nickname = user.get("nickname").asText();
-                log.info("여행 그룹에 속한 회원 닉네임 입니다. ", nickname);
-                users.add(nickname);
+            if (data.isArray()) {
+                for (JsonNode item : data) {
+                    JsonNode user = item.get("user");
+                    String nickname = user.get("nickname").asText();
+                    log.info("여행 그룹에 속한 회원 닉네임 입니다. ", nickname);
+                    users.add(nickname);
+                }
             }
         }
 
@@ -206,19 +212,21 @@ public class MateServiceImpl implements MateService {
         Mate mate = mateRepository.findById(mateId).orElseThrow(MateNotFoundException::new);
 
         log.info("여행 그룹에 포함된 user 정보 조회");
-
-        ResponseDto responseDto = userServiceClient.getMateBridgeUsers(mateId);
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("user-mate-bridge-circuitbreaker");
+        ResponseDto responseDto = circuitBreaker.run(() -> userServiceClient.getMateBridgeUsers(mateId), throwable -> null);
 
         List<String> users = new ArrayList<>();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode data = objectMapper.readTree(responseDto.getData().toString()).get("users");
+        if(responseDto != null){
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode data = objectMapper.readTree(responseDto.getData().toString()).get("users");
 
-        if (data.isArray()) {
-            for (JsonNode item : data) {
-                String nickname = item.get("nickname").asText();
-                log.info("여행 그룹에 속한 회원 닉네임 입니다. ", nickname);
-                users.add(nickname);
+            if (data.isArray()) {
+                for (JsonNode item : data) {
+                    String nickname = item.get("nickname").asText();
+                    log.info("여행 그룹에 속한 회원 닉네임 입니다. ", nickname);
+                    users.add(nickname);
+                }
             }
         }
 
@@ -662,17 +670,24 @@ public class MateServiceImpl implements MateService {
     private String getNickName(String userId) {
 
         log.info("user service 호출 : 아이디로 유저 찾기");
-        ResponseDto responseDto = userServiceClient.getUserInfo(userId);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode data = null;
-        try {
-            data = objectMapper.readTree(responseDto.getData().toString());
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            log.error("JSON 데이터를 가져오는 과정에서 에러가 발생했습니다. ");
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("user-nickname-circuitbreaker");
+
+        ResponseDto responseDto = circuitBreaker.run(() ->userServiceClient.getUserInfo(userId) ,throwable -> null);
+
+        String nickname = " ";
+
+        if(responseDto != null){
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode data = null;
+            try {
+                data = objectMapper.readTree(responseDto.getData().toString());
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                log.error("JSON 데이터를 가져오는 과정에서 에러가 발생했습니다. ");
+            }
+            nickname = data.get("nickname").asText();
         }
-        String nickname = data.get("nickname").asText();
 
         return nickname;
     }
