@@ -8,6 +8,7 @@ import com.ssafy.journeymate.journeyservice.dto.kafka.KafkaJourneyDto;
 import com.ssafy.journeymate.journeyservice.dto.kafka.Payload;
 import com.ssafy.journeymate.journeyservice.dto.kafka.Schema;
 import com.ssafy.journeymate.journeyservice.dto.response.JourneyGetRes;
+import com.ssafy.journeymate.journeyservice.entity.Journey;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class JourneyProducer {
 
+    /*  journey-service와 DB간 카프카 통신을 위한 코드 */
     private KafkaTemplate<String, String> kafkaTemplate;
 
     List<Field> fields = Arrays.asList(new Field("int64", true, "id"),
@@ -47,25 +49,21 @@ public class JourneyProducer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
+    public Journey upsertJourney(String topic, Journey journey) {
 
-    /*  예시 코드 */
-    public JourneyGetRes sendJourney(String topic, JourneyGetRes journeyGetRes) {
-        
-//        Payload payload = Payload.builder()
-//                .id(journeyGetRes.getId())
-//                .mate_id()
-//                .category_id()
-//                .title()
-//                .day()
-//                .sequence()
-//                .xcoordinate()
-//                .ycoordinate()
-//                .created_at()
-//                .updated_at()
-//                .is_deleted()
-//                .build();
-
-        Payload payload = Payload.builder().build();
+        Payload payload = Payload.builder()
+                .id(journey.getId())
+                .mate_id(journey.getMateId())
+                .category_id(journey.getCategoryId())
+                .title(journey.getTitle())
+                .day(journey.getDay())
+                .sequence(journey.getSequence())
+                .xcoordinate(journey.getXcoordinate())
+                .ycoordinate(journey.getYcoordinate())
+                .created_at(journey.getCreatedAt())
+                .updated_at(journey.getUpdatedAt())
+                .is_deleted(journey.getIsDeleted())
+                .build();
 
         KafkaJourneyDto kafkaJourneyDto = new KafkaJourneyDto(schema, payload);
 
@@ -78,9 +76,9 @@ public class JourneyProducer {
         }
 
         kafkaTemplate.send(topic, jsonInString);
-        log.info("Kafka Producer sent data from the Journey " + kafkaJourneyDto);
+        log.info("Kafka Producer sent data from the Journey " + kafkaJourneyDto.toString());
 
-        return journeyGetRes;
+        return journey;
 
     }
 

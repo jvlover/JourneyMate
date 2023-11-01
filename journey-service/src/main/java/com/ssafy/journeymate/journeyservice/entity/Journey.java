@@ -1,10 +1,10 @@
 package com.ssafy.journeymate.journeyservice.entity;
 
-import com.ssafy.journeymate.journeyservice.dto.request.JourneyModifyReq;
+import com.ssafy.journeymate.journeyservice.dto.request.JourneyModifyPutReq;
+import com.ssafy.journeymate.journeyservice.dto.request.JourneyRegistPostReq;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -56,12 +56,32 @@ public class Journey extends BaseEntity {
     private Integer isDeleted; // 0 false  1 true
 
 
-    public void modifyJourney(JourneyModifyReq journeyModifyReq){
+    public Journey(JourneyRegistPostReq journeyRegistPostReq) {
 
+        this.mateId = journeyRegistPostReq.getMateId();
+        this.categoryId = journeyRegistPostReq.getCategoryId();
+        this.title = journeyRegistPostReq.getTitle();
+        this.day = journeyRegistPostReq.getDay();
+        this.sequence = journeyRegistPostReq.getSequence();
+        this.xcoordinate = journeyRegistPostReq.getXcoordinate();
+        this.ycoordinate = journeyRegistPostReq.getYcoordinate();
+        this.isDeleted = 0;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+
+    }
+
+
+    public Journey(JourneyModifyPutReq journeyModifyReq) {
+
+        this.mateId = journeyModifyReq.getMateId();
         this.categoryId = journeyModifyReq.getCategoryId();
         this.title = journeyModifyReq.getTitle();
+        this.day = journeyModifyReq.getDay();
+        this.sequence = journeyModifyReq.getSequence();
         this.xcoordinate = journeyModifyReq.getXcoordinate();
         this.ycoordinate = journeyModifyReq.getYcoordinate();
+        this.isDeleted = 0;
         this.updatedAt = LocalDateTime.now();
     }
 
@@ -71,7 +91,7 @@ public class Journey extends BaseEntity {
     }
 
     public void updateCategoryJourney() {
-
     }
+
 
 }

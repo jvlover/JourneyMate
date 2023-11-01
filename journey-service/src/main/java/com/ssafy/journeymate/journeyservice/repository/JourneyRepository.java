@@ -11,12 +11,7 @@ public interface JourneyRepository extends JpaRepository<Journey, Long> {
 
     Optional<Journey> findById(Long journeyId);
 
-    Optional<Journey> findByMateId(Long mateId);
-
     List<Journey> findAllByMateId(Long mateId);
-
-
-
 
 
 }

@@ -7,6 +7,13 @@ server:
 spring:
   application:
     name: journey-service
+  zipkin:
+    base-url: http://localhost:9411
+    enabled: true
+  sleuth:
+    sampler:
+      probability: 1.0
+
   #  rabbitmq:
   #    host: 127.0.0.1
   #    port: 15672
@@ -24,7 +31,7 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3307/journeymate?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mariadb://localhost:3307/journey-service?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
     password: ssafy
 
@@ -42,3 +49,5 @@ management:
     web:
       exposure:
         include: refresh, health, beans, busrefresh
+
+

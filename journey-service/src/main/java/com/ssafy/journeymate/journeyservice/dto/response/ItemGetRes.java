@@ -1,5 +1,6 @@
 package com.ssafy.journeymate.journeyservice.dto.response;
 
+import java.io.Serializable;
 import lombok.Data;
 
 @Data
