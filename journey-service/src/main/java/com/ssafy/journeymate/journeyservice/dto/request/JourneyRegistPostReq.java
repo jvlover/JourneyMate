@@ -7,7 +7,7 @@ public class JourneyRegistPostReq {
 
     private Long journeyId;
     private Long mateId;
-    private Integer categoryId;
+    private Long categoryId;
     private String title;
     private Integer day;
     private Integer sequence;

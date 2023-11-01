@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface CategoryServiceClient {
 
     @GetMapping("/category-service/{categoryId}")
-    CategoryGetRes getCategory(@PathVariable int categoryId);
+    CategoryGetRes getCategory(@PathVariable Long categoryId);
 
     @GetMapping("/category-service/{categoryId}/items")
-    List<ItemGetRes> getCategoryItems(@PathVariable int categoryId);
+    List<ItemGetRes> getCategoryItems(@PathVariable Long categoryId);
 
 }

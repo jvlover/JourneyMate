@@ -89,7 +89,7 @@ public class JourneyController {
         log.info("journey_registJourney_start: " + journeyRegistPostReq.toString());
         Journey journey = new Journey(journeyRegistPostReq);
         journeyProducer.upsertJourney("journey-topic", journey);
-        List<ItemGetRes> items = categoryServiceClient.getCategoryItems(journeyRegistPostReq.getCategoryId());
+        List<ItemGetRes> items = journeyService.getItemsInCategory(journeyRegistPostReq.getCategoryId());
         log.info("journey_registJourney_middle_getItems: " + items.toString());
 
         ChecklistDto checklistDto = new ChecklistDto(journeyRegistPostReq.getMateId(),
@@ -107,7 +107,7 @@ public class JourneyController {
         log.info("journey_updateJourney_start: " + journeyModifyReq.toString());
         Journey journey = new Journey(journeyModifyReq);
         journeyProducer.upsertJourney("journey-topic", journey);
-        List<ItemGetRes> items = categoryServiceClient.getCategoryItems(journeyModifyReq.getCategoryId());
+        List<ItemGetRes> items = journeyService.getItemsInCategory(journeyModifyReq.getCategoryId());
         log.info("journey_registJourney_middle_getItems: " + items.toString());
 
 //        ChecklistDto checklistDto = new ChecklistDto(journeyModifyReq.getMateId(),
@@ -158,7 +158,6 @@ public class JourneyController {
     @PutMapping("/updatesequence")
     public ResponseEntity<ResponseDto> updateSequenceJourney(
             @RequestBody JourneySwitchSequenceReq journeySwitchSequenceReq) {
-
         return new ResponseEntity<>(new ResponseDto("일정 순서 스왑 완료", null), HttpStatus.OK);
     }
 
