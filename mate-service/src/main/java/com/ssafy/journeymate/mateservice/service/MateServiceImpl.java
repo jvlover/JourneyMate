@@ -1,6 +1,9 @@
 package com.ssafy.journeymate.mateservice.service;
 
 
+import com.ssafy.journeymate.mateservice.client.UserServiceClient;
+import com.ssafy.journeymate.mateservice.dto.ResponseDto;
+import com.ssafy.journeymate.mateservice.dto.request.client.MateBridgeRegistPostReq;
 import com.ssafy.journeymate.mateservice.dto.request.content.ContentDeleteReq;
 import com.ssafy.journeymate.mateservice.dto.request.content.ContentRegistPostReq;
 import com.ssafy.journeymate.mateservice.dto.request.docs.DocsDeleteReq;
@@ -59,6 +62,8 @@ public class MateServiceImpl implements MateService {
 
     private final ContentsRepository contentsRepository;
 
+    private final UserServiceClient userServiceClient;
+
     private final FileUtil fileUtil;
 
 
@@ -82,6 +87,19 @@ public class MateServiceImpl implements MateService {
             .build();
 
         Mate savedMate = mateRepository.save(mate);
+
+        MateBridgeRegistPostReq mateBridgeRegistPostReq = MateBridgeRegistPostReq.builder()
+            .mateId(savedMate.getId())
+            .creator(savedMate.getCreator())
+            .user(mateRegistPostReq.getUsers().stream().toList())
+            .build();
+
+        ResponseDto responseDto = userServiceClient.registMateBridge(mateBridgeRegistPostReq);
+
+        List<String> users = new ArrayList<>();
+
+
+
 
         // users 는 mate bridge 에 존재 이후 관련 api 호출 필요
 
