@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+    environment {
+        DOCKER = 'sudo docker'
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                checkout scm
+                echo 'Checkout Scm'
+            }
+        }
+
+        stage('Build image') {
+            steps {
+                sh 'ls -al'
+                dir('discovery-service') {
+                    sh 'ls -al'
+                    sh 'chmod +x ./gradlew'
+                    sh './gradlew build'
+                    sh 'docker build -t discovery-service .'
+                }
+                echo 'Build image...'
+            }
+            post {
+                success {
+                    echo 'Build Success'
+                }
+                failure {
+                    echo 'Build Failed'
+                }
+            }
+        }
+
+        stage('Remove Previous image') {
+            steps {
+                script {
+                    try {
+                        h 'docker stop journeymate-discovery-service'
+                        sh 'docker rm journeymate-discovery-service'
+                    } catch (e) {
+                        echo 'fail to stop and remove container'
+                    }
+                }
+            }
+        }
+        stage('Run New image') {
+            steps {
+                sh 'docker run --name journeymate-discovery-service -d -p 8761:8761 discovery-service'
+                echo 'Run New member image'
+            }
+        }
+    }
+}
