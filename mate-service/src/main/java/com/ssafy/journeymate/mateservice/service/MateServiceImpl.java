@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.journeymate.mateservice.client.UserServiceClient;
 import com.ssafy.journeymate.mateservice.dto.ResponseDto;
+import com.ssafy.journeymate.mateservice.dto.request.client.MateBridgeModifyReq;
 import com.ssafy.journeymate.mateservice.dto.request.client.MateBridgeRegistPostReq;
 import com.ssafy.journeymate.mateservice.dto.request.content.ContentDeleteReq;
 import com.ssafy.journeymate.mateservice.dto.request.content.ContentRegistPostReq;
@@ -15,6 +16,7 @@ import com.ssafy.journeymate.mateservice.dto.request.docs.DocsUpdateReq;
 import com.ssafy.journeymate.mateservice.dto.request.mate.MateDeleteReq;
 import com.ssafy.journeymate.mateservice.dto.request.mate.MateRegistPostReq;
 import com.ssafy.journeymate.mateservice.dto.request.mate.MateUpdatePostReq;
+import com.ssafy.journeymate.mateservice.dto.request.messagequeue.MateDeleteDto;
 import com.ssafy.journeymate.mateservice.dto.response.content.ContentListRes;
 import com.ssafy.journeymate.mateservice.dto.response.content.ContentRegistPostRes;
 import com.ssafy.journeymate.mateservice.dto.response.content.ContentRegistPostRes.content;
@@ -36,13 +38,13 @@ import com.ssafy.journeymate.mateservice.exception.ImageNotFoundException;
 import com.ssafy.journeymate.mateservice.exception.ImageUploadException;
 import com.ssafy.journeymate.mateservice.exception.MateNotFoundException;
 import com.ssafy.journeymate.mateservice.exception.UnauthorizedRoleException;
+import com.ssafy.journeymate.mateservice.messagequeue.KafkaProducer;
 import com.ssafy.journeymate.mateservice.repository.ContentsRepository;
 import com.ssafy.journeymate.mateservice.repository.DocsImgRepository;
 import com.ssafy.journeymate.mateservice.repository.DocsRepository;
 import com.ssafy.journeymate.mateservice.repository.MateRepository;
 import com.ssafy.journeymate.mateservice.util.FileUtil;
 import com.ssafy.journeymate.mateservice.util.FileUtil.FileUploadResult;
-import com.ssafy.journeymate.mateservice.util.UserIdUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,8 +72,9 @@ public class MateServiceImpl implements MateService {
 
     private final UserServiceClient userServiceClient;
 
+    private final CircuitBreakerFactory circuitBreakerFactory;
 
-    private CircuitBreakerFactory circuitBreakerFactory;
+    private final KafkaProducer kafkaProducer;
 
     private final FileUtil fileUtil;
 
@@ -104,29 +107,13 @@ public class MateServiceImpl implements MateService {
 
         log.info("user-service : user 정보 request");
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("user-regist-circuitbreaker");
-        ResponseDto responseDto = circuitBreaker.run(()-> userServiceClient.registMateBridge(mateBridgeRegistPostReq), throwable -> null);
+        ResponseDto responseDto = circuitBreaker.run(
+            () -> userServiceClient.registMateBridge(mateBridgeRegistPostReq), throwable -> null);
 
-        List<String> users = new ArrayList<>();
+        List<String> users;
+        users = getUsers(responseDto);
 
-        if(responseDto != null){
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            JsonNode data = null;
-            try {
-                data = objectMapper.readTree(responseDto.toString()).get("data");
-            } catch (JsonProcessingException e) {
-                log.error("JSON 데이터를 가져오는 과정에서 에러가 발생했습니다. ");
-            }
-
-            if (data.isArray()) {
-                for (JsonNode item : data) {
-                    JsonNode user = item.get("user");
-                    String nickname = user.get("nickname").asText();
-                    log.info("여행 그룹에 속한 회원 닉네임 입니다. ", nickname);
-                    users.add(nickname);
-                }
-            }
-        }
+        log.info("여행 그룹에 소속된 인원 수 : ", users.size());
 
         return MateRegistPostRes.builder().mateId(savedMate.getId())
             .name(savedMate.getName())
@@ -141,7 +128,6 @@ public class MateServiceImpl implements MateService {
 
 
     /**
-     * TODO : 브릿지 테이블 수정 URL 필요
      * 그룹 수정
      *
      * @param mateUpdatePostReq
@@ -162,9 +148,24 @@ public class MateServiceImpl implements MateService {
         if (!mate.getDestination().equals(mateUpdatePostReq.getDestination())) {
             mate.modifyDestination(mateUpdatePostReq.getDestination());
         }
-        // users 는 mate bridge 에 존재 이후 수정 추가 필요
 
         Mate saveMate = mateRepository.save(mate);
+
+        MateBridgeModifyReq mateBridgeModifyReq = MateBridgeModifyReq.builder()
+            .mateId(saveMate.getId())
+            .creator(saveMate.getCreator())
+            .user(mateUpdatePostReq.getUsers())
+            .build();
+
+        log.info("user-service : 그룹 유저 수정 request");
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("user-modify-circuitbreaker");
+        ResponseDto responseDto = circuitBreaker.run(
+            () -> userServiceClient.modifyMateBridge(mateBridgeModifyReq), throwable -> null);
+
+        List<String> users;
+        users = getUsers(responseDto);
+
+        log.info("여행 그룹에 소속된 인원 수 : ", users.size());
 
         return MateUpdatePostRes.builder()
             .mateId(saveMate.getId())
@@ -174,6 +175,7 @@ public class MateServiceImpl implements MateService {
             .createdDate(saveMate.getCreatedDate())
             .updatedDate(saveMate.getUpdatedDate())
             .creator(saveMate.getCreator())
+            .users(users)
             .build();
 
     }
@@ -196,6 +198,13 @@ public class MateServiceImpl implements MateService {
         } else {
             throw new UnauthorizedRoleException();
         }
+
+        MateDeleteDto mateDeleteDto = MateDeleteDto.builder()
+            .mateId(mateDeleteReq.getMateId())
+            .build();
+
+        kafkaProducer.send("journeys-delete", mateDeleteDto);
+
         return true;
     }
 
@@ -207,19 +216,26 @@ public class MateServiceImpl implements MateService {
      */
     @Override
     public MateDetailRes getMateDetail(Long mateId)
-        throws MateNotFoundException, JsonProcessingException {
+        throws MateNotFoundException {
 
         Mate mate = mateRepository.findById(mateId).orElseThrow(MateNotFoundException::new);
 
         log.info("여행 그룹에 포함된 user 정보 조회");
-        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("user-mate-bridge-circuitbreaker");
-        ResponseDto responseDto = circuitBreaker.run(() -> userServiceClient.getMateBridgeUsers(mateId), throwable -> null);
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create(
+            "user-mate-bridge-circuitbreaker");
+        ResponseDto responseDto = circuitBreaker.run(
+            () -> userServiceClient.getMateBridgeUsers(mateId), throwable -> null);
 
         List<String> users = new ArrayList<>();
 
-        if(responseDto != null){
+        if (responseDto != null) {
             ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode data = objectMapper.readTree(responseDto.getData().toString()).get("users");
+            JsonNode data = null;
+            try {
+                data = objectMapper.readTree(responseDto.getData().toString()).get("users");
+            } catch (JsonProcessingException e) {
+                log.error("JSON 데이터를 가져오는 과정에서 에러가 발생했습니다. ");
+            }
 
             if (data.isArray()) {
                 for (JsonNode item : data) {
@@ -671,13 +687,15 @@ public class MateServiceImpl implements MateService {
 
         log.info("user service 호출 : 아이디로 유저 찾기");
 
-        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("user-nickname-circuitbreaker");
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create(
+            "user-nickname-circuitbreaker");
 
-        ResponseDto responseDto = circuitBreaker.run(() ->userServiceClient.getUserInfo(userId) ,throwable -> null);
+        ResponseDto responseDto = circuitBreaker.run(() -> userServiceClient.getUserInfo(userId),
+            throwable -> null);
 
         String nickname = " ";
 
-        if(responseDto != null){
+        if (responseDto != null) {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode data = null;
             try {
@@ -692,5 +710,30 @@ public class MateServiceImpl implements MateService {
         return nickname;
     }
 
+    private static List<String> getUsers(ResponseDto responseDto) {
 
+        List<String> userList = new ArrayList<>();
+
+        if (responseDto != null) {
+
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            JsonNode data = null;
+            try {
+                data = objectMapper.readTree(responseDto.toString()).get("data");
+            } catch (JsonProcessingException e) {
+                log.error("JSON 데이터를 가져오는 과정에서 에러가 발생했습니다. ");
+            }
+
+            if (data.isArray()) {
+                for (JsonNode item : data) {
+                    JsonNode user = item.get("user");
+                    String nickname = user.get("nickname").asText();
+                    log.info("여행 그룹에 속한 회원 닉네임 입니다. ", nickname);
+                    userList.add(nickname);
+                }
+            }
+        }
+        return userList;
+    }
 }

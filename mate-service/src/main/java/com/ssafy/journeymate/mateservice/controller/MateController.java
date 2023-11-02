@@ -24,6 +24,7 @@ import com.ssafy.journeymate.mateservice.exception.ImageNotFoundException;
 import com.ssafy.journeymate.mateservice.exception.ImageUploadException;
 import com.ssafy.journeymate.mateservice.exception.MateNotFoundException;
 import com.ssafy.journeymate.mateservice.exception.UnauthorizedRoleException;
+import com.ssafy.journeymate.mateservice.messagequeue.KafkaProducer;
 import com.ssafy.journeymate.mateservice.service.MateService;
 import java.io.IOException;
 import java.util.List;
@@ -50,6 +51,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class MateController {
 
     private final MateService mateService;
+
 
     /**
      * 그룹 등록

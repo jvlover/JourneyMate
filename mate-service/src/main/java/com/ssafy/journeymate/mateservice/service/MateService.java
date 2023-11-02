@@ -30,8 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface MateService {
 
 
-    public MateRegistPostRes registMate(MateRegistPostReq mateRegistPostReq)
-        throws JsonProcessingException;
+    public MateRegistPostRes registMate(MateRegistPostReq mateRegistPostReq);
 
     public MateUpdatePostRes modifyMate(MateUpdatePostReq mateUpdatePostRes)
         throws MateNotFoundException;
@@ -40,7 +39,7 @@ public interface MateService {
         throws MateNotFoundException, UnauthorizedRoleException;
 
     public MateDetailRes getMateDetail(Long mateId)
-        throws MateNotFoundException, JsonProcessingException;
+        throws MateNotFoundException;
 
     public DocsRegistPostRes registDocs(DocsRegistPostReq docsRegistReq,
         List<MultipartFile> imgFile)
