@@ -21,7 +21,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin() // 권한없이 페이지 접근하면 로그인 페이지로 이동한다.
                 .and()
                 .authorizeRequests()
-                .antMatchers("/comment-service/**").hasRole("USER") // chat으로 시작하는 리소스에 대한 접근 권한 설정
+//                .antMatchers("/comment-service/**").hasRole("USER") // chat으로 시작하는 리소스에 대한 접근 권한 설정
                 .anyRequest().permitAll(); // 나머지 리소스에 대한 접근 설정
     }
 

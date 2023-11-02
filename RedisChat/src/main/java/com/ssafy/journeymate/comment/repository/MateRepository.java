@@ -18,7 +18,7 @@ public class MateRepository {
     public static final String ENTER_INFO = "ENTER_INFO"; // 채팅룸에 입장한 클라이언트의 sessionId와 채팅룸 id를 맵핑한 정보 저장
 
     @Resource(name = "redisTemplate")
-    private HashOperations<String, String, Mate> hashOpsChatRoom;
+    private HashOperations<String, String, Mate> hashOpsMate;
     @Resource(name = "redisTemplate")
     private HashOperations<String, String, String> hashOpsEnterInfo;
     @Resource(name = "redisTemplate")
@@ -26,18 +26,18 @@ public class MateRepository {
 
     // 모든 채팅방 조회
     public List<Mate> findAllMate() {
-        return hashOpsChatRoom.values(MATES);
+        return hashOpsMate.values(MATES);
     }
 
     // 특정 채팅방 조회
     public Mate findMateById(String id) {
-        return hashOpsChatRoom.get(MATES, id);
+        return hashOpsMate.get(MATES, id);
     }
 
     // 채팅방 생성 : 서버간 채팅방 공유를 위해 redis hash에 저장한다.
     public Mate createMate(String name) {
         Mate mate = Mate.create(name);
-        hashOpsChatRoom.put(MATES, mate.getMateId(), mate);
+        hashOpsMate.put(MATES, mate.getMateId(), mate);
         return mate;
     }
 

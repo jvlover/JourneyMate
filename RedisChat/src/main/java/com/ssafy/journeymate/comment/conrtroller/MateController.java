@@ -16,7 +16,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
-//@RequestMapping("/comment-service")
+@RequestMapping("/mate-service")
 public class MateController {
 
     private final MateRepository mateRepository;
@@ -24,7 +24,7 @@ public class MateController {
 
     @GetMapping("/mate")
     public String mates() {
-        return "/comment-service/mate";
+        return "/mate-service/mate";
     }
 
     @GetMapping("/mates")
@@ -41,10 +41,10 @@ public class MateController {
         return mateRepository.createMate(name);
     }
 
-    @GetMapping("/mate/enter/{mateId}")
+    @GetMapping("/enter/{mateId}")
     public String mateDetail(Model model, @PathVariable String mateId) {
         model.addAttribute("mateId", mateId);
-        return "/comment-service/matedetail";
+        return "/mate-service/matedetail";
     }
 
     @GetMapping("/mate/{mateId}")

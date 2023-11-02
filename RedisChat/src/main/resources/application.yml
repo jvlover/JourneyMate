@@ -15,4 +15,4 @@ spring:
     cache: false
   data:
     mongodb:
-      uri: mongodb://localhost:27017/mydatabase
+      uri: mongodb://k9a204.p.ssafy.io/testdb
