@@ -32,9 +32,6 @@ public class User {
     @Column(columnDefinition = "BINARY(16)")
     private byte[] id;
 
-    @Column(nullable = false, length = 40)
-    private String email;
-
     @Column(nullable = false, length = 50)
     private String nickname;
 

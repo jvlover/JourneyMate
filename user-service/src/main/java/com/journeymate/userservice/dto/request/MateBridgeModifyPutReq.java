@@ -6,12 +6,11 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class MateBridgeRegistPostReq {
+public class MateBridgeModifyPutReq {
 
     Long mateId;
 
     List<String> users;
 
     String creator;
-
 }

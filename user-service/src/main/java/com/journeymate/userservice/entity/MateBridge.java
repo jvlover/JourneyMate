@@ -53,8 +53,5 @@ public class MateBridge {
     public void deleteBridge() {
         this.isDeleted = true;
     }
-
-    public void setCreator() {
-        this.isCreator = true;
-    }
+    
 }

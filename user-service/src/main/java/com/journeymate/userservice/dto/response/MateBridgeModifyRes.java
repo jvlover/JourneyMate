@@ -1,21 +1,24 @@
 package com.journeymate.userservice.dto.response;
 
+import com.journeymate.userservice.entity.User;
 import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class UserFindRes {
+public class MateBridgeModifyRes {
 
-    private String id;
+    private Long id;
 
-    private String nickname;
+    private User user;
 
-    private String imgUrl;
+    private Long mateId;
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    private Boolean isCreator;
 
 }

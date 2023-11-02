@@ -3,6 +3,7 @@ package com.journeymate.userservice.service;
 import com.fasterxml.uuid.Generators;
 import com.journeymate.userservice.dto.request.UserModifyProfilePutReq;
 import com.journeymate.userservice.dto.response.UserFindRes;
+import com.journeymate.userservice.dto.response.UserModifyRes;
 import com.journeymate.userservice.entity.User;
 import com.journeymate.userservice.exception.UserNotFoundException;
 import com.journeymate.userservice.repository.UserRepository;
@@ -27,13 +28,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User registUser(byte[] hexId, String email, String nickname) {
+    public User registUser(byte[] hexId, String nickname) {
 
-        User user = User.builder().id(hexId).email(email).nickname(nickname).build();
+        User user = User.builder().id(hexId).nickname(nickname).build();
 
-        User res = userRepository.save(user);
-
-        return res;
+        return userRepository.save(user);
 
     }
 
@@ -44,32 +43,24 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public Boolean NicknameDuplicateCheck(String nickname) {
+    public Boolean nicknameDuplicateCheck(String nickname) {
 
-        if (userRepository.findByNickname(nickname).isPresent()) {
-            return true;
-        } else {
-            return false;
-        }
+        return userRepository.findByNickname(nickname).isPresent();
     }
 
     @Override
-    public Boolean UserCheck(byte[] bytesId) {
+    public Boolean userCheck(byte[] bytesId) {
 
-        if (userRepository.findById(bytesId).isPresent()) {
-            return true;
-        } else {
-            return false;
-        }
+        return userRepository.findById(bytesId).isPresent();
     }
 
     @Override
-    public Boolean Login() {
+    public Boolean login() {
         return null;
     }
 
     @Override
-    public UserFindRes FindUserById(byte[] bytesId) {
+    public UserFindRes findUserById(byte[] bytesId) {
 
         User user = userRepository.findById(bytesId).orElseThrow(UserNotFoundException::new);
 
@@ -81,19 +72,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserFindRes FindUserByEmail(String email) {
-
-        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-
-        UserFindRes res = new ModelMapper().map(user, UserFindRes.class);
-
-        res.setId(bytesHexChanger.bytesToHex(user.getId()));
-
-        return res;
-    }
-
-    @Override
-    public UserFindRes FindUserByNickname(String nickname) {
+    public UserFindRes findUserByNickname(String nickname) {
 
         User user = userRepository.findByNickname(nickname).orElseThrow(UserNotFoundException::new);
 
@@ -105,7 +84,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void modifyProfile(UserModifyProfilePutReq userModifyProfilePutReq) {
+    public UserModifyRes modifyProfile(UserModifyProfilePutReq userModifyProfilePutReq) {
 
         User user = userRepository.findById(
                 bytesHexChanger.hexToBytes(userModifyProfilePutReq.getId()))
@@ -113,6 +92,9 @@ public class UserServiceImpl implements UserService {
 
         user.modifyProfile(userModifyProfilePutReq.getNickname(),
             userModifyProfilePutReq.getImgUrl());
+
+        return new ModelMapper().map(user, UserModifyRes.class);
+
     }
 
     //UUID 생성 후 byte[]로
