@@ -89,10 +89,8 @@ public class JourneyController {
         log.info("journey_registJourney_start: " + journeyRegistPostReq.toString());
 
         /* jpa */
-
         journeyService.registJourney(journeyRegistPostReq);
         /* 카프카를 활용한 db 연동 */
-
 //        journeyProducer.insertJourney("test1", journeyRegistPostReq);
 
         log.info("journey_registJourney_end");
@@ -108,9 +106,9 @@ public class JourneyController {
         List<ItemGetRes> items = journeyService.getItemsInCategory(journeyGetRes.getCategoryId());
         log.info("item 목록 확인: " + items.toString());
 
-//        ChecklistDto checklistDto = new ChecklistDto(journeyGetRes.getMateId(),
-//                journeyGetRes.getId(), "REGIST", items);
-//        kafkaProducer.sendItems("checklist-update", checklistDto);
+        ChecklistDto checklistDto = new ChecklistDto(journeyGetRes.getMateId(),
+                journeyGetRes.getId(), "REGIST", items);
+        kafkaProducer.sendItems("checklist-update", checklistDto);
 
         log.info("journey_sendchecklist_end");
 

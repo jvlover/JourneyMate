@@ -54,6 +54,7 @@ public class JourneyProducer {
     }
 
     public void insertJourney(String topic, JourneyRegistPostReq journeyRegistPostReq) {
+
         Payload payload = Payload.builder()
                 .id(0l)
                 .mate_id(journeyRegistPostReq.getMateId())

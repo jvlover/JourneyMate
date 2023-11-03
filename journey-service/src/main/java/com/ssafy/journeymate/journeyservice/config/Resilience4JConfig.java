@@ -1,4 +1,4 @@
-package com.ssafy.journeymate.journeyservice.config.config;
+package com.ssafy.journeymate.journeyservice.config;
 
 
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
