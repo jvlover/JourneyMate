@@ -9,8 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface JourneyRepository extends JpaRepository<Journey, Long> {
 
-    Optional<Journey> findById(Long journeyId);
-
     List<Journey> findAllByMateId(Long mateId);
 
 

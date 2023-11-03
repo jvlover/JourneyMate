@@ -87,32 +87,47 @@ public class JourneyController {
     public ResponseEntity<ResponseDto> registJourney(@RequestBody JourneyRegistPostReq journeyRegistPostReq) {
 
         log.info("journey_registJourney_start: " + journeyRegistPostReq.toString());
-        Journey journey = new Journey(journeyRegistPostReq);
-        journeyProducer.upsertJourney("journey-topic", journey);
-        List<ItemGetRes> items = journeyService.getItemsInCategory(journeyRegistPostReq.getCategoryId());
-        log.info("journey_registJourney_middle_getItems: " + items.toString());
 
-        ChecklistDto checklistDto = new ChecklistDto(journeyRegistPostReq.getMateId(),
-                journeyRegistPostReq.getJourneyId(), "REGIST", items);
-        kafkaProducer.sendItems("checklist-update", checklistDto);
+        /* jpa */
+
+        journeyService.registJourney(journeyRegistPostReq);
+        /* 카프카를 활용한 db 연동 */
+
+//        journeyProducer.insertJourney("test1", journeyRegistPostReq);
 
         log.info("journey_registJourney_end");
 
         return new ResponseEntity<>(new ResponseDto("일정 등록 완료", null), HttpStatus.OK);
     }
 
+    @GetMapping("/sendChecklist/{journeyId}")
+    public ResponseEntity<ResponseDto> sendChecklist(@PathVariable Long journeyId) {
+
+        log.info("journey_sendChecklist_start: " + journeyId);
+        JourneyGetRes journeyGetRes = journeyService.findByJourneyId(journeyId);
+        List<ItemGetRes> items = journeyService.getItemsInCategory(journeyGetRes.getCategoryId());
+        log.info("item 목록 확인: " + items.toString());
+
+//        ChecklistDto checklistDto = new ChecklistDto(journeyGetRes.getMateId(),
+//                journeyGetRes.getId(), "REGIST", items);
+//        kafkaProducer.sendItems("checklist-update", checklistDto);
+
+        log.info("journey_sendchecklist_end");
+
+        return new ResponseEntity<>(new ResponseDto("체크 리스트 목록 전달 완료", items), HttpStatus.OK);
+    }
+
     @PutMapping("/update")
     public ResponseEntity<ResponseDto> updateJourney(@RequestBody JourneyModifyPutReq journeyModifyReq) {
 
         log.info("journey_updateJourney_start: " + journeyModifyReq.toString());
-        Journey journey = new Journey(journeyModifyReq);
-        journeyProducer.upsertJourney("journey-topic", journey);
+        journeyService.modifyJourney(journeyModifyReq);
         List<ItemGetRes> items = journeyService.getItemsInCategory(journeyModifyReq.getCategoryId());
         log.info("journey_registJourney_middle_getItems: " + items.toString());
 
-//        ChecklistDto checklistDto = new ChecklistDto(journeyModifyReq.getMateId(),
-//                journeyModifyReq.getJourneyId(), "UPDATE", items);
-//        kafkaProducer.sendItems("checklist-update", checklistDto);
+        ChecklistDto checklistDto = new ChecklistDto(journeyModifyReq.getMateId(),
+                journeyModifyReq.getJourneyId(), "UPDATE", items);
+        kafkaProducer.sendItems("checklist-update", checklistDto);
 
         log.info("journey_updateJourney_end");
 
@@ -127,10 +142,10 @@ public class JourneyController {
 
         log.info("journey_deleteJourney_start: " + journeyId.toString());
         JourneyGetRes journeyGetRes = journeyService.deleteJourney(journeyId);
-//        List<ItemGetRes> items = new ArrayList<>();
-//        ChecklistDto checklistDto = new ChecklistDto(journeyGetRes.getMateId(),
-//                journeyGetRes.getId(), "DELETE", items);
-//        kafkaProducer.sendItems("checklist-update", checklistDto);
+        List<ItemGetRes> items = new ArrayList<>();
+        ChecklistDto checklistDto = new ChecklistDto(journeyGetRes.getMateId(),
+                journeyGetRes.getId(), "DELETE", items);
+        kafkaProducer.sendItems("checklist-update", checklistDto);
 
         log.info("journey_deleteJourney_end");
 
@@ -141,13 +156,13 @@ public class JourneyController {
     public ResponseEntity<ResponseDto> deleteJourneysInMate(@PathVariable Long mateId) {
 
         log.info("journey_deleteJourneysInMate_start: " + mateId.toString());
-        List<JourneyGetRes> journeyGetResponses = journeyService.deleteJourneysinMate(mateId);
-//        for (JourneyGetRes journeyGetRes : journeyGetResponses) {
-//            List<ItemGetRes> items = new ArrayList<>();
-//            ChecklistDto checklistDto = new ChecklistDto(journeyGetRes.getMateId(),
-//                    journeyGetRes.getId(), "DELETE", items);
-//            kafkaProducer.sendItems("checklist-update", checklistDto);
-//        }
+        List<JourneyGetRes> journeyGetResponses = journeyService.deleteJourneysInMate(mateId);
+        for (JourneyGetRes journeyGetRes : journeyGetResponses) {
+            List<ItemGetRes> items = new ArrayList<>();
+            ChecklistDto checklistDto = new ChecklistDto(journeyGetRes.getMateId(),
+                    journeyGetRes.getId(), "DELETE", items);
+            kafkaProducer.sendItems("checklist-update", checklistDto);
+        }
 
         log.info("journey_deleteJourneysInMate_end");
 

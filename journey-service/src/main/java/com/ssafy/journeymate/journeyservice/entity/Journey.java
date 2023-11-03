@@ -21,7 +21,7 @@ import org.hibernate.annotations.Where;
 @AllArgsConstructor // 모든 변수를 파라미터로 받는 생성자
 @SuperBuilder   // Builder를 보완한 Annotation. 상속 받은 필드도 build 해줌, but experimental
 @DynamicInsert  // INSERT 구문에서 null이 아닌 컬럼들만 실제로 insert
-@Where(clause = "is_deleted is 0")   // 일괄적으로 적용할 where 조건. 현재 clause는 soft delete를 위함
+@Where(clause = "is_deleted = '0'")   // 일괄적으로 적용할 where 조건. 현재 clause는 soft delete를 위함
 @Entity
 public class Journey extends BaseEntity {
 
@@ -30,7 +30,7 @@ public class Journey extends BaseEntity {
     private Long mateId;
 
     @Column(nullable = false)
-    private Integer categoryId;
+    private Long categoryId;
 
     @Column(nullable = false, length = 40)
     private String title;
@@ -42,48 +42,33 @@ public class Journey extends BaseEntity {
     private Integer sequence;
 
     @Column(nullable = false)
-    private float xcoordinate;
+    private Double xcoordinate;
 
     @Column(nullable = false)
-    private float ycoordinate;
+    private Double ycoordinate;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @CreationTimestamp
     private LocalDateTime updatedAt;
 
     @Column(nullable = false, columnDefinition = "TINYINT")
     private Integer isDeleted; // 0 false  1 true
 
 
-    public Journey(JourneyRegistPostReq journeyRegistPostReq) {
-
-        this.mateId = journeyRegistPostReq.getMateId();
-        this.categoryId = journeyRegistPostReq.getCategoryId();
-        this.title = journeyRegistPostReq.getTitle();
-        this.day = journeyRegistPostReq.getDay();
-        this.sequence = journeyRegistPostReq.getSequence();
-        this.xcoordinate = journeyRegistPostReq.getXcoordinate();
-        this.ycoordinate = journeyRegistPostReq.getYcoordinate();
-        this.isDeleted = 0;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-
-    }
-
-
-    public Journey(JourneyModifyPutReq journeyModifyReq) {
+    public void modifyJourney(JourneyModifyPutReq journeyModifyReq) {
 
         this.mateId = journeyModifyReq.getMateId();
         this.categoryId = journeyModifyReq.getCategoryId();
         this.title = journeyModifyReq.getTitle();
-        this.day = journeyModifyReq.getDay();
-        this.sequence = journeyModifyReq.getSequence();
         this.xcoordinate = journeyModifyReq.getXcoordinate();
         this.ycoordinate = journeyModifyReq.getYcoordinate();
         this.isDeleted = 0;
         this.updatedAt = LocalDateTime.now();
+
     }
+
 
     public void deleteJourney() {
         this.updatedAt = LocalDateTime.now();

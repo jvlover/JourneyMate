@@ -1,6 +1,8 @@
 package com.ssafy.journeymate.journeyservice.service;
 
 import com.ssafy.journeymate.journeyservice.client.CategoryServiceClient;
+import com.ssafy.journeymate.journeyservice.dto.request.JourneyModifyPutReq;
+import com.ssafy.journeymate.journeyservice.dto.request.JourneyRegistPostReq;
 import com.ssafy.journeymate.journeyservice.dto.response.ItemGetRes;
 import com.ssafy.journeymate.journeyservice.dto.response.JourneyGetRes;
 import com.ssafy.journeymate.journeyservice.exception.JourneyNotFoundException;
@@ -34,13 +36,36 @@ public class JourneyServiceImpl implements JourneyService {
 
 
     @Override
+    public JourneyGetRes registJourney(JourneyRegistPostReq journeyRegistPostReq) {
+
+        log.info("JourneyService_registJourney_start: " + journeyRegistPostReq.toString());
+
+        ModelMapper mapper = new ModelMapper();
+        Journey journey = Journey.builder()
+                .mateId(journeyRegistPostReq.getMateId())
+                .categoryId(journeyRegistPostReq.getCategoryId())
+                .title(journeyRegistPostReq.getTitle())
+                .day(journeyRegistPostReq.getDay())
+                .sequence(journeyRegistPostReq.getSequence())
+                .xcoordinate(journeyRegistPostReq.getXcoordinate())
+                .ycoordinate(journeyRegistPostReq.getYcoordinate())
+                .isDeleted(0)
+                .build();
+
+        journeyRepository.save(journey);
+        JourneyGetRes journeyGetRes = mapper.map(journey, JourneyGetRes.class);
+        log.info("JourneyService_registJourney_end: " + journeyGetRes.toString());
+
+        return journeyGetRes;
+    }
+
+    @Override
     public JourneyGetRes findByJourneyId(Long journeyId) {
 
         log.info("JourneyService_findByJourneyId_start: " + journeyId);
-
-        Journey journeyEntity = journeyRepository.findById(journeyId)
+        Journey journey = journeyRepository.findById(journeyId)
                 .orElseThrow(JourneyNotFoundException::new);
-        JourneyGetRes journeyGetRes = new ModelMapper().map(journeyEntity, JourneyGetRes.class);
+        JourneyGetRes journeyGetRes = new ModelMapper().map(journey, JourneyGetRes.class);
 
         log.info("JourneyService_findByJourneyId_end");
 
@@ -82,7 +107,7 @@ public class JourneyServiceImpl implements JourneyService {
     }
 
     @Override
-    public List<JourneyGetRes> deleteJourneysinMate(Long mateId) {
+    public List<JourneyGetRes> deleteJourneysInMate(Long mateId) {
 
         log.info("JourneyService_deleteJourneysinMate_start: " + mateId);
 
@@ -109,6 +134,19 @@ public class JourneyServiceImpl implements JourneyService {
                 throwable -> new ArrayList<>());
 
         return items;
+    }
+
+    @Override
+    public boolean modifyJourney(JourneyModifyPutReq journeyModifyPutReq) {
+
+        log.info("journeyService_modifyJourney_start: " + journeyModifyPutReq.toString());
+
+        Journey journey = journeyRepository.findById(journeyModifyPutReq.getJourneyId()).orElseThrow();
+        journey.modifyJourney(journeyModifyPutReq);
+
+        log.info("CategoryService_modifyCategory_end: ");
+
+        return true;
     }
 
 

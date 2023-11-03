@@ -1,40 +1,44 @@
 package com.ssafy.journeymate.journeyservice.messagequeue;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ssafy.journeymate.journeyservice.dto.kafka.Field;
 import com.ssafy.journeymate.journeyservice.dto.kafka.KafkaJourneyDto;
 import com.ssafy.journeymate.journeyservice.dto.kafka.Payload;
 import com.ssafy.journeymate.journeyservice.dto.kafka.Schema;
-import com.ssafy.journeymate.journeyservice.dto.response.JourneyGetRes;
-import com.ssafy.journeymate.journeyservice.entity.Journey;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
+import com.ssafy.journeymate.journeyservice.dto.request.JourneyRegistPostReq;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+
 @Service
 @Slf4j
+@JsonDeserialize
+@JsonSerialize
 public class JourneyProducer {
 
-    /*  journey-service와 DB간 카프카 통신을 위한 코드 */
     private KafkaTemplate<String, String> kafkaTemplate;
 
-    List<Field> fields = Arrays.asList(new Field("int64", true, "id"),
-            new Field("int64", true, "mated_id"),
-            new Field("string", true, "category_id"),
-            new Field("string", true, "title"),
+    List<Field> fields = Arrays.asList(
+            new Field("int64", true, "id"),
+            new Field("int64", true, "mateId"),
+            new Field("int64", true, "categoryId"),
+            new Field("String", true, "title"),
             new Field("int32", true, "day"),
             new Field("int32", true, "sequence"),
-            new Field("FLOAT", true, "xcoordinate"),
-            new Field("FLOAT", true, "ycoordinate"),
-            new Field("datetime", true, "created_at"),
-            new Field("datetime", true, "updated_at"),
-            new Field("int32", true, "is_deleted")
+            new Field("float64", true, "xcoordinate"),
+            new Field("float64", true, "ycoordinate"),
+            new Field("String", true, "createdAt"),
+            new Field("String", true, "updatedAt"),
+            new Field("int32", true, "isDeleted")
     );
 
     Schema schema = Schema.builder()
@@ -49,25 +53,25 @@ public class JourneyProducer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public Journey upsertJourney(String topic, Journey journey) {
-
+    public void insertJourney(String topic, JourneyRegistPostReq journeyRegistPostReq) {
         Payload payload = Payload.builder()
-                .id(journey.getId())
-                .mate_id(journey.getMateId())
-                .category_id(journey.getCategoryId())
-                .title(journey.getTitle())
-                .day(journey.getDay())
-                .sequence(journey.getSequence())
-                .xcoordinate(journey.getXcoordinate())
-                .ycoordinate(journey.getYcoordinate())
-                .created_at(journey.getCreatedAt())
-                .updated_at(journey.getUpdatedAt())
-                .is_deleted(journey.getIsDeleted())
+                .id(0l)
+                .mate_id(journeyRegistPostReq.getMateId())
+                .category_id(journeyRegistPostReq.getCategoryId())
+                .title(journeyRegistPostReq.getTitle())
+                .day(journeyRegistPostReq.getDay())
+                .sequence(journeyRegistPostReq.getSequence())
+                .xcoordinate(journeyRegistPostReq.getXcoordinate())
+                .ycoordinate(journeyRegistPostReq.getYcoordinate())
+                .createdAt(LocalDateTime.now().toString())
+                .updatedAt(LocalDateTime.now().toString())
+                .is_deleted(0)
                 .build();
 
         KafkaJourneyDto kafkaJourneyDto = new KafkaJourneyDto(schema, payload);
 
         ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
         String jsonInString = "";
         try {
             jsonInString = mapper.writeValueAsString(kafkaJourneyDto);
@@ -77,10 +81,10 @@ public class JourneyProducer {
 
         kafkaTemplate.send(topic, jsonInString);
         log.info("Kafka Producer sent data from the Journey " + kafkaJourneyDto.toString());
-
-        return journey;
-
     }
-
-
 }
+
+
+
+
+
