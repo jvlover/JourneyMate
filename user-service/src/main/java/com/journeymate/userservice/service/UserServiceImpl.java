@@ -4,6 +4,7 @@ import com.fasterxml.uuid.Generators;
 import com.journeymate.userservice.dto.request.UserModifyProfilePutReq;
 import com.journeymate.userservice.dto.response.UserFindRes;
 import com.journeymate.userservice.dto.response.UserModifyRes;
+import com.journeymate.userservice.dto.response.UserRegistRes;
 import com.journeymate.userservice.entity.User;
 import com.journeymate.userservice.exception.UserNotFoundException;
 import com.journeymate.userservice.repository.UserRepository;
@@ -28,11 +29,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User registUser(byte[] hexId, String nickname) {
+    public UserRegistRes registUser(byte[] hexId, String nickname) {
 
-        User user = User.builder().id(hexId).nickname(nickname).build();
+        User user = userRepository.save(User.builder().id(hexId).nickname(nickname).build());
 
-        return userRepository.save(user);
+        UserRegistRes res = new ModelMapper().map(user, UserRegistRes.class);
+
+        res.setId(bytesHexChanger.bytesToHex(user.getId()));
+        
+        return res;
 
     }
 

@@ -4,12 +4,13 @@ import com.journeymate.userservice.dto.ResponseDto;
 import com.journeymate.userservice.dto.request.MateBridgeModifyPutReq;
 import com.journeymate.userservice.dto.request.MateBridgeRegistPostReq;
 import com.journeymate.userservice.dto.request.UserModifyProfilePutReq;
+import com.journeymate.userservice.dto.request.UserRegistPostReq;
 import com.journeymate.userservice.dto.response.MateBridgeFindRes;
 import com.journeymate.userservice.dto.response.MateBridgeModifyRes;
 import com.journeymate.userservice.dto.response.MateBridgeRegistRes;
 import com.journeymate.userservice.dto.response.UserFindRes;
 import com.journeymate.userservice.dto.response.UserModifyRes;
-import com.journeymate.userservice.entity.User;
+import com.journeymate.userservice.dto.response.UserRegistRes;
 import com.journeymate.userservice.service.MateBridgeService;
 import com.journeymate.userservice.service.UserService;
 import com.journeymate.userservice.util.BytesHexChanger;
@@ -48,12 +49,12 @@ public class UserController {
     @PostMapping("/regist")
     @Transactional
     public ResponseEntity<ResponseDto> socialLogin(
-        @RequestBody String nickname) {
+        @RequestBody UserRegistPostReq userRegistPostReq) {
 
         byte[] hexId = userService.createUUID();
 
         // TODO: 회원 있으면 login 없으면 registUser
-        User res = userService.registUser(hexId, nickname);
+        UserRegistRes res = userService.registUser(hexId, userRegistPostReq.getNickname());
 
         return new ResponseEntity<>(new ResponseDto("로그인 완료!", res), HttpStatus.OK);
     }
@@ -100,14 +101,6 @@ public class UserController {
         MateBridgeFindRes res = mateBridgeService.findMateBridgeByMateId(mateId);
 
         return new ResponseEntity<>(new ResponseDto("회원 정보 반환!", res), HttpStatus.OK);
-    }
-
-    @GetMapping("/feign/{mateId}")
-    public MateBridgeFindRes findUserByMateIdForFeign(@PathVariable Long mateId) {
-
-        MateBridgeFindRes res = mateBridgeService.findMateBridgeByMateId(mateId);
-
-        return res;
     }
 
     @PutMapping("/exit/{id}")
