@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +24,7 @@ import ssafy.journeymate.categoryservice.categoryservice.dto.request.ItemModifyP
 @SuperBuilder   // Builder를 보완한 Annotation. 상속 받은 필드도 build 해줌, but experimental
 @DynamicInsert  // INSERT 구문에서 null이 아닌 컬럼들만 실제로 insert
 @Entity
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"category_id", "name"})})
 public class Item extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)

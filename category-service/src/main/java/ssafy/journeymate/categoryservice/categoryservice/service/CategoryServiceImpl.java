@@ -89,7 +89,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category category = categoryRepository.findById(categoryUpdatePutReq.getId()).orElseThrow();
         category.modifyCategory(categoryUpdatePutReq);
-        log.info("CategoryService_modifyCategory_end: " + categoryUpdatePutReq.toString());
+        log.info("CategoryService_modifyCategory_end");
 
         return true;
     }
