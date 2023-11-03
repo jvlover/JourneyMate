@@ -1,16 +1,13 @@
 package com.journeymate.checkservice.dto.request;
 
-import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ChecklistRegistPostReq {
+public class ItemUpdatePutReq {
 
-    Long mateId;
+    String name;
 
-    Long journeyId;
-
-    List<ItemUpdatePutReq> items;
+    Integer num;
 }

@@ -2,14 +2,15 @@ package com.journeymate.checkservice.service;
 
 
 import com.journeymate.checkservice.dto.request.ChecklistRegistPostReq;
-import com.journeymate.checkservice.dto.response.DefaultChecklistFindRes;
-import com.journeymate.checkservice.entity.Checklist;
+import com.journeymate.checkservice.dto.response.ChecklistFindRes;
+import com.journeymate.checkservice.dto.response.ChecklistRegistRes;
+import java.util.List;
 
 public interface ChecklistService {
 
-    DefaultChecklistFindRes getDefaultChecklist(Long categoryId);
+    List<ChecklistRegistRes> registChecklist(ChecklistRegistPostReq checklistRegistPostReq);
 
-    Checklist registChecklist(ChecklistRegistPostReq checklistRegistPostReq);
+    ChecklistFindRes findChecklistById(Long id);
 
-    Checklist getChecklist(Long id);
+    List<ChecklistFindRes> findChecklistByuserIdAndJourneyId(String userId, Long journeyId);
 }

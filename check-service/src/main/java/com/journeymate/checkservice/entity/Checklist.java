@@ -3,6 +3,7 @@ package com.journeymate.checkservice.entity;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.ws.rs.DefaultValue;
 import lombok.AccessLevel;
@@ -27,6 +28,7 @@ import org.hibernate.annotations.Where;
 public class Checklist {
 
     @Id
+    @GeneratedValue
     private Long id;
 
     @Column
@@ -43,7 +45,7 @@ public class Checklist {
     private Integer num;
 
     @Column(nullable = false, columnDefinition = "TINYINT default 0")
-    private Boolean is_checked;
+    private Boolean isChecked;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -56,6 +58,10 @@ public class Checklist {
 
     public void deleteChecklist() {
         this.isDeleted = true;
+    }
+
+    public void check() {
+        this.isChecked = true;
     }
 
 }
