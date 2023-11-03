@@ -1,0 +1,39 @@
+server:
+  port: 8000
+eureka:
+  client:
+    register-with-eureka:  true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+spring:
+  application:
+    name: apigateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/**
+        - id: mate-service
+          uri: lb://MATE-SERVICE
+          predicates:
+            - Path=/mate-service/**
+        - id: category-service
+          uri: lb://CATEGORY-SERVICE
+          predicates:
+            - Path=/category-service/**
+        - id: journey-service
+          uri: lb://JOURNEY-SERVICE
+          predicates:
+            - Path=/journey-service/**
+        - id: comment-service
+          uri: lb://COMMENT-SERVICE
+          predicates:
+            - Path=/comment-service/**
+        - id: check-service
+          uri: lb://CHECK-SERVICE
+          predicates:
+            - Path=/check-service/**
