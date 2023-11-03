@@ -16,23 +16,20 @@ public class KafkaProducer {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public void send(String topic, MateDeleteDto mateDeleteDto){
+    public void send(String topic, MateDeleteDto mateDeleteDto) {
         ObjectMapper mapper = new ObjectMapper();
         String jsonInString = "";
 
-        try{
+        try {
             jsonInString = mapper.writeValueAsString(mateDeleteDto);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             log.error("Kafka 전송 에러가 발생했습니다");
         }
 
-        kafkaTemplate.send(topic,jsonInString);
+        kafkaTemplate.send(topic, jsonInString);
 
         log.info("Kafka Producer sent data from Mate microservice : " + mateDeleteDto.toString());
     }
-
-
-
 
 }

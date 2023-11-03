@@ -11,5 +11,4 @@ import org.springframework.stereotype.Repository;
 public interface DocsImgRepository extends JpaRepository<DocsImg, Long> {
 
     Optional<List<DocsImg>> findByDocs_id(Long docsId);
-
 }

@@ -10,7 +10,7 @@ import lombok.Data;
 public class MateBridgeRegistPostReq {
 
     private Long mateId;
-    private List<String> user;
+    private List<String> users;
     private String creator;
 
 }

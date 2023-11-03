@@ -65,5 +65,4 @@ public interface MateService {
 
     public ContentListRes getContentDetail(Long mateId);
 
-
 }

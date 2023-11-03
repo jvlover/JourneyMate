@@ -17,6 +17,8 @@ import com.ssafy.journeymate.mateservice.dto.request.mate.MateDeleteReq;
 import com.ssafy.journeymate.mateservice.dto.request.mate.MateRegistPostReq;
 import com.ssafy.journeymate.mateservice.dto.request.mate.MateUpdatePostReq;
 import com.ssafy.journeymate.mateservice.dto.request.messagequeue.MateDeleteDto;
+import com.ssafy.journeymate.mateservice.dto.response.client.MateBridgeRes;
+import com.ssafy.journeymate.mateservice.dto.response.client.ResponseMateRes;
 import com.ssafy.journeymate.mateservice.dto.response.content.ContentListRes;
 import com.ssafy.journeymate.mateservice.dto.response.content.ContentRegistPostRes;
 import com.ssafy.journeymate.mateservice.dto.response.content.ContentRegistPostRes.content;
@@ -102,18 +104,35 @@ public class MateServiceImpl implements MateService {
         MateBridgeRegistPostReq mateBridgeRegistPostReq = MateBridgeRegistPostReq.builder()
             .mateId(savedMate.getId())
             .creator(savedMate.getCreator())
-            .user(mateRegistPostReq.getUsers().stream().toList())
+            .users(mateRegistPostReq.getUsers())
             .build();
+
+        for(String id : mateRegistPostReq.getUsers()){
+            log.info("회원 ID 입니다 : {}", id);
+        }
 
         log.info("user-service : user 정보 request");
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("user-regist-circuitbreaker");
-        ResponseDto responseDto = circuitBreaker.run(
+        List<MateBridgeRes> mateBridgeRegistResList = circuitBreaker.run(
             () -> userServiceClient.registMateBridge(mateBridgeRegistPostReq), throwable -> null);
 
-        List<String> users;
-        users = getUsers(responseDto);
+        List<String> users = new ArrayList<>();
 
-        log.info("여행 그룹에 소속된 인원 수 : ", users.size());
+        //users = getUsers(mateBridgeRegistResList);
+
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        if(mateBridgeRegistResList != null){
+
+            for(MateBridgeRes mateBridgeRes : mateBridgeRegistResList) {
+                log.info("여행 그룹에 등록된 id : {}", mateBridgeRes.getUser().getNickname());
+                users.add(mateBridgeRes.getUser().getNickname());
+            }
+            log.info("여행 그룹에 소속된 인원 수 : {}", users.size());
+        }
+
+
 
         return MateRegistPostRes.builder().mateId(savedMate.getId())
             .name(savedMate.getName())
@@ -157,15 +176,25 @@ public class MateServiceImpl implements MateService {
             .user(mateUpdatePostReq.getUsers())
             .build();
 
+        for(String id : mateUpdatePostReq.getUsers()){
+            log.info("회원 ID 입니다 : {}", id);
+        }
+
         log.info("user-service : 그룹 유저 수정 request");
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("user-modify-circuitbreaker");
-        ResponseDto responseDto = circuitBreaker.run(
+        List<MateBridgeRes> mateBridgeModifyResList = circuitBreaker.run(
             () -> userServiceClient.modifyMateBridge(mateBridgeModifyReq), throwable -> null);
 
-        List<String> users;
-        users = getUsers(responseDto);
+        List<String> users = new ArrayList<>();
+        // users = getUsers(responseDto);
 
-        log.info("여행 그룹에 소속된 인원 수 : ", users.size());
+        if(mateBridgeModifyResList != null){
+            for(MateBridgeRes mateBridgeRes : mateBridgeModifyResList) {
+                users.add(String.valueOf(mateBridgeRes));
+            }
+
+            log.info("여행 그룹에 소속된 인원 수 : ", users.size());
+        }
 
         return MateUpdatePostRes.builder()
             .mateId(saveMate.getId())
@@ -203,6 +232,8 @@ public class MateServiceImpl implements MateService {
             .mateId(mateDeleteReq.getMateId())
             .build();
 
+        log.info("mateId : delete", mateDeleteDto.getMateId());
+
         kafkaProducer.send("journeys-delete", mateDeleteDto);
 
         return true;
@@ -223,10 +254,18 @@ public class MateServiceImpl implements MateService {
         log.info("여행 그룹에 포함된 user 정보 조회");
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create(
             "user-mate-bridge-circuitbreaker");
-        ResponseDto responseDto = circuitBreaker.run(
+        List<MateBridgeRes> mateBridgeResList = circuitBreaker.run(
             () -> userServiceClient.getMateBridgeUsers(mateId), throwable -> null);
 
         List<String> users = new ArrayList<>();
+
+        if(mateBridgeResList != null){
+            for(MateBridgeRes mateBridgeRes : mateBridgeResList) {
+                users.add(String.valueOf(mateBridgeRes));
+            }
+        }
+
+        /*
 
         if (responseDto != null) {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -245,6 +284,8 @@ public class MateServiceImpl implements MateService {
                 }
             }
         }
+
+         */
 
         return MateDetailRes.builder()
             .mateId(mate.getId())
@@ -682,6 +723,7 @@ public class MateServiceImpl implements MateService {
 
         return contentListRes;
     }
+/*
 
     private String getNickName(String userId) {
 
@@ -690,12 +732,13 @@ public class MateServiceImpl implements MateService {
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create(
             "user-nickname-circuitbreaker");
 
-        ResponseDto responseDto = circuitBreaker.run(() -> userServiceClient.getUserInfo(userId),
+        MateBridgeRes mateBridgeRes = circuitBreaker.run(() -> userServiceClient.getUserInfo(userId),
             throwable -> null);
 
-        String nickname = " ";
+        String nickname = mateBridgeRes != null? mateBridgeRes.getUser().getNickname() : " ";
 
-        if (responseDto != null) {
+
+            if (responseDto != null) {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode data = null;
             try {
@@ -707,8 +750,11 @@ public class MateServiceImpl implements MateService {
             nickname = data.get("nickname").asText();
         }
 
+
         return nickname;
     }
+
+
 
     private static List<String> getUsers(ResponseDto responseDto) {
 
@@ -736,4 +782,66 @@ public class MateServiceImpl implements MateService {
         }
         return userList;
     }
+
+     */
+
+
+    private String getNickName(String userId) {
+
+        log.info("user service 호출 : 아이디로 유저 찾기");
+
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create(
+            "user-nickname-circuitbreaker");
+
+        ResponseMateRes responseDto = circuitBreaker.run(() -> userServiceClient.getUserInfo(userId),
+            throwable -> null);
+
+        log.info("responseDto data {}", responseDto.getData());
+
+        String nickname = " ";
+
+        if (responseDto != null) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode data = null;
+            try {
+                data = objectMapper.readTree(responseDto.getData().toString());
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                log.error("JSON 데이터를 가져오는 과정에서 에러가 발생했습니다. ");
+            }
+            nickname = data.get("nickname").asText();
+        }
+
+        return nickname;
+    }
+   /*
+    private static List<String> getUsers(ResponseMateRes responseDto) {
+
+        List<String> userList = new ArrayList<>();
+
+        if (responseDto != null) {
+
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            JsonNode data = null;
+            try {
+                data = objectMapper.readTree(responseDto.toString()).get("data");
+            } catch (JsonProcessingException e) {
+                log.error("JSON 데이터를 가져오는 과정에서 에러가 발생했습니다. ");
+            }
+
+            if (data.isArray()) {
+                for (JsonNode item : data) {
+                    JsonNode user = item.get("user");
+                    String nickname = user.get("nickname").asText();
+                    log.info("여행 그룹에 속한 회원 닉네임 입니다. {}", nickname);
+                    userList.add(nickname);
+                }
+            }
+        }
+        return userList;
+    }
+
+
+     */
 }

@@ -1,6 +1,7 @@
-package com.ssafy.journeymate.mateservice.dto;
+package com.ssafy.journeymate.mateservice.dto.response.client;
 
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,8 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ResponseDto {
+@JsonSerialize
+public class ResponseMateRes implements Serializable {
 
     private String message;
     private Object data;
+
 }
