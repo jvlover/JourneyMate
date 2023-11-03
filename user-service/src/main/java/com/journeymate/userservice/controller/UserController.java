@@ -99,7 +99,15 @@ public class UserController {
 
         MateBridgeFindRes res = mateBridgeService.findMateBridgeByMateId(mateId);
 
-        return new ResponseEntity<>(new ResponseDto("회원 정보 반환", res), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto("회원 정보 반환!", res), HttpStatus.OK);
+    }
+
+    @GetMapping("/feign/{mateId}")
+    public MateBridgeFindRes findUserByMateIdForFeign(@PathVariable Long mateId) {
+
+        MateBridgeFindRes res = mateBridgeService.findMateBridgeByMateId(mateId);
+
+        return res;
     }
 
     @PutMapping("/exit/{id}")

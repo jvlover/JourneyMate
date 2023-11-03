@@ -7,11 +7,13 @@ import com.journeymate.userservice.dto.response.MateBridgeModifyRes;
 import com.journeymate.userservice.dto.response.MateBridgeRegistRes;
 import com.journeymate.userservice.entity.MateBridge;
 import com.journeymate.userservice.entity.User;
+import com.journeymate.userservice.exception.MateBridgeNotFoundException;
 import com.journeymate.userservice.exception.UserNotFoundException;
 import com.journeymate.userservice.repository.MateBridgeRepository;
 import com.journeymate.userservice.repository.UserRepository;
 import com.journeymate.userservice.util.BytesHexChanger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -86,20 +88,45 @@ public class MateBridgeServiceImpl implements MateBridgeService {
     public List<MateBridgeModifyRes> modifyMateBridge(
         MateBridgeModifyPutReq mateBridgeModifyPutReq) {
 
-        ModelMapper modelMapper = new ModelMapper();
-        List<MateBridgeModifyRes> res = new ArrayList<>();
         List<MateBridge> mateBridges = mateBridgeRepository.findByMateId(
             mateBridgeModifyPutReq.getMateId());
 
+        List<String> users = mateBridgeModifyPutReq.getUsers();
+
+        List<MateBridgeModifyRes> res = new ArrayList<>();
+
+        HashMap<String, Integer> userMap = new HashMap<>();
+
         for (MateBridge mateBridge : mateBridges) {
-            mateBridge.deleteBridge();
+            userMap.put(new BytesHexChanger().bytesToHex(mateBridge.getUser().getId()), 1);
         }
+        for (String id : users) {
+            if (userMap.containsKey(id)) {
+                userMap.put(id, userMap.get(id) + 1);
+            } else {
+                userMap.put(id, 3);
+            }
+        }
+        for (String id : userMap.keySet()) {
+            MateBridge mateBridge = mateBridgeRepository
+                .findByMateIdAndUser(mateBridgeModifyPutReq.getMateId(),
+                    userRepository.findById(bytesHexChanger.hexToBytes(id))
+                        .orElseThrow(UserNotFoundException::new))
+                .orElseThrow(MateBridgeNotFoundException::new);
+            MateBridgeModifyRes modifyRes = new ModelMapper().map(mateBridge,
+                MateBridgeModifyRes.class);
+            if (userMap.get(id) == 3) {
+                // 새롭게 추가된 유저
+                mateBridgeRepository.save(mateBridge);
 
-        List<MateBridgeRegistRes> mateBridgeRegistReses = registMateBridge(
-            modelMapper.map(mateBridgeModifyPutReq, MateBridgeRegistPostReq.class));
-
-        for (MateBridgeRegistRes mateBridgeRegistRes : mateBridgeRegistReses) {
-            res.add(modelMapper.map(mateBridgeRegistRes, MateBridgeModifyRes.class));
+                res.add(modifyRes);
+            } else if (userMap.get(id) == 2) {
+                // 계속 존재하는 유저
+                res.add(modifyRes);
+            } else if (userMap.get(id) == 1) {
+                // 삭제된 유저
+                mateBridge.deleteBridge();
+            }
         }
         return res;
     }

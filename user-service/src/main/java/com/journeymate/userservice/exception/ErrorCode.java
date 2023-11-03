@@ -26,6 +26,8 @@ public enum ErrorCode {
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
 
+    MateBridge_NOT_FOUND(HttpStatus.NOT_FOUND, "그룹에 가입된 회원이 아닙니다"),
+
     DUPLICATED_LOGIN_ID(HttpStatus.CONFLICT, "중복된 아이디 입니다."),
 
     DUPLICATED_EMAIL(HttpStatus.CONFLICT, "중복된 이메일 입니다."),
