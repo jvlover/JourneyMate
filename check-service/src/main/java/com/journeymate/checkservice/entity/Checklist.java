@@ -60,8 +60,8 @@ public class Checklist {
         this.isDeleted = true;
     }
 
-    public void check() {
-        this.isChecked = true;
+    public void changeCheck() {
+        this.isChecked = !isChecked;
     }
 
 }

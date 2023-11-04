@@ -1,11 +1,11 @@
 package com.journeymate.checkservice.service;
 
 import com.journeymate.checkservice.client.UserClient;
-import com.journeymate.checkservice.dto.User;
 import com.journeymate.checkservice.dto.request.ChecklistRegistPostReq;
 import com.journeymate.checkservice.dto.request.ItemUpdatePutReq;
 import com.journeymate.checkservice.dto.response.ChecklistFindRes;
 import com.journeymate.checkservice.dto.response.ChecklistRegistRes;
+import com.journeymate.checkservice.dto.response.UserFindRes;
 import com.journeymate.checkservice.entity.Checklist;
 import com.journeymate.checkservice.exception.ChecklistNotFoundException;
 import com.journeymate.checkservice.repository.ChecklistRepository;
@@ -38,15 +38,17 @@ public class ChecklistServiceImpl implements ChecklistService {
     @Override
     public List<ChecklistRegistRes> registChecklist(ChecklistRegistPostReq checklistRegistPostReq) {
 
-        List<User> users = userClient.findUserByMateIdForFeign(checklistRegistPostReq.getMateId())
-            .getUsers();
+        log.info("ChecklistService_registChecklist_start : " + checklistRegistPostReq);
+
+        List<UserFindRes> users = userClient.findUserByMateId(checklistRegistPostReq.getMateId())
+            .getData().getUsers();
 
         List<ChecklistRegistRes> res = new ArrayList<>();
 
         for (ItemUpdatePutReq item : checklistRegistPostReq.getItems()) {
-            for (User user : users) {
+            for (UserFindRes user : users) {
                 Checklist checklist = Checklist.builder()
-                    .userId(user.getId())
+                    .userId(bytesHexChanger.hexToBytes(user.getId()))
                     .journeyId(checklistRegistPostReq.getJourneyId())
                     .name(item.getName()).num(item.getNum()).isChecked(false).isDeleted(false)
                     .build();
@@ -56,11 +58,14 @@ public class ChecklistServiceImpl implements ChecklistService {
                 ChecklistRegistRes checklistRegistRes = new ModelMapper().map(checklist,
                     ChecklistRegistRes.class);
 
-                checklistRegistRes.setUserId(bytesHexChanger.bytesToHex(user.getId()));
+                checklistRegistRes.setUserId(user.getId());
 
                 res.add(checklistRegistRes);
             }
         }
+
+        log.info("ChecklistService_registChecklist_end : " + res);
+
         return res;
     }
 

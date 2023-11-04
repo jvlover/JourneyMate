@@ -1,6 +1,5 @@
 package com.journeymate.checkservice.dto.response;
 
-import com.journeymate.checkservice.dto.User;
 import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,8 +8,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MateBridgeFindRes {
 
-    List<User> users;
+    private String message;
 
-    String creator;
+    private MateBridgeFindData data;
 
+    @Data
+    public static class MateBridgeFindData {
+
+        List<UserFindRes> users;
+
+        String creator;
+
+    }
 }

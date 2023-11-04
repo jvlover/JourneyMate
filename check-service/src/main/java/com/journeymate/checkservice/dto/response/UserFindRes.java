@@ -1,4 +1,4 @@
-package com.journeymate.checkservice.dto;
+package com.journeymate.checkservice.dto.response;
 
 import java.time.LocalDateTime;
 import lombok.Data;
@@ -6,9 +6,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class User {
+public class UserFindRes {
 
-    private byte[] id;
+    private String id;
 
     private String nickname;
 
@@ -17,7 +17,5 @@ public class User {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
-
-    private Boolean isDeleted;
 
 }
