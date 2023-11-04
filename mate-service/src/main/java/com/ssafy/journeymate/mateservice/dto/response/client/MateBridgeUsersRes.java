@@ -2,29 +2,23 @@ package com.ssafy.journeymate.mateservice.dto.response.client;
 
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import java.io.Serializable;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Data;
-import lombok.Getter;
 
 @Data
-public class MateBridgeRes{
+@JsonSerialize
+public class MateBridgeUsersRes {
 
     private String message;
-    private List<MateBridgeData> data;
+    private MateBridgeUser data;
 
     @Data
-    public static class MateBridgeData{
+    public static class MateBridgeUser{
 
-        private int id;
-        private User user;
-        private Long mateId;
-        private LocalDateTime createdAt;
-        private LocalDateTime updatedAt;
-        private Boolean isDeleted;
-        private Boolean isCreator;
-
+        private List<User> users;
+        private String creator;
 
         @Data
         public static class User{
@@ -34,7 +28,6 @@ public class MateBridgeRes{
             private String imgUrl;
             private LocalDateTime createdAt;
             private LocalDateTime updatedAt;
-            private Boolean isDeleted;
         }
 
     }
