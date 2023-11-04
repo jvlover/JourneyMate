@@ -5,6 +5,7 @@ import com.journeymate.userservice.dto.request.MateBridgeRegistPostReq;
 import com.journeymate.userservice.dto.response.MateBridgeFindRes;
 import com.journeymate.userservice.dto.response.MateBridgeModifyRes;
 import com.journeymate.userservice.dto.response.MateBridgeRegistRes;
+import com.journeymate.userservice.dto.response.UserFindRes;
 import com.journeymate.userservice.entity.MateBridge;
 import com.journeymate.userservice.entity.User;
 import com.journeymate.userservice.exception.MateBridgeNotFoundException;
@@ -27,30 +28,38 @@ public class MateBridgeServiceImpl implements MateBridgeService {
 
     private final MateBridgeRepository mateBridgeRepository;
     private final UserRepository userRepository;
-    private final BytesHexChanger bytesHexChanger;
+
+    private final ModelMapper modelMapper = new ModelMapper();
+
+    private final BytesHexChanger bytesHexChanger = new BytesHexChanger();
 
     @Autowired
     public MateBridgeServiceImpl(MateBridgeRepository mateBridgeRepository,
-        UserRepository userRepository, BytesHexChanger bytesHexChanger) {
+        UserRepository userRepository) {
         this.mateBridgeRepository = mateBridgeRepository;
         this.userRepository = userRepository;
-        this.bytesHexChanger = bytesHexChanger;
     }
 
     @Override
     public MateBridgeFindRes findMateBridgeByMateId(Long mateId) {
 
         List<MateBridge> mateBridges = mateBridgeRepository.findByMateId(mateId);
+
         MateBridgeFindRes res = new MateBridgeFindRes();
-        List<User> users = new ArrayList<>();
+
+        List<UserFindRes> users = new ArrayList<>();
+
         String creator = "";
+
         for (MateBridge mateBridge : mateBridges) {
             if (mateBridge.getIsCreator()) {
                 creator = bytesHexChanger.bytesToHex(mateBridge.getUser().getId());
             }
             Optional<User> user = userRepository.findById(mateBridge.getUser().getId());
             if (user.isPresent()) {
-                users.add(user.orElseThrow(UserNotFoundException::new));
+                UserFindRes userFindRes = new ModelMapper().map(user.get(), UserFindRes.class);
+                userFindRes.setId(bytesHexChanger.bytesToHex(user.get().getId()));
+                users.add(userFindRes);
             }
         }
         res.setUsers(users);
@@ -63,6 +72,7 @@ public class MateBridgeServiceImpl implements MateBridgeService {
         MateBridgeRegistPostReq mateBridgeRegistPostReq) {
 
         List<String> users = mateBridgeRegistPostReq.getUsers();
+
         List<MateBridgeRegistRes> mateBridges = new ArrayList<>();
 
         for (String id : users) {
@@ -78,7 +88,13 @@ public class MateBridgeServiceImpl implements MateBridgeService {
 
             mateBridgeRepository.save(mateBridge);
 
-            mateBridges.add(new ModelMapper().map(mateBridge, MateBridgeRegistRes.class));
+            UserFindRes userFindRes = modelMapper.map(user, UserFindRes.class);
+            userFindRes.setId(bytesHexChanger.bytesToHex(user.getId()));
+            MateBridgeRegistRes mateBridgeRegistRes = modelMapper.map(mateBridge,
+                MateBridgeRegistRes.class);
+            mateBridgeRegistRes.setUser(userFindRes);
+
+            mateBridges.add(mateBridgeRegistRes);
         }
 
         return mateBridges;
@@ -98,34 +114,65 @@ public class MateBridgeServiceImpl implements MateBridgeService {
         HashMap<String, Integer> userMap = new HashMap<>();
 
         for (MateBridge mateBridge : mateBridges) {
+            // 기존에 있던 user들 hashMap에 추가
             userMap.put(new BytesHexChanger().bytesToHex(mateBridge.getUser().getId()), 1);
         }
         for (String id : users) {
             if (userMap.containsKey(id)) {
+                // 새롭게 추가된 유저가 기존 유저라면 +1 -> 2가 됨
+                // 따라서, 만약 기존 유저가 추가되지 않았다면 (삭제됐다면) 1이 됨
                 userMap.put(id, userMap.get(id) + 1);
             } else {
+                // 새롭게 추가된 유저가 기존 유저가 아니라면 +3 -> 3이 됨
                 userMap.put(id, 3);
             }
         }
         for (String id : userMap.keySet()) {
-            MateBridge mateBridge = mateBridgeRepository
-                .findByMateIdAndUser(mateBridgeModifyPutReq.getMateId(),
-                    userRepository.findById(bytesHexChanger.hexToBytes(id))
-                        .orElseThrow(UserNotFoundException::new))
-                .orElseThrow(MateBridgeNotFoundException::new);
-            MateBridgeModifyRes modifyRes = new ModelMapper().map(mateBridge,
-                MateBridgeModifyRes.class);
             if (userMap.get(id) == 3) {
                 // 새롭게 추가된 유저
+
+                MateBridge mateBridge = MateBridge.builder()
+                    .user(userRepository.findById(bytesHexChanger.hexToBytes(id))
+                        .orElseThrow(UserNotFoundException::new))
+                    .mateId(mateBridgeModifyPutReq.getMateId()).build();
+
                 mateBridgeRepository.save(mateBridge);
 
+                MateBridgeModifyRes modifyRes = new ModelMapper().map(mateBridge,
+                    MateBridgeModifyRes.class);
+
+                UserFindRes userFindRes = modelMapper.map(mateBridge.getUser(), UserFindRes.class);
+
+                userFindRes.setId(bytesHexChanger.bytesToHex(mateBridge.getUser().getId()));
+
+                modifyRes.setUser(userFindRes);
+
                 res.add(modifyRes);
-            } else if (userMap.get(id) == 2) {
-                // 계속 존재하는 유저
-                res.add(modifyRes);
-            } else if (userMap.get(id) == 1) {
-                // 삭제된 유저
-                mateBridge.deleteBridge();
+
+            } else {
+                MateBridge mateBridge = mateBridgeRepository
+                    .findByMateIdAndUserId(mateBridgeModifyPutReq.getMateId(),
+                        bytesHexChanger.hexToBytes(id))
+                    .orElseThrow(MateBridgeNotFoundException::new);
+
+                if (userMap.get(id) == 2) {
+                    MateBridgeModifyRes modifyRes = new ModelMapper().map(mateBridge,
+                        MateBridgeModifyRes.class);
+
+                    User user = mateBridge.getUser();
+
+                    UserFindRes userFindRes = modelMapper.map(user, UserFindRes.class);
+
+                    userFindRes.setId(bytesHexChanger.bytesToHex(user.getId()));
+
+                    modifyRes.setUser(userFindRes);
+                    
+                    // 계속 존재하는 유저
+                    res.add(modifyRes);
+                } else if (userMap.get(id) == 1) {
+                    // 삭제된 유저
+                    mateBridge.deleteBridge();
+                }
             }
         }
         return res;

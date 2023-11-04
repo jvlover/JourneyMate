@@ -1,14 +1,21 @@
 package com.journeymate.userservice.service;
 
 import com.fasterxml.uuid.Generators;
+import com.journeymate.userservice.client.JourneyClient;
+import com.journeymate.userservice.client.MateClient;
 import com.journeymate.userservice.dto.request.UserModifyProfilePutReq;
+import com.journeymate.userservice.dto.response.MateFindRes.MateFindData;
 import com.journeymate.userservice.dto.response.UserFindRes;
 import com.journeymate.userservice.dto.response.UserModifyRes;
 import com.journeymate.userservice.dto.response.UserRegistRes;
+import com.journeymate.userservice.entity.MateBridge;
 import com.journeymate.userservice.entity.User;
 import com.journeymate.userservice.exception.UserNotFoundException;
+import com.journeymate.userservice.repository.MateBridgeRepository;
 import com.journeymate.userservice.repository.UserRepository;
 import com.journeymate.userservice.util.BytesHexChanger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -20,12 +27,19 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final BytesHexChanger bytesHexChanger;
+    private final MateBridgeRepository mateBridgeRepository;
+    private final MateClient mateClient;
+    private final JourneyClient journeyClient;
+
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BytesHexChanger bytesHexChanger) {
+    public UserServiceImpl(UserRepository userRepository,
+        MateBridgeRepository mateBridgeRepository, MateClient mateClient,
+        JourneyClient journeyClient) {
         this.userRepository = userRepository;
-        this.bytesHexChanger = bytesHexChanger;
+        this.mateBridgeRepository = mateBridgeRepository;
+        this.mateClient = mateClient;
+        this.journeyClient = journeyClient;
     }
 
     @Override
@@ -35,17 +49,11 @@ public class UserServiceImpl implements UserService {
 
         UserRegistRes res = new ModelMapper().map(user, UserRegistRes.class);
 
-        res.setId(bytesHexChanger.bytesToHex(user.getId()));
-        
+        res.setId(new BytesHexChanger().bytesToHex(user.getId()));
+
         return res;
 
     }
-
-    @Override
-    public Boolean logout() {
-        return null;
-    }
-
 
     @Override
     public Boolean nicknameDuplicateCheck(String nickname) {
@@ -53,6 +61,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByNickname(nickname).isPresent();
     }
 
+    // 유저 있는지 체크
     @Override
     public Boolean userCheck(byte[] bytesId) {
 
@@ -71,7 +80,7 @@ public class UserServiceImpl implements UserService {
 
         UserFindRes res = new ModelMapper().map(user, UserFindRes.class);
 
-        res.setId(bytesHexChanger.bytesToHex(user.getId()));
+        res.setId(new BytesHexChanger().bytesToHex(user.getId()));
 
         return res;
     }
@@ -83,8 +92,24 @@ public class UserServiceImpl implements UserService {
 
         UserFindRes res = new ModelMapper().map(user, UserFindRes.class);
 
-        res.setId(bytesHexChanger.bytesToHex(user.getId()));
+        res.setId(new BytesHexChanger().bytesToHex(user.getId()));
 
+        return res;
+    }
+
+    @Override
+    public List<MateFindData> findMateById(String id) {
+
+        List<MateBridge> mateBridges = mateBridgeRepository.findByUserId(
+            new BytesHexChanger().hexToBytes(id));
+
+        List<MateFindData> res = new ArrayList<>();
+
+        for (MateBridge mateBridge : mateBridges) {
+
+            res.add(mateClient.findMate(mateBridge.getMateId()).getData());
+
+        }
         return res;
     }
 
@@ -92,7 +117,7 @@ public class UserServiceImpl implements UserService {
     public UserModifyRes modifyProfile(UserModifyProfilePutReq userModifyProfilePutReq) {
 
         User user = userRepository.findById(
-                bytesHexChanger.hexToBytes(userModifyProfilePutReq.getId()))
+                new BytesHexChanger().hexToBytes(userModifyProfilePutReq.getId()))
             .orElseThrow(UserNotFoundException::new);
 
         user.modifyProfile(userModifyProfilePutReq.getNickname(),
@@ -112,7 +137,7 @@ public class UserServiceImpl implements UserService {
             uuidV1Parts[2] + uuidV1Parts[1] + uuidV1Parts[0] + uuidV1Parts[3] + uuidV1Parts[4];
 
         String sequentialUuidV1 = String.join("", sequentialUUID);
-        return bytesHexChanger.hexToBytes(sequentialUuidV1);
+        return new BytesHexChanger().hexToBytes(sequentialUuidV1);
     }
 
     @Override

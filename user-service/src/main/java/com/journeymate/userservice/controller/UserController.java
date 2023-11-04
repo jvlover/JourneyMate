@@ -98,7 +98,11 @@ public class UserController {
     @GetMapping("/mateBridge/{mateId}")
     public ResponseEntity<ResponseDto> findUserByMateId(@PathVariable Long mateId) {
 
+        log.info("UserController_findUserByMateId_start : " + mateId);
+
         MateBridgeFindRes res = mateBridgeService.findMateBridgeByMateId(mateId);
+
+        log.info("UserController_findUserByMateId_end : " + res.toString());
 
         return new ResponseEntity<>(new ResponseDto("회원 정보 반환!", res), HttpStatus.OK);
     }
@@ -129,5 +133,13 @@ public class UserController {
         Boolean nicknameDuplicate = userService.nicknameDuplicateCheck(nickname);
 
         return new ResponseEntity<>(new ResponseDto("닉네임 중복 확인", nicknameDuplicate), HttpStatus.OK);
+    }
+
+    @GetMapping("/mate/{id}")
+    @Transactional
+    public ResponseEntity<ResponseDto> findMateById(@PathVariable String id) {
+
+        return new ResponseEntity<>(new ResponseDto("그룹 확인", userService.findMateById(id)),
+            HttpStatus.OK);
     }
 }
