@@ -7,7 +7,6 @@ import lombok.Data;
 public class DocsUpdateReq {
 
     private String title;
-    private Long mateId;
     private String userId;
     private String content;
     private Long docsId;

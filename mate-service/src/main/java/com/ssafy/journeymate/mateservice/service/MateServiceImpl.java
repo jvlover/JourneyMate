@@ -639,6 +639,9 @@ public class MateServiceImpl implements MateService {
     public void deleteContent(ContentDeleteReq contentDeleteReq) throws ImageNotFoundException {
 
         for (Long contentId : contentDeleteReq.getContents()) {
+
+            log.info("삭제할 content Id : {}", contentId);
+
             Contents contents = contentsRepository.findById(contentId)
                 .orElseThrow(ImageNotFoundException::new);
 
