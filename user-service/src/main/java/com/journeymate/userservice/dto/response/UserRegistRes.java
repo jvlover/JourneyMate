@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserRegistRes {
 
-    String id;
+    private String id;
 
-    String nickname;
+    private String nickname;
 
-    String imgUrl;
+    private String imgUrl;
 
-    LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
-    LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
 }

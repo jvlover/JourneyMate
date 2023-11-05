@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserModifyProfilePutReq {
 
-    String id;
+    private String id;
 
-    String nickname;
+    private String nickname;
 
-    String imgUrl;
+    private String imgUrl;
 }

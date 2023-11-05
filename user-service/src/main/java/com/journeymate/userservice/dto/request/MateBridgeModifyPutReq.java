@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MateBridgeModifyPutReq {
 
-    Long mateId;
+    private Long mateId;
 
-    List<String> users;
+    private List<String> users;
 
-    String creator;
+    private String creator;
 }

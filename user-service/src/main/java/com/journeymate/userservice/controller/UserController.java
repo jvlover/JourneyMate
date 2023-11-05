@@ -5,9 +5,12 @@ import com.journeymate.userservice.dto.request.MateBridgeModifyPutReq;
 import com.journeymate.userservice.dto.request.MateBridgeRegistPostReq;
 import com.journeymate.userservice.dto.request.UserModifyProfilePutReq;
 import com.journeymate.userservice.dto.request.UserRegistPostReq;
+import com.journeymate.userservice.dto.response.DocsListFindRes.DocsListFindData;
+import com.journeymate.userservice.dto.response.JourneyFindRes.JourneyFindData;
 import com.journeymate.userservice.dto.response.MateBridgeFindRes;
 import com.journeymate.userservice.dto.response.MateBridgeModifyRes;
 import com.journeymate.userservice.dto.response.MateBridgeRegistRes;
+import com.journeymate.userservice.dto.response.MateFindRes.MateFindData;
 import com.journeymate.userservice.dto.response.UserFindRes;
 import com.journeymate.userservice.dto.response.UserModifyRes;
 import com.journeymate.userservice.dto.response.UserRegistRes;
@@ -35,15 +38,12 @@ public class UserController {
 
     private final UserService userService;
     private final MateBridgeService mateBridgeService;
-
-    private final BytesHexChanger bytesHexChanger;
+    private final BytesHexChanger bytesHexChanger = new BytesHexChanger();
 
     @Autowired
-    public UserController(UserService userService, MateBridgeService mateBridgeService,
-        BytesHexChanger bytesHexChanger) {
+    public UserController(UserService userService, MateBridgeService mateBridgeService) {
         this.userService = userService;
         this.mateBridgeService = mateBridgeService;
-        this.bytesHexChanger = bytesHexChanger;
     }
 
     @PostMapping("/regist")
@@ -51,10 +51,14 @@ public class UserController {
     public ResponseEntity<ResponseDto> socialLogin(
         @RequestBody UserRegistPostReq userRegistPostReq) {
 
+        log.info("UserController_socailLogin_start : " + userRegistPostReq);
+
         byte[] hexId = userService.createUUID();
 
         // TODO: 회원 있으면 login 없으면 registUser
         UserRegistRes res = userService.registUser(hexId, userRegistPostReq.getNickname());
+
+        log.info("UserController_socailLogin_end : " + res);
 
         return new ResponseEntity<>(new ResponseDto("로그인 완료!", res), HttpStatus.OK);
     }
@@ -64,7 +68,11 @@ public class UserController {
     public ResponseEntity<ResponseDto> registMateBridge(@RequestBody
     MateBridgeRegistPostReq mateBridgeRegistPostReq) {
 
+        log.info("UserController_registMateBridge_start : " + mateBridgeRegistPostReq);
+
         List<MateBridgeRegistRes> res = mateBridgeService.registMateBridge(mateBridgeRegistPostReq);
+
+        log.info("UserController_registMateBridge_end : " + res);
 
         return new ResponseEntity<>(new ResponseDto("메이트 브릿지 저장 완료!", res), HttpStatus.OK);
     }
@@ -74,7 +82,11 @@ public class UserController {
     public ResponseEntity<ResponseDto> modifyMateBridge(
         @RequestBody MateBridgeModifyPutReq mateBridgeModifyPutReq) {
 
+        log.info("UserController_modifyMateBridge_start : " + mateBridgeModifyPutReq);
+
         List<MateBridgeModifyRes> res = mateBridgeService.modifyMateBridge(mateBridgeModifyPutReq);
+
+        log.info("UserController_modifyMateBridge_end : " + res);
 
         return new ResponseEntity<>(new ResponseDto("메이트 브릿지 수정 완료", res), HttpStatus.OK);
     }
@@ -82,7 +94,11 @@ public class UserController {
     @GetMapping("/findById/{id}")
     public ResponseEntity<ResponseDto> findUserById(@PathVariable String id) {
 
-        UserFindRes res = userService.findUserById(bytesHexChanger.hexToBytes(id));
+        log.info("UserController_findUserById_start : " + id);
+
+        UserFindRes res = userService.findUserById(id);
+
+        log.info("UserController_findUserById_end : " + res);
 
         return new ResponseEntity<>(new ResponseDto("회원 정보 반환!", res), HttpStatus.OK);
     }
@@ -90,7 +106,11 @@ public class UserController {
     @GetMapping("/findByNickname/{nickname}")
     public ResponseEntity<ResponseDto> findUserByNickname(@PathVariable String nickname) {
 
+        log.info("UserController_findUserByNickname_start : " + nickname);
+
         UserFindRes res = userService.findUserByNickname(nickname);
+
+        log.info("UserController_findUserByNickname_end : " + res);
 
         return new ResponseEntity<>(new ResponseDto("회원 정보 반환!", res), HttpStatus.OK);
     }
@@ -111,7 +131,11 @@ public class UserController {
     @Transactional
     public ResponseEntity<ResponseDto> deleteUser(@PathVariable String id) {
 
-        userService.deleteUser(bytesHexChanger.hexToBytes(id));
+        log.info("UserController_deleteUser_start : " + id);
+
+        userService.deleteUser(id);
+
+        log.info("UserController_deleteUser_end : SUCCESS");
 
         return new ResponseEntity<>(new ResponseDto("회원 탈퇴 성공!", true), HttpStatus.OK);
     }
@@ -121,7 +145,11 @@ public class UserController {
     public ResponseEntity<ResponseDto> modifyProfile(
         UserModifyProfilePutReq userModifyProfilePutReq) {
 
+        log.info("UserController_modifyProfile_end : " + userModifyProfilePutReq);
+
         UserModifyRes res = userService.modifyProfile(userModifyProfilePutReq);
+
+        log.info("UserController_mmodifyProfile_end : " + res);
 
         return new ResponseEntity<>(new ResponseDto("회원 정보 수정 완료", res), HttpStatus.OK);
     }
@@ -130,16 +158,50 @@ public class UserController {
     @Transactional
     public ResponseEntity<ResponseDto> nicknameDuplicateCheck(@PathVariable String nickname) {
 
-        Boolean nicknameDuplicate = userService.nicknameDuplicateCheck(nickname);
+        log.info("UserController_nicknameDuplicateCheck_start : " + nickname);
 
-        return new ResponseEntity<>(new ResponseDto("닉네임 중복 확인", nicknameDuplicate), HttpStatus.OK);
+        Boolean res = userService.nicknameDuplicateCheck(nickname);
+
+        log.info("UserController_nicknameDuplicateCheck_end : " + res);
+
+        return new ResponseEntity<>(new ResponseDto("닉네임 중복 확인", res), HttpStatus.OK);
     }
 
     @GetMapping("/mate/{id}")
     @Transactional
     public ResponseEntity<ResponseDto> findMateById(@PathVariable String id) {
 
-        return new ResponseEntity<>(new ResponseDto("그룹 확인", userService.findMateById(id)),
+        log.info("UserController_findMateById_start : " + id);
+
+        List<MateFindData> res = userService.findMateById(id);
+
+        log.info("UserController_findMateById_end : " + res);
+
+        return new ResponseEntity<>(new ResponseDto("그룹 확인", res),
             HttpStatus.OK);
+    }
+
+    @GetMapping("/journey/{id}")
+    public ResponseEntity<ResponseDto> findTodayJourneyById(@PathVariable String id) {
+
+        log.info("UserController_findTodayJourneyById_start : " + id);
+
+        List<JourneyFindData> res = userService.findTodayJourneyById(id);
+
+        log.info("UserController_findTodayJourneyById_end : " + res);
+
+        return new ResponseEntity<>(new ResponseDto("오늘의 일정 조회 완료!", res), HttpStatus.OK);
+    }
+
+    @GetMapping("/docs/{id}")
+    public ResponseEntity<ResponseDto> findDocsById(@PathVariable String id) {
+
+        log.info("UserController_findDocsById_start : " + id);
+
+        List<DocsListFindData> res = userService.findDocsById(id);
+
+        log.info("UserController_findDocsById_end : " + res);
+
+        return new ResponseEntity<>(new ResponseDto("문서 조회 완료!", res), HttpStatus.OK);
     }
 }

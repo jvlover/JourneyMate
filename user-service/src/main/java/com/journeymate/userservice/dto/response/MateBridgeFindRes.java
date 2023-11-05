@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MateBridgeFindRes {
 
-    List<UserFindRes> users;
+    private List<UserFindRes> users;
 
-    String creator;
+    private String creator;
 
 }
