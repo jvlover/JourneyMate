@@ -1,11 +1,13 @@
 package com.journeymate.checkservice.service;
 
 import com.journeymate.checkservice.client.UserClient;
+import com.journeymate.checkservice.dto.request.ChecklistModifyPutReq;
 import com.journeymate.checkservice.dto.request.ChecklistRegistPostReq;
-import com.journeymate.checkservice.dto.request.ItemUpdatePutReq;
+import com.journeymate.checkservice.dto.request.ChecklistRegistPostReq.ItemUpdatePutReq;
 import com.journeymate.checkservice.dto.response.ChecklistFindRes;
+import com.journeymate.checkservice.dto.response.ChecklistModifyRes;
 import com.journeymate.checkservice.dto.response.ChecklistRegistRes;
-import com.journeymate.checkservice.dto.response.UserFindRes;
+import com.journeymate.checkservice.dto.response.MateBridgeFindRes.UserFindRes;
 import com.journeymate.checkservice.entity.Checklist;
 import com.journeymate.checkservice.exception.ChecklistNotFoundException;
 import com.journeymate.checkservice.repository.ChecklistRepository;
@@ -22,16 +24,16 @@ import org.springframework.stereotype.Service;
 public class ChecklistServiceImpl implements ChecklistService {
 
     private final ChecklistRepository checklistRepository;
-
-    private final BytesHexChanger bytesHexChanger;
-
     private final UserClient userClient;
 
+    private final BytesHexChanger bytesHexChanger = new BytesHexChanger();
+    private final ModelMapper modelMapper = new ModelMapper();
+
     @Autowired
-    public ChecklistServiceImpl(ChecklistRepository checklistRepository,
-        BytesHexChanger bytesHexChanger, UserClient userClient) {
+    public ChecklistServiceImpl(ChecklistRepository checklistRepository, UserClient userClient) {
+
         this.checklistRepository = checklistRepository;
-        this.bytesHexChanger = bytesHexChanger;
+
         this.userClient = userClient;
     }
 
@@ -46,6 +48,7 @@ public class ChecklistServiceImpl implements ChecklistService {
         List<ChecklistRegistRes> res = new ArrayList<>();
 
         for (ItemUpdatePutReq item : checklistRegistPostReq.getItems()) {
+
             for (UserFindRes user : users) {
                 Checklist checklist = Checklist.builder()
                     .userId(bytesHexChanger.hexToBytes(user.getId()))
@@ -55,7 +58,7 @@ public class ChecklistServiceImpl implements ChecklistService {
 
                 checklistRepository.save(checklist);
 
-                ChecklistRegistRes checklistRegistRes = new ModelMapper().map(checklist,
+                ChecklistRegistRes checklistRegistRes = modelMapper.map(checklist,
                     ChecklistRegistRes.class);
 
                 checklistRegistRes.setUserId(user.getId());
@@ -72,25 +75,52 @@ public class ChecklistServiceImpl implements ChecklistService {
     @Override
     public ChecklistFindRes findChecklistById(Long id) {
 
-        return new ModelMapper().map(
+        log.info("ChecklistService_findChecklistById_start : " + id);
+
+        ChecklistFindRes res = modelMapper.map(
             checklistRepository.findById(id).orElseThrow(ChecklistNotFoundException::new),
             ChecklistFindRes.class);
+
+        log.info("ChecklistService_findChecklistById_end : " + res);
+
+        return res;
     }
 
     @Override
-    public List<ChecklistFindRes> findChecklistByuserIdAndJourneyId(String userId, Long journeyId) {
+    public ChecklistModifyRes modifyChecklist(ChecklistModifyPutReq checklistModifyPutReq) {
+        
+        log.info("ChecklistService_modifyChecklist_start : " + checklistModifyPutReq);
+
+        ChecklistModifyRes res = null;
+
+        log.info("ChecklistService_modifyChecklist_end : " + res);
+
+        return res;
+    }
+
+    @Override
+    public List<ChecklistFindRes> findChecklistByUserIdAndJourneyId(String userId, Long journeyId) {
+
+        log.info(
+            "ChecklistService_findChecklistByUserIdAndJourneyId_start : " + userId + " "
+                + journeyId);
 
         List<Checklist> checklists = checklistRepository.findChecklistByUserIdAndJourneyId(
             bytesHexChanger.hexToBytes(userId),
             journeyId);
+
         List<ChecklistFindRes> res = new ArrayList<>();
 
-        ModelMapper modelMapper = new ModelMapper();
         for (Checklist checklist : checklists) {
+
             ChecklistFindRes checklistFindRes = modelMapper.map(checklist, ChecklistFindRes.class);
+
             checklistFindRes.setUserId(bytesHexChanger.bytesToHex(checklist.getUserId()));
+
             res.add(checklistFindRes);
         }
+
+        log.info("ChecklistService_findChecklistByUserIdAndJourneyId_end : " + res);
 
         return res;
     }

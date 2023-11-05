@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ChecklistUpdatePutReq {
+public class ChecklistModifyPutReq {
 
     String userId;
 

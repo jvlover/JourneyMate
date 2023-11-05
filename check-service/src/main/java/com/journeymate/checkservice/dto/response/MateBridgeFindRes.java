@@ -1,5 +1,6 @@
 package com.journeymate.checkservice.dto.response;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,21 @@ public class MateBridgeFindRes {
         List<UserFindRes> users;
 
         String creator;
+
+    }
+
+    @Data
+    public class UserFindRes {
+
+        private String id;
+
+        private String nickname;
+
+        private String imgUrl;
+
+        private LocalDateTime createdAt;
+
+        private LocalDateTime updatedAt;
 
     }
 }

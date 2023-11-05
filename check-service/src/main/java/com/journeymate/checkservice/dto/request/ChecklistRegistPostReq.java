@@ -13,4 +13,12 @@ public class ChecklistRegistPostReq {
     Long journeyId;
 
     List<ItemUpdatePutReq> items;
+
+    @Data
+    public class ItemUpdatePutReq {
+
+        String name;
+
+        Integer num;
+    }
 }
