@@ -87,7 +87,7 @@ public class MateServiceImpl implements MateService {
     @Override
     public MateRegistPostRes registMate(MateRegistPostReq mateRegistPostReq) {
 
-        log.info("회원 등록입니다");
+        log.info("여행 그룹 등록 service");
 
         Mate mate = Mate.builder().name(mateRegistPostReq.getName())
             .destination(mateRegistPostReq.getDestination())
@@ -129,9 +129,8 @@ public class MateServiceImpl implements MateService {
     }
 
 
-
     /**
-     * 그룹 수정
+     * 여행 그룹 수정
      *
      * @param mateUpdatePostReq
      * @return
@@ -140,7 +139,7 @@ public class MateServiceImpl implements MateService {
     public MateUpdatePostRes modifyMate(MateUpdatePostReq mateUpdatePostReq)
         throws MateNotFoundException {
 
-        log.info("mate ID : {}", mateUpdatePostReq.getMateId());
+        log.info("수정할 여행 그룹 , mate ID : {}", mateUpdatePostReq.getMateId());
 
         Mate mate = mateRepository.findById(mateUpdatePostReq.getMateId())
             .orElseThrow(MateNotFoundException::new);
@@ -170,7 +169,7 @@ public class MateServiceImpl implements MateService {
         MateBridgeRes mateBridgeModifyRes = circuitBreaker.run(
             () -> userServiceClient.modifyMateBridge(mateBridgeModifyReq), throwable -> null);
 
-        // feignclient X
+        // feignclient O
         List<String> users = savedMateBridgeUsers(mateBridgeModifyRes);
 
         return MateUpdatePostRes.builder()
@@ -187,10 +186,12 @@ public class MateServiceImpl implements MateService {
     }
 
     /**
-     * 그룹 삭제
+     * 여행 그룹 삭제
      *
      * @param mateDeleteReq
      * @return
+     * @throws MateNotFoundException
+     * @throws UnauthorizedRoleException
      */
     @Override
     public boolean deleteMate(MateDeleteReq mateDeleteReq)
@@ -209,7 +210,7 @@ public class MateServiceImpl implements MateService {
             .mateId(mateDeleteReq.getMateId())
             .build();
 
-        log.info("mateId : delete", mateDeleteDto.getMateId());
+        log.info("삭제할 여행 그룹 mateId : {}", mateDeleteDto.getMateId());
 
         kafkaProducer.send("journeys-delete", mateDeleteDto);
 
@@ -217,10 +218,11 @@ public class MateServiceImpl implements MateService {
     }
 
     /**
-     * 여행 그룹 상세 조회
+     * 여행 그룹 상세 정보
      *
      * @param mateId
      * @return
+     * @throws MateNotFoundException
      */
     @Override
     public MateDetailRes getMateDetail(Long mateId)
@@ -259,16 +261,18 @@ public class MateServiceImpl implements MateService {
     }
 
     /**
-     * 여행 그룹 문서 저장
+     * 여행 그룹 문서 등록
      *
      * @param docsRegistReq
      * @param imgFile
      * @return
+     * @throws MateNotFoundException
+     * @throws ImageUploadException
      */
     @Override
     public DocsRegistPostRes registDocs(DocsRegistPostReq docsRegistReq,
         List<MultipartFile> imgFile)
-        throws MateNotFoundException, IOException {
+        throws MateNotFoundException, ImageUploadException {
 
         Mate mate = mateRepository.findById(docsRegistReq.getMateId())
             .orElseThrow(MateNotFoundException::new);
@@ -298,28 +302,37 @@ public class MateServiceImpl implements MateService {
 
             List<FileResposeDto> imgFiles = new ArrayList<>();
 
-            log.info("Multipart");
+            log.info("Multipart 파일 업로드 시작");
 
             for (MultipartFile multipartFile : imgFile) {
-                FileUploadResult fileUploadResult = fileUtil.uploadFile(multipartFile);
 
-                DocsImg docsImg = DocsImg.builder()
-                    .docs(savedDocs)
-                    .fileName(fileUploadResult.getFileName())
-                    .imgUrl(fileUploadResult.getImgUrl())
-                    .build();
+                try {
 
-                docsImgRepository.save(docsImg);
+                    FileUploadResult fileUploadResult = fileUtil.uploadFile(multipartFile);
 
-                FileResposeDto fileResposeDto = FileResposeDto.builder()
-                    .filename(fileUploadResult.getFileName())
-                    .imgUrl(fileUploadResult.getImgUrl())
-                    .build();
+                    DocsImg docsImg = DocsImg.builder()
+                        .docs(savedDocs)
+                        .fileName(fileUploadResult.getFileName())
+                        .imgUrl(fileUploadResult.getImgUrl())
+                        .build();
 
-                imgFiles.add(fileResposeDto);
+                    docsImgRepository.save(docsImg);
 
+                    FileResposeDto fileResposeDto = FileResposeDto.builder()
+                        .filename(fileUploadResult.getFileName())
+                        .imgUrl(fileUploadResult.getImgUrl())
+                        .build();
+
+                    imgFiles.add(fileResposeDto);
+
+                } catch (IOException e) {
+                    log.info("이미지 업로드에 문제가 발생했습니다.");
+                    throw new ImageUploadException();
+                }
             }
             docsRegistRes.imgFileInfo(imgFiles);
+        } else {
+            log.info("보내진 이미지 데이터가 없습니다.");
         }
 
         return docsRegistRes.build();
@@ -445,11 +458,12 @@ public class MateServiceImpl implements MateService {
     }
 
     /**
-     * 문서 삭제
+     * 여행 그룹 문서 삭제
      *
      * @param docsDeleteReq
      * @return
      * @throws DocsNotFoundException
+     * @throws UnauthorizedRoleException
      */
     @Override
     public boolean deleteDocs(DocsDeleteReq docsDeleteReq)
@@ -479,11 +493,12 @@ public class MateServiceImpl implements MateService {
 
 
     /**
-     * 여행 그룹 문서 상세 조회
+     * 여행 그룹 문서 상세 정보 조회
      *
      * @param docsId
      * @return
      * @throws DocsNotFoundException
+     * @throws ImageNotFoundException
      */
     @Override
     public DocsDetailRes getDocsDetail(Long docsId)
@@ -515,19 +530,19 @@ public class MateServiceImpl implements MateService {
 
                 imgFiles.add(fileResposeDto);
             }
-
             docsDetailRes.imgFileInfo(imgFiles);
-
         }
         return docsDetailRes.build();
     }
 
+
     /**
-     * 여행 그룹 문서 전체 조회
+     * 여행 그룹 내의 문서 전체 조회
      *
      * @param mateId
      * @return
      * @throws MateNotFoundException
+     * @throws ImageNotFoundException
      */
     @Override
     public DocsListRes getDocsList(Long mateId)
@@ -574,11 +589,13 @@ public class MateServiceImpl implements MateService {
     }
 
     /**
-     * 여행 그룹 콘텐츠 저장
+     * 여행 그룹 내의 콘텐츠 등록
      *
      * @param contentRegistPostReq
      * @param imgFile
      * @return
+     * @throws ImageUploadException
+     * @throws MateNotFoundException
      */
     @Override
     public ContentRegistPostRes registContent(ContentRegistPostReq contentRegistPostReq,
@@ -619,21 +636,19 @@ public class MateServiceImpl implements MateService {
             } catch (IOException e) {
                 throw new ImageUploadException();
             }
-
         }
 
         ContentRegistPostRes contentRegistPostRes = ContentRegistPostRes.builder()
             .contentInfo(contentList).build();
 
         return contentRegistPostRes;
-
     }
 
     /**
      * 여행 그룹 콘텐츠 삭제
      *
      * @param contentDeleteReq
-     * @return
+     * @throws ImageNotFoundException
      */
     @Override
     public void deleteContent(ContentDeleteReq contentDeleteReq) throws ImageNotFoundException {
@@ -677,9 +692,7 @@ public class MateServiceImpl implements MateService {
 
                 contentInfo.add(content);
             }
-
         }
-
         ContentListRes contentListRes = ContentListRes.builder()
             .contentInfo(contentInfo)
             .build();
@@ -689,6 +702,7 @@ public class MateServiceImpl implements MateService {
 
     /**
      * ID 로 유저 정보 찾기를 통한 nickname 조회
+     *
      * @param userId
      * @return
      */
@@ -697,13 +711,15 @@ public class MateServiceImpl implements MateService {
         log.info("user service 호출 : 아이디로 유저 찾기");
         log.info("user Id : {}", userId);
 
+        // circuitbreaker O
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create(
             "user-nickname-circuitbreaker");
 
+        // feign client O
         FindUserRes findUserRes = circuitBreaker.run(() -> userServiceClient.getUserInfo(userId),
             throwable -> null);
 
-        log.info("responseDto data {}", findUserRes.getData());
+        log.info("feign client responseDto data :  {}", findUserRes.getData());
 
         String nickname = " ";
 
@@ -715,6 +731,7 @@ public class MateServiceImpl implements MateService {
 
     /**
      * 여행 그룹 저장, 수정 이후 그룹에 속한 유저들의 nickname 조회
+     *
      * @param mateBridgeRes
      * @return
      */

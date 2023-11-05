@@ -1,6 +1,5 @@
 package com.ssafy.journeymate.mateservice.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.journeymate.mateservice.dto.request.content.ContentDeleteReq;
 import com.ssafy.journeymate.mateservice.dto.request.content.ContentRegistPostReq;
 import com.ssafy.journeymate.mateservice.dto.request.docs.DocsDeleteReq;
@@ -23,7 +22,6 @@ import com.ssafy.journeymate.mateservice.exception.ImageNotFoundException;
 import com.ssafy.journeymate.mateservice.exception.ImageUploadException;
 import com.ssafy.journeymate.mateservice.exception.MateNotFoundException;
 import com.ssafy.journeymate.mateservice.exception.UnauthorizedRoleException;
-import java.io.IOException;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,7 +41,7 @@ public interface MateService {
 
     public DocsRegistPostRes registDocs(DocsRegistPostReq docsRegistReq,
         List<MultipartFile> imgFile)
-        throws MateNotFoundException, IOException;
+        throws MateNotFoundException, ImageUploadException;
 
     public DocsUpdateRes modifyDocs(DocsUpdateReq docsUpdateReq, List<MultipartFile> imgFile)
         throws ImageUploadException, DocsNotFoundException, UnauthorizedRoleException;

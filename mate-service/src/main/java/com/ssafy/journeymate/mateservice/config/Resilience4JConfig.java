@@ -33,6 +33,4 @@ public class Resilience4JConfig {
             .timeLimiterConfig(timeLimiterConfig)
             .circuitBreakerConfig(circuitBreakerConfig).build());
     }
-
-
 }

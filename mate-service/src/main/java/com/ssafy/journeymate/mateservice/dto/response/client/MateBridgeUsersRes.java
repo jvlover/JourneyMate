@@ -2,7 +2,6 @@ package com.ssafy.journeymate.mateservice.dto.response.client;
 
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Data;
@@ -15,13 +14,14 @@ public class MateBridgeUsersRes {
     private MateBridgeUser data;
 
     @Data
-    public static class MateBridgeUser{
+    public static class MateBridgeUser {
 
         private List<User> users;
         private String creator;
 
         @Data
-        public static class User{
+        public static class User {
+
             private String id;
             private String email;
             private String nickname;
