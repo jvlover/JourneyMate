@@ -1,29 +1,26 @@
 package com.journeymate.checkservice.dto.request;
 
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ChecklistModifyPutReq {
+@AllArgsConstructor
+public class ChecklistKafkaReq {
 
-    String userId;
+    Long mateId;
 
     Long journeyId;
 
-    List<Item> items;
+    List<DefaultItem> defaultItems;
 
     @Data
-    public class Item {
+    public class DefaultItem {
 
         String name;
 
         Integer num;
-
-        Boolean isChecked;
-
-        Boolean isDeleted;
-
     }
 }

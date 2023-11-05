@@ -2,8 +2,9 @@ package com.journeymate.checkservice.service;
 
 import com.journeymate.checkservice.client.UserClient;
 import com.journeymate.checkservice.dto.request.ChecklistModifyPutReq;
-import com.journeymate.checkservice.dto.request.ChecklistRegistPostReq;
-import com.journeymate.checkservice.dto.request.ChecklistRegistPostReq.ItemUpdatePutReq;
+import com.journeymate.checkservice.dto.request.ChecklistKafkaReq;
+import com.journeymate.checkservice.dto.request.ChecklistKafkaReq.DefaultItem;
+import com.journeymate.checkservice.dto.request.ChecklistModifyPutReq.Item;
 import com.journeymate.checkservice.dto.response.ChecklistFindRes;
 import com.journeymate.checkservice.dto.response.ChecklistModifyRes;
 import com.journeymate.checkservice.dto.response.ChecklistRegistRes;
@@ -38,22 +39,22 @@ public class ChecklistServiceImpl implements ChecklistService {
     }
 
     @Override
-    public List<ChecklistRegistRes> registChecklist(ChecklistRegistPostReq checklistRegistPostReq) {
+    public List<ChecklistRegistRes> registChecklist(ChecklistKafkaReq checklistKafkaReq) {
 
-        log.info("ChecklistService_registChecklist_start : " + checklistRegistPostReq);
+        log.info("ChecklistService_registChecklist_start : " + checklistKafkaReq);
 
-        List<UserFindRes> users = userClient.findUserByMateId(checklistRegistPostReq.getMateId())
+        List<UserFindRes> users = userClient.findUserByMateId(checklistKafkaReq.getMateId())
             .getData().getUsers();
 
         List<ChecklistRegistRes> res = new ArrayList<>();
 
-        for (ItemUpdatePutReq item : checklistRegistPostReq.getItems()) {
+        for (DefaultItem defaultItem : checklistKafkaReq.getDefaultItems()) {
 
             for (UserFindRes user : users) {
                 Checklist checklist = Checklist.builder()
                     .userId(bytesHexChanger.hexToBytes(user.getId()))
-                    .journeyId(checklistRegistPostReq.getJourneyId())
-                    .name(item.getName()).num(item.getNum()).isChecked(false).isDeleted(false)
+                    .journeyId(checklistKafkaReq.getJourneyId())
+                    .name(defaultItem.getName()).num(defaultItem.getNum()).isChecked(false).isDeleted(false)
                     .build();
 
                 checklistRepository.save(checklist);
@@ -73,6 +74,68 @@ public class ChecklistServiceImpl implements ChecklistService {
     }
 
     @Override
+    public void deleteChecklist(ChecklistKafkaReq checklistKafkaReq) {
+
+        log.info("ChecklistService_deleteChecklist_start : " + checklistKafkaReq);
+
+        List<Checklist> checklists = checklistRepository.findChecklistByJourneyId(
+            checklistKafkaReq.getJourneyId());
+
+        for (Checklist checklist : checklists){
+
+            checklist.deleteChecklist();
+
+        }
+
+        log.info("ChecklistService_deleteChecklist_end : SUCCESS");
+    }
+
+    @Override
+    public List<ChecklistRegistRes> updateChecklist(ChecklistKafkaReq checklistKafkaReq) {
+
+        log.info("ChecklistService_updateChecklist_start : " + checklistKafkaReq);
+
+        List<Checklist> checklists = checklistRepository.findChecklistByJourneyId(
+            checklistKafkaReq.getJourneyId());
+
+        for (Checklist checklist : checklists){
+
+            checklist.deleteChecklist();
+
+        }
+
+        List<UserFindRes> users = userClient.findUserByMateId(checklistKafkaReq.getMateId())
+            .getData().getUsers();
+
+        List<ChecklistRegistRes> res = new ArrayList<>();
+
+        for (DefaultItem defaultItem : checklistKafkaReq.getDefaultItems()) {
+
+            for (UserFindRes user : users) {
+                Checklist checklist = Checklist.builder()
+                    .userId(bytesHexChanger.hexToBytes(user.getId()))
+                    .journeyId(checklistKafkaReq.getJourneyId())
+                    .name(defaultItem.getName()).num(defaultItem.getNum()).isChecked(false).isDeleted(false)
+                    .build();
+
+                checklistRepository.save(checklist);
+
+                ChecklistRegistRes checklistRegistRes = modelMapper.map(checklist,
+                    ChecklistRegistRes.class);
+
+                checklistRegistRes.setUserId(user.getId());
+
+                res.add(checklistRegistRes);
+            }
+        }
+
+        log.info("ChecklistService_updateChecklist_end : " + res);
+
+        return res;
+    }
+
+
+    @Override
     public ChecklistFindRes findChecklistById(Long id) {
 
         log.info("ChecklistService_findChecklistById_start : " + id);
@@ -87,11 +150,40 @@ public class ChecklistServiceImpl implements ChecklistService {
     }
 
     @Override
-    public ChecklistModifyRes modifyChecklist(ChecklistModifyPutReq checklistModifyPutReq) {
+    public List<ChecklistModifyRes> modifyPersonalChecklist(ChecklistModifyPutReq checklistModifyPutReq) {
         
         log.info("ChecklistService_modifyChecklist_start : " + checklistModifyPutReq);
 
-        ChecklistModifyRes res = null;
+        List<Checklist> checklists = checklistRepository.findChecklistByUserIdAndJourneyId(
+            bytesHexChanger.hexToBytes(checklistModifyPutReq.getUserId()),
+            checklistModifyPutReq.getJourneyId());
+
+        List<Item> items = checklistModifyPutReq.getItems();
+
+        List<ChecklistModifyRes> res = new ArrayList<>();
+
+        for (Checklist checklist: checklists){
+
+            checklist.deleteChecklist();
+
+        }
+
+        for (Item item : items) {
+            Checklist checklist = Checklist.builder()
+                .userId(bytesHexChanger.hexToBytes(checklistModifyPutReq.getUserId()))
+                .journeyId(checklistModifyPutReq.getJourneyId())
+                .name(item.getName()).num(item.getNum()).isChecked(item.getIsChecked()).isDeleted(item.getIsDeleted())
+                .build();
+
+            checklistRepository.save(checklist);
+
+            ChecklistModifyRes checklistModifyRes = modelMapper.map(checklist,
+                ChecklistModifyRes.class);
+
+            checklistModifyRes.setUserId(checklistModifyPutReq.getUserId());
+
+            res.add(checklistModifyRes);
+        }
 
         log.info("ChecklistService_modifyChecklist_end : " + res);
 

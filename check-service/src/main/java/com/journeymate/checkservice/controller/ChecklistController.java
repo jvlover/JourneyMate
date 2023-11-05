@@ -2,11 +2,13 @@ package com.journeymate.checkservice.controller;
 
 import com.journeymate.checkservice.dto.ResponseDto;
 import com.journeymate.checkservice.dto.request.ChecklistModifyPutReq;
-import com.journeymate.checkservice.dto.request.ChecklistRegistPostReq;
+import com.journeymate.checkservice.dto.request.ChecklistKafkaReq;
+import com.journeymate.checkservice.dto.response.ChecklistFindRes;
 import com.journeymate.checkservice.dto.response.ChecklistModifyRes;
 import com.journeymate.checkservice.dto.response.ChecklistRegistRes;
 import com.journeymate.checkservice.service.ChecklistService;
 import java.util.List;
+import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,38 +33,84 @@ public class ChecklistController {
         this.checklistService = checklistService;
     }
 
-    @PostMapping
+    @PostMapping("/kafak")
+    @Transactional
     public ResponseEntity<ResponseDto> registChecklist(@RequestBody
-    ChecklistRegistPostReq checklistRegistPostReq) {
+    ChecklistKafkaReq checklistKafkaReq) {
 
-        log.info("ChecklistController_registChecklist_start : " + checklistRegistPostReq);
+        log.info("ChecklistController_registChecklist_start : " + checklistKafkaReq);
 
-        List<ChecklistRegistRes> res = checklistService.registChecklist(checklistRegistPostReq);
+        List<ChecklistRegistRes> res = checklistService.registChecklist(checklistKafkaReq);
 
         log.info("ChecklistController_registChecklist_end : " + res);
 
         return new ResponseEntity<>(new ResponseDto("체크리스트 저장 완료!", res), HttpStatus.OK);
     }
 
+    @PutMapping("/kafak")
+    @Transactional
+    public ResponseEntity<ResponseDto> deleteChecklist(@RequestBody
+    ChecklistKafkaReq checklistKafkaReq) {
+
+        log.info("ChecklistController_deleteChecklist_start : " + checklistKafkaReq);
+
+        checklistService.deleteChecklist(checklistKafkaReq);
+
+        log.info("ChecklistController_deleteChecklist_end : SUCCESS");
+
+        return new ResponseEntity<>(new ResponseDto("체크리스트 삭제 완료!", true), HttpStatus.OK);
+    }
+
+    @PutMapping("/kafak/update")
+    @Transactional
+    public ResponseEntity<ResponseDto> updateChecklist(@RequestBody
+    ChecklistKafkaReq checklistKafkaReq) {
+
+        log.info("ChecklistController_updateChecklist_start : " + checklistKafkaReq);
+
+        List<ChecklistRegistRes> res = checklistService.updateChecklist(checklistKafkaReq);
+
+        log.info("ChecklistController_updateChecklist_end : " + res);
+
+        return new ResponseEntity<>(new ResponseDto("체크리스트 수정 완료!", res), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseDto> findChecklistById(@PathVariable Long id){
+
+        log.info("ChecklistController_findChecklist_start : " + id);
+
+        ChecklistFindRes res = checklistService.findChecklistById(id);
+
+        log.info("ChecklistController_findChecklist_end : " + res);
+
+        return new ResponseEntity<>(new ResponseDto("체크리스트 반환 완료!", res), HttpStatus.OK);
+    }
+
     @PutMapping
-    public ResponseEntity<ResponseDto> modifyChecklist(
+    @Transactional
+    public ResponseEntity<ResponseDto> modifyPersonalChecklist(
         @RequestBody ChecklistModifyPutReq checklistModifyPutReq) {
 
-        log.info("ChecklistController_modifyChecklist_start : " + checklistModifyPutReq);
+        log.info("ChecklistController_modifyPersonalChecklist_start : " + checklistModifyPutReq);
 
-        ChecklistModifyRes res = new ChecklistModifyRes();
+        ChecklistModifyRes res = checklistService.modifyPersonalChecklist(checklistModifyPutReq);
 
-        // Todo : 만약에 체크리스트 이미 있으면 다 지우고 다시 저장하기
+        log.info("ChecklistController_modifyPersonalChecklist_end : " + res);
+
         return new ResponseEntity<>(new ResponseDto("체크리스트 수정 완료", res), HttpStatus.OK);
     }
 
     @GetMapping("/{userId}/{journeyId}")
-    public ResponseEntity<ResponseDto> findChecklist(@PathVariable String userId,
+    public ResponseEntity<ResponseDto> findChecklistByUserIdAndJourneyId(@PathVariable String userId,
         @PathVariable Long journeyId) {
 
-        return new ResponseEntity<>(
-            new ResponseDto("체크리스트 반환 완료!",
-                checklistService.findChecklistByUserIdAndJourneyId(userId, journeyId)),
-            HttpStatus.OK);
+        log.info("ChecklistController_findChecklistByUserIdAndJourneyId_start : " + userId + " " + journeyId);
+
+        List<ChecklistFindRes> res = checklistService.findChecklistByUserIdAndJourneyId(userId, journeyId);
+
+        log.info("ChecklistController_findChecklistByUserIdAndJourneyId_end : " + res);
+
+        return new ResponseEntity<>(new ResponseDto("체크리스트 반환 완료!", res), HttpStatus.OK);
     }
 }
