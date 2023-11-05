@@ -155,7 +155,6 @@ public class UserController {
     }
 
     @GetMapping("/duplicateCheck/{nickname}")
-    @Transactional
     public ResponseEntity<ResponseDto> nicknameDuplicateCheck(@PathVariable String nickname) {
 
         log.info("UserController_nicknameDuplicateCheck_start : " + nickname);
@@ -168,7 +167,6 @@ public class UserController {
     }
 
     @GetMapping("/mate/{id}")
-    @Transactional
     public ResponseEntity<ResponseDto> findMateById(@PathVariable String id) {
 
         log.info("UserController_findMateById_start : " + id);
