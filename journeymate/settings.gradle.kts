@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "journeymate"
+rootProject.name = "JourneyMate"
 include(":app")
