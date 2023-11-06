@@ -16,14 +16,14 @@ public class MateBridgeFindRes {
     @Data
     public static class MateBridgeFindData {
 
-        List<UserFindRes> users;
+        List<UserFindData> users;
 
         String creator;
 
     }
 
     @Data
-    public class UserFindRes {
+    public class UserFindData {
 
         private String id;
 

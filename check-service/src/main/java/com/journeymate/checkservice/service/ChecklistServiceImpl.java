@@ -1,14 +1,14 @@
 package com.journeymate.checkservice.service;
 
 import com.journeymate.checkservice.client.UserClient;
-import com.journeymate.checkservice.dto.request.ChecklistModifyPutReq;
 import com.journeymate.checkservice.dto.request.ChecklistKafkaReq;
 import com.journeymate.checkservice.dto.request.ChecklistKafkaReq.DefaultItem;
+import com.journeymate.checkservice.dto.request.ChecklistModifyPutReq;
 import com.journeymate.checkservice.dto.request.ChecklistModifyPutReq.Item;
 import com.journeymate.checkservice.dto.response.ChecklistFindRes;
 import com.journeymate.checkservice.dto.response.ChecklistModifyRes;
 import com.journeymate.checkservice.dto.response.ChecklistRegistRes;
-import com.journeymate.checkservice.dto.response.MateBridgeFindRes.UserFindRes;
+import com.journeymate.checkservice.dto.response.MateBridgeFindRes.UserFindData;
 import com.journeymate.checkservice.entity.Checklist;
 import com.journeymate.checkservice.exception.ChecklistNotFoundException;
 import com.journeymate.checkservice.repository.ChecklistRepository;
@@ -18,6 +18,8 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -26,16 +28,19 @@ public class ChecklistServiceImpl implements ChecklistService {
 
     private final ChecklistRepository checklistRepository;
     private final UserClient userClient;
+    private final CircuitBreakerFactory circuitBreakerFactory;
 
     private final BytesHexChanger bytesHexChanger = new BytesHexChanger();
     private final ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
-    public ChecklistServiceImpl(ChecklistRepository checklistRepository, UserClient userClient) {
+    public ChecklistServiceImpl(ChecklistRepository checklistRepository, UserClient userClient,
+        CircuitBreakerFactory circuitBreakerFactory) {
 
         this.checklistRepository = checklistRepository;
 
         this.userClient = userClient;
+        this.circuitBreakerFactory = circuitBreakerFactory;
     }
 
     @Override
@@ -43,18 +48,22 @@ public class ChecklistServiceImpl implements ChecklistService {
 
         log.info("ChecklistService_registChecklist_start : " + checklistKafkaReq);
 
-        List<UserFindRes> users = userClient.findUserByMateId(checklistKafkaReq.getMateId())
-            .getData().getUsers();
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("user-find-circuitbreaker");
+
+        List<UserFindData> users = circuitBreaker.run(
+            () -> userClient.findUserByMateId(checklistKafkaReq.getMateId())
+                .getData().getUsers(), throwable -> new ArrayList<>());
 
         List<ChecklistRegistRes> res = new ArrayList<>();
 
         for (DefaultItem defaultItem : checklistKafkaReq.getDefaultItems()) {
 
-            for (UserFindRes user : users) {
+            for (UserFindData user : users) {
                 Checklist checklist = Checklist.builder()
                     .userId(bytesHexChanger.hexToBytes(user.getId()))
                     .journeyId(checklistKafkaReq.getJourneyId())
-                    .name(defaultItem.getName()).num(defaultItem.getNum()).isChecked(false).isDeleted(false)
+                    .name(defaultItem.getName()).num(defaultItem.getNum()).isChecked(false)
+                    .isDeleted(false)
                     .build();
 
                 checklistRepository.save(checklist);
@@ -81,7 +90,7 @@ public class ChecklistServiceImpl implements ChecklistService {
         List<Checklist> checklists = checklistRepository.findChecklistByJourneyId(
             checklistKafkaReq.getJourneyId());
 
-        for (Checklist checklist : checklists){
+        for (Checklist checklist : checklists) {
 
             checklist.deleteChecklist();
 
@@ -98,24 +107,28 @@ public class ChecklistServiceImpl implements ChecklistService {
         List<Checklist> checklists = checklistRepository.findChecklistByJourneyId(
             checklistKafkaReq.getJourneyId());
 
-        for (Checklist checklist : checklists){
+        for (Checklist checklist : checklists) {
 
             checklist.deleteChecklist();
 
         }
 
-        List<UserFindRes> users = userClient.findUserByMateId(checklistKafkaReq.getMateId())
-            .getData().getUsers();
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("user-find-circuitbreaker");
+
+        List<UserFindData> users = circuitBreaker.run(
+            () -> userClient.findUserByMateId(checklistKafkaReq.getMateId())
+                .getData().getUsers(), throwable -> new ArrayList<>());
 
         List<ChecklistRegistRes> res = new ArrayList<>();
 
         for (DefaultItem defaultItem : checklistKafkaReq.getDefaultItems()) {
 
-            for (UserFindRes user : users) {
+            for (UserFindData user : users) {
                 Checklist checklist = Checklist.builder()
                     .userId(bytesHexChanger.hexToBytes(user.getId()))
                     .journeyId(checklistKafkaReq.getJourneyId())
-                    .name(defaultItem.getName()).num(defaultItem.getNum()).isChecked(false).isDeleted(false)
+                    .name(defaultItem.getName()).num(defaultItem.getNum()).isChecked(false)
+                    .isDeleted(false)
                     .build();
 
                 checklistRepository.save(checklist);
@@ -150,8 +163,9 @@ public class ChecklistServiceImpl implements ChecklistService {
     }
 
     @Override
-    public List<ChecklistModifyRes> modifyPersonalChecklist(ChecklistModifyPutReq checklistModifyPutReq) {
-        
+    public List<ChecklistModifyRes> modifyPersonalChecklist(
+        ChecklistModifyPutReq checklistModifyPutReq) {
+
         log.info("ChecklistService_modifyChecklist_start : " + checklistModifyPutReq);
 
         List<Checklist> checklists = checklistRepository.findChecklistByUserIdAndJourneyId(
@@ -162,7 +176,7 @@ public class ChecklistServiceImpl implements ChecklistService {
 
         List<ChecklistModifyRes> res = new ArrayList<>();
 
-        for (Checklist checklist: checklists){
+        for (Checklist checklist : checklists) {
 
             checklist.deleteChecklist();
 
@@ -172,7 +186,8 @@ public class ChecklistServiceImpl implements ChecklistService {
             Checklist checklist = Checklist.builder()
                 .userId(bytesHexChanger.hexToBytes(checklistModifyPutReq.getUserId()))
                 .journeyId(checklistModifyPutReq.getJourneyId())
-                .name(item.getName()).num(item.getNum()).isChecked(item.getIsChecked()).isDeleted(item.getIsDeleted())
+                .name(item.getName()).num(item.getNum()).isChecked(item.getIsChecked())
+                .isDeleted(item.getIsDeleted())
                 .build();
 
             checklistRepository.save(checklist);

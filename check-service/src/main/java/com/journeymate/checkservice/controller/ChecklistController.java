@@ -1,8 +1,8 @@
 package com.journeymate.checkservice.controller;
 
 import com.journeymate.checkservice.dto.ResponseDto;
-import com.journeymate.checkservice.dto.request.ChecklistModifyPutReq;
 import com.journeymate.checkservice.dto.request.ChecklistKafkaReq;
+import com.journeymate.checkservice.dto.request.ChecklistModifyPutReq;
 import com.journeymate.checkservice.dto.response.ChecklistFindRes;
 import com.journeymate.checkservice.dto.response.ChecklistModifyRes;
 import com.journeymate.checkservice.dto.response.ChecklistRegistRes;
@@ -76,7 +76,7 @@ public class ChecklistController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseDto> findChecklistById(@PathVariable Long id){
+    public ResponseEntity<ResponseDto> findChecklistById(@PathVariable Long id) {
 
         log.info("ChecklistController_findChecklist_start : " + id);
 
@@ -94,7 +94,8 @@ public class ChecklistController {
 
         log.info("ChecklistController_modifyPersonalChecklist_start : " + checklistModifyPutReq);
 
-        ChecklistModifyRes res = checklistService.modifyPersonalChecklist(checklistModifyPutReq);
+        List<ChecklistModifyRes> res = checklistService.modifyPersonalChecklist(
+            checklistModifyPutReq);
 
         log.info("ChecklistController_modifyPersonalChecklist_end : " + res);
 
@@ -102,12 +103,15 @@ public class ChecklistController {
     }
 
     @GetMapping("/{userId}/{journeyId}")
-    public ResponseEntity<ResponseDto> findChecklistByUserIdAndJourneyId(@PathVariable String userId,
+    public ResponseEntity<ResponseDto> findChecklistByUserIdAndJourneyId(
+        @PathVariable String userId,
         @PathVariable Long journeyId) {
 
-        log.info("ChecklistController_findChecklistByUserIdAndJourneyId_start : " + userId + " " + journeyId);
+        log.info("ChecklistController_findChecklistByUserIdAndJourneyId_start : " + userId + " "
+            + journeyId);
 
-        List<ChecklistFindRes> res = checklistService.findChecklistByUserIdAndJourneyId(userId, journeyId);
+        List<ChecklistFindRes> res = checklistService.findChecklistByUserIdAndJourneyId(userId,
+            journeyId);
 
         log.info("ChecklistController_findChecklistByUserIdAndJourneyId_end : " + res);
 
