@@ -15,6 +15,10 @@ spring:
         # show_sql: true
         format_sql: true
     open-in-view: false
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 1GB
 
 
 #
@@ -25,6 +29,6 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://127.0.0.1:8761/eureka
+      defaultZone: http://k9a204.p.ssafy.io:8761/eureka
 
 
