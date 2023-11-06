@@ -22,7 +22,6 @@ import com.ssafy.journeymate.mateservice.exception.ImageNotFoundException;
 import com.ssafy.journeymate.mateservice.exception.ImageUploadException;
 import com.ssafy.journeymate.mateservice.exception.MateNotFoundException;
 import com.ssafy.journeymate.mateservice.exception.UnauthorizedRoleException;
-import java.io.IOException;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,11 +36,12 @@ public interface MateService {
     public boolean deleteMate(MateDeleteReq mateDeleteReq)
         throws MateNotFoundException, UnauthorizedRoleException;
 
-    public MateDetailRes getMateDetail(Long mateId) throws MateNotFoundException;
+    public MateDetailRes getMateDetail(Long mateId)
+        throws MateNotFoundException;
 
     public DocsRegistPostRes registDocs(DocsRegistPostReq docsRegistReq,
         List<MultipartFile> imgFile)
-        throws MateNotFoundException, IOException;
+        throws MateNotFoundException, ImageUploadException;
 
     public DocsUpdateRes modifyDocs(DocsUpdateReq docsUpdateReq, List<MultipartFile> imgFile)
         throws ImageUploadException, DocsNotFoundException, UnauthorizedRoleException;
@@ -62,6 +62,5 @@ public interface MateService {
     public void deleteContent(ContentDeleteReq contentDeleteReq) throws ImageNotFoundException;
 
     public ContentListRes getContentDetail(Long mateId);
-
 
 }
