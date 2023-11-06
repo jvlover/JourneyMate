@@ -33,7 +33,7 @@ public class ChecklistController {
         this.checklistService = checklistService;
     }
 
-    @PostMapping("/kafak")
+    @PostMapping("/kafka")
     @Transactional
     public ResponseEntity<ResponseDto> registChecklist(@RequestBody
     ChecklistKafkaReq checklistKafkaReq) {
@@ -47,21 +47,20 @@ public class ChecklistController {
         return new ResponseEntity<>(new ResponseDto("체크리스트 저장 완료!", res), HttpStatus.OK);
     }
 
-    @PutMapping("/kafak")
+    @PutMapping("/kafka/{journeyId}")
     @Transactional
-    public ResponseEntity<ResponseDto> deleteChecklist(@RequestBody
-    ChecklistKafkaReq checklistKafkaReq) {
+    public ResponseEntity<ResponseDto> deleteChecklist(@PathVariable Long journeyId) {
 
-        log.info("ChecklistController_deleteChecklist_start : " + checklistKafkaReq);
+        log.info("ChecklistController_deleteChecklist_start : " + journeyId);
 
-        checklistService.deleteChecklist(checklistKafkaReq);
+        checklistService.deleteChecklist(journeyId);
 
         log.info("ChecklistController_deleteChecklist_end : SUCCESS");
 
         return new ResponseEntity<>(new ResponseDto("체크리스트 삭제 완료!", true), HttpStatus.OK);
     }
 
-    @PutMapping("/kafak/update")
+    @PutMapping("/kafka")
     @Transactional
     public ResponseEntity<ResponseDto> updateChecklist(@RequestBody
     ChecklistKafkaReq checklistKafkaReq) {

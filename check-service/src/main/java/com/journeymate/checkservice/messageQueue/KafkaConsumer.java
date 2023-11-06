@@ -36,7 +36,9 @@ public class KafkaConsumer {
 
         ObjectMapper mapper = new ObjectMapper();
 
-        try {map = mapper.readValue(kafkaMessage, new TypeReference<>(){});
+        try {
+            map = mapper.readValue(kafkaMessage, new TypeReference<>() {
+            });
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -86,7 +88,8 @@ public class KafkaConsumer {
         try {
             if (itemObject instanceof List<?>) {
 
-                defaultItems = mapper.convertValue(itemObject, new TypeReference<>() {});
+                defaultItems = mapper.convertValue(itemObject, new TypeReference<>() {
+                });
 
             }
         } catch (IllegalArgumentException e) {
@@ -95,15 +98,16 @@ public class KafkaConsumer {
 
         }
 
-        log.info("Kafka_message_mateId_check: " +  mateId);
+        log.info("Kafka_message_mateId_check: " + mateId);
 
-        log.info("Kafka_message_journeyId_check: " +  journeyId);
+        log.info("Kafka_message_journeyId_check: " + journeyId);
 
-        log.info("Kafka_message_items+check: " +  defaultItems.toString());
+        log.info("Kafka_message_items+check: " + defaultItems.toString());
 
-        log.info("Kafka_message_service+type : " +  type);
+        log.info("Kafka_message_service+type : " + type);
 
-        ChecklistKafkaReq checklistKafkaReq = new ChecklistKafkaReq(journeyId,mateId, defaultItems);
+        ChecklistKafkaReq checklistKafkaReq = new ChecklistKafkaReq(journeyId, mateId,
+            defaultItems);
 
         if (type.equals("REGIST")) {
 
@@ -113,15 +117,15 @@ public class KafkaConsumer {
 
             log.info("Kafka_Consumer_Checklist_Regist_end:  " + res);
 
-        }else if(type.equals("DELETE")){
+        } else if (type.equals("DELETE")) {
 
             log.info("Kafka_Consumer_Checklist_Delete_start:  " + checklistKafkaReq);
 
-            checklistService.deleteChecklist(checklistKafkaReq);
+            checklistService.deleteChecklist(checklistKafkaReq.getJourneyId());
 
             log.info("Kafka_Consumer_Checklist_Delete_end: SUCCESS");
 
-        }else if(type.equals("UPDATE")){
+        } else if (type.equals("UPDATE")) {
 
             log.info("Kafka_Consumer_Checklist_Update start:  " + checklistKafkaReq);
 

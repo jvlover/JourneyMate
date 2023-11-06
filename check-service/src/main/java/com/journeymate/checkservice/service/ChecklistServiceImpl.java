@@ -84,12 +84,11 @@ public class ChecklistServiceImpl implements ChecklistService {
     }
 
     @Override
-    public void deleteChecklist(ChecklistKafkaReq checklistKafkaReq) {
+    public void deleteChecklist(Long journeyId) {
 
-        log.info("ChecklistService_deleteChecklist_start : " + checklistKafkaReq);
+        log.info("ChecklistService_deleteChecklist_start : " + journeyId);
 
-        List<Checklist> checklists = checklistRepository.findChecklistByJourneyId(
-            checklistKafkaReq.getJourneyId());
+        List<Checklist> checklists = checklistRepository.findChecklistByJourneyId(journeyId);
 
         for (Checklist checklist : checklists) {
 
@@ -232,7 +231,7 @@ public class ChecklistServiceImpl implements ChecklistService {
                 res.add(checklistModifyRes);
 
             } else {
-                
+
                 // 수정된 체크리스트에 없다면 삭제
                 checklist.deleteChecklist();
 

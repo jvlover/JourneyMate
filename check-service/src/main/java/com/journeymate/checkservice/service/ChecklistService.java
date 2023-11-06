@@ -1,8 +1,8 @@
 package com.journeymate.checkservice.service;
 
 
-import com.journeymate.checkservice.dto.request.ChecklistModifyPutReq;
 import com.journeymate.checkservice.dto.request.ChecklistKafkaReq;
+import com.journeymate.checkservice.dto.request.ChecklistModifyPutReq;
 import com.journeymate.checkservice.dto.response.ChecklistFindRes;
 import com.journeymate.checkservice.dto.response.ChecklistModifyRes;
 import com.journeymate.checkservice.dto.response.ChecklistRegistRes;
@@ -12,7 +12,7 @@ public interface ChecklistService {
 
     List<ChecklistRegistRes> registChecklist(ChecklistKafkaReq checklistKafkaReq);
 
-    void deleteChecklist(ChecklistKafkaReq checklistKafkaReq);
+    void deleteChecklist(Long journeyId);
 
     List<ChecklistRegistRes> updateChecklist(ChecklistKafkaReq checklistKafkaReq);
 
