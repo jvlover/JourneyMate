@@ -718,12 +718,12 @@ public class MateServiceImpl implements MateService {
         // feign client O
         FindUserRes findUserRes = circuitBreaker.run(() -> userServiceClient.getUserInfo(userId),
             throwable -> null);
-
-        log.info("feign client responseDto data :  {}", findUserRes.getData());
-
+        
         String nickname = " ";
 
         if (findUserRes != null) {
+
+            log.info("feign client responseDto data :  {}", findUserRes.getData());
             nickname = findUserRes.getData().getNickname();
         }
         return nickname;
