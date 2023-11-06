@@ -43,6 +43,9 @@ dependencies {
     /* circuitbreaker 설정 */
     implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
 
+    /* zipkin 설정 */
+    implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+    implementation 'org.springframework.cloud:spring-cloud-starter-zipkin:2.2.3.RELEASE'
 }
 
 dependencyManagement {

@@ -16,7 +16,6 @@ import com.journeymate.userservice.dto.response.UserModifyRes;
 import com.journeymate.userservice.dto.response.UserRegistRes;
 import com.journeymate.userservice.service.MateBridgeService;
 import com.journeymate.userservice.service.UserService;
-import com.journeymate.userservice.util.BytesHexChanger;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,6 @@ public class UserController {
 
     private final UserService userService;
     private final MateBridgeService mateBridgeService;
-    private final BytesHexChanger bytesHexChanger = new BytesHexChanger();
 
     @Autowired
     public UserController(UserService userService, MateBridgeService mateBridgeService) {
