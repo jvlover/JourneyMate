@@ -30,7 +30,6 @@ public class MateBridgeServiceImpl implements MateBridgeService {
     private final UserRepository userRepository;
 
     private final ModelMapper modelMapper = new ModelMapper();
-
     private final BytesHexChanger bytesHexChanger = new BytesHexChanger();
 
     @Autowired
@@ -43,6 +42,8 @@ public class MateBridgeServiceImpl implements MateBridgeService {
     @Override
     public MateBridgeFindRes findMateBridgeByMateId(Long mateId) {
 
+        log.info("MateBridgeService_findMateBridgeByMateId_start : " + mateId);
+
         List<MateBridge> mateBridges = mateBridgeRepository.findByMateId(mateId);
 
         MateBridgeFindRes res = new MateBridgeFindRes();
@@ -52,18 +53,32 @@ public class MateBridgeServiceImpl implements MateBridgeService {
         String creator = "";
 
         for (MateBridge mateBridge : mateBridges) {
+
             if (mateBridge.getIsCreator()) {
+
                 creator = bytesHexChanger.bytesToHex(mateBridge.getUser().getId());
+
             }
+
             Optional<User> user = userRepository.findById(mateBridge.getUser().getId());
+
             if (user.isPresent()) {
+
                 UserFindRes userFindRes = new ModelMapper().map(user.get(), UserFindRes.class);
+
                 userFindRes.setId(bytesHexChanger.bytesToHex(user.get().getId()));
+
                 users.add(userFindRes);
+
             }
         }
+
         res.setUsers(users);
+
         res.setCreator(creator);
+
+        log.info("MateBridgeService_findMateBridgeByMateId_end : " + res);
+
         return res;
     }
 
@@ -71,9 +86,11 @@ public class MateBridgeServiceImpl implements MateBridgeService {
     public List<MateBridgeRegistRes> registMateBridge(
         MateBridgeRegistPostReq mateBridgeRegistPostReq) {
 
+        log.info("MateBridgeService_registMateBridge_start : " + mateBridgeRegistPostReq);
+
         List<String> users = mateBridgeRegistPostReq.getUsers();
 
-        List<MateBridgeRegistRes> mateBridges = new ArrayList<>();
+        List<MateBridgeRegistRes> res = new ArrayList<>();
 
         for (String id : users) {
             User user = userRepository.findById(bytesHexChanger.hexToBytes(id))
@@ -89,20 +106,27 @@ public class MateBridgeServiceImpl implements MateBridgeService {
             mateBridgeRepository.save(mateBridge);
 
             UserFindRes userFindRes = modelMapper.map(user, UserFindRes.class);
+
             userFindRes.setId(bytesHexChanger.bytesToHex(user.getId()));
+
             MateBridgeRegistRes mateBridgeRegistRes = modelMapper.map(mateBridge,
                 MateBridgeRegistRes.class);
+
             mateBridgeRegistRes.setUser(userFindRes);
 
-            mateBridges.add(mateBridgeRegistRes);
+            res.add(mateBridgeRegistRes);
         }
 
-        return mateBridges;
+        log.info("MateBridgeService_registMateBridge_end : " + res);
+
+        return res;
     }
 
     @Override
     public List<MateBridgeModifyRes> modifyMateBridge(
         MateBridgeModifyPutReq mateBridgeModifyPutReq) {
+
+        log.info("MateBridgeService_modifyMateBridge_start : " + mateBridgeModifyPutReq);
 
         List<MateBridge> mateBridges = mateBridgeRepository.findByMateId(
             mateBridgeModifyPutReq.getMateId());
@@ -156,6 +180,9 @@ public class MateBridgeServiceImpl implements MateBridgeService {
                     .orElseThrow(MateBridgeNotFoundException::new);
 
                 if (userMap.get(id) == 2) {
+
+                    // 계속 존재하는 유저
+
                     MateBridgeModifyRes modifyRes = new ModelMapper().map(mateBridge,
                         MateBridgeModifyRes.class);
 
@@ -166,15 +193,19 @@ public class MateBridgeServiceImpl implements MateBridgeService {
                     userFindRes.setId(bytesHexChanger.bytesToHex(user.getId()));
 
                     modifyRes.setUser(userFindRes);
-                    
-                    // 계속 존재하는 유저
+
                     res.add(modifyRes);
                 } else if (userMap.get(id) == 1) {
+
                     // 삭제된 유저
+
                     mateBridge.deleteBridge();
                 }
             }
         }
+
+        log.info("MateBridgeService_modifyMateBridge_end : " + res);
+
         return res;
     }
 

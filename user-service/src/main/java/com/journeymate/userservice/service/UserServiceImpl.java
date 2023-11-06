@@ -23,6 +23,8 @@ import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -33,6 +35,7 @@ public class UserServiceImpl implements UserService {
     private final MateBridgeRepository mateBridgeRepository;
     private final MateClient mateClient;
     private final JourneyClient journeyClient;
+    private final CircuitBreakerFactory circuitBreakerFactory;
 
     private final BytesHexChanger bytesHexChanger = new BytesHexChanger();
     private final ModelMapper modelMapper = new ModelMapper();
@@ -40,11 +43,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
         MateBridgeRepository mateBridgeRepository, MateClient mateClient,
-        JourneyClient journeyClient) {
+        JourneyClient journeyClient, CircuitBreakerFactory circuitBreakerFactory) {
         this.userRepository = userRepository;
         this.mateBridgeRepository = mateBridgeRepository;
         this.mateClient = mateClient;
         this.journeyClient = journeyClient;
+        this.circuitBreakerFactory = circuitBreakerFactory;
     }
 
     @Override
@@ -136,9 +140,16 @@ public class UserServiceImpl implements UserService {
 
         List<MateFindData> res = new ArrayList<>();
 
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create(
+            "mate-find-circuitbreaker");
+
         for (MateBridge mateBridge : mateBridges) {
 
-            res.add(mateClient.findMate(mateBridge.getMateId()).getData());
+            MateFindData mateFindData = circuitBreaker.run(
+                () -> mateClient.findMate(mateBridge.getMateId()).getData(),
+                throwable -> new MateFindData());
+
+            res.add(mateFindData);
 
         }
 
@@ -210,15 +221,21 @@ public class UserServiceImpl implements UserService {
             bytesHexChanger.hexToBytes(id));
 
         LocalDate today = LocalDate.now();
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create(
+            "Mate-And-Journey-find-circuitbreaker");
 
         for (MateBridge mateBridge : mateBridges) {
 
             Long mateId = mateBridge.getMateId();
 
-            LocalDate mateDate = mateClient.findMate(mateId).getData().getStartDate().toLocalDate();
+            LocalDate mateDate = circuitBreaker.run(
+                () -> mateClient.findMate(mateId).getData().getStartDate().toLocalDate(),
+                throwable -> LocalDate.of(1970, 01, 01));
 
-            List<JourneyFindData> journeyFindRes = journeyClient.findJourneyByMateId(mateId)
-                .getData();
+            List<JourneyFindData> journeyFindRes = circuitBreaker.run(
+                () -> journeyClient.findJourneyByMateId(mateId)
+                    .getData(),
+                throwable -> new ArrayList<>());
 
             for (JourneyFindData journeyFindData : journeyFindRes) {
                 if (today.isEqual(mateDate.plusDays(journeyFindData.getDay() - 1))) {
@@ -244,11 +261,14 @@ public class UserServiceImpl implements UserService {
 
         List<DocsListFindData> res = new ArrayList<>();
 
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("docs-find-circuitbreaker");
+
         for (MateBridge mateBridge : mateBridges) {
 
             Long mateId = mateBridge.getMateId();
 
-            List<DocsListFindData> docsListFindData = mateClient.findDocs(mateId).getData();
+            List<DocsListFindData> docsListFindData = circuitBreaker.run(
+                () -> mateClient.findDocs(mateId).getData(), throwable -> new ArrayList<>());
 
             res.addAll(docsListFindData);
         }
