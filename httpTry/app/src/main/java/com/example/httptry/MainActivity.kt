@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://xx.xx.xxx.xx:8080")
+            .baseUrl("http://70.12.246.220:8080")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
@@ -31,9 +31,9 @@ class MainActivity : AppCompatActivity() {
 
         binding.button1.setOnClickListener {
             val loginRequest = LoginRequest(binding.idInput.text.toString(), binding.pwInput.text.toString())
-            val call: Call<LoginResponse> = apiService.login(loginRequest)
+            val callLogin: Call<LoginResponse> = apiService.login(loginRequest)
 
-            call.enqueue(object: Callback<LoginResponse> {
+            callLogin.enqueue(object: Callback<LoginResponse> {
                 override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                     val result = response.body() as LoginResponse?
                     if( result == null ) {
@@ -50,5 +50,32 @@ class MainActivity : AppCompatActivity() {
                 }
             })
         }
+
+        binding.button2.setOnClickListener {
+            val mateId = binding.mateIdInput.text.toString()
+            val callLoadComment: Call<List<LoadCommentResponse>> = apiService.loadComment(mateId)
+            callLoadComment.enqueue(object: Callback<List<LoadCommentResponse>> {
+                override fun onResponse(
+                    call: Call<List<LoadCommentResponse>>,
+                    response: Response<List<LoadCommentResponse>>
+                ) {
+                    val result = response.body()
+                    if(result.isNullOrEmpty()) binding.textView2.text = "잘안됨"
+                    else {
+                        val commentsText = result.joinToString("\n") { comment ->
+                            "보낸이: ${comment.data.sender}, 메시지: ${comment.data.message}, 시간: ${comment.data.timeStampe}"
+                        }
+                        binding.textView2.text = commentsText
+                    }
+                }
+
+                override fun onFailure(call: Call<List<LoadCommentResponse>>, t: Throwable) {
+                    binding.textView2.text = "에러"
+                    Log.e("메인 액티비티 에러", "onFailure: ", t)
+                }
+            })
+        }
+
+
     }
 }
