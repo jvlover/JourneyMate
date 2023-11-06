@@ -55,7 +55,7 @@ pipeline {
         }
         stage('Run New image') {
             steps {
-                sh 'docker run --name journeymate-mate-service -d -P mate-service'
+                sh 'docker run --name journeymate-mate-service -d -p 8500:8500 mate-service'
                 echo 'Run New member image'
             }
         }
