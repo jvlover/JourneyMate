@@ -16,10 +16,21 @@ import org.springframework.kafka.core.ProducerFactory;
 public class KafkaProducerConfig {
 
     /* 접속하는 카프카의 정보가 들어가는 Bean */
+//    @Bean
+//    public ProducerFactory<String, String> producerFactory(){
+//        Map<String, Object> properties = new HashMap<>();
+//        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
+//        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+//        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+//
+//        return new DefaultKafkaProducerFactory<>(properties);
+//    }
+
+    /* 배포 환경 Bean */
     @Bean
-    public ProducerFactory<String, String> producerFactory(){
+    public ProducerFactory<String, String> producerFactory() {
         Map<String, Object> properties = new HashMap<>();
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "k9a204.p.ssafy.io:9092");
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 
