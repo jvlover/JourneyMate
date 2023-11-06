@@ -4,11 +4,9 @@ package com.ssafy.journeymate.mateservice.dto.request.mate;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 
-@NoArgsConstructor
 @Data
 public class MateRegistPostReq {
 

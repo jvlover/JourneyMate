@@ -1,6 +1,9 @@
 package com.ssafy.journeymate.mateservice.service;
 
 
+import com.ssafy.journeymate.mateservice.client.UserServiceClient;
+import com.ssafy.journeymate.mateservice.dto.request.client.MateBridgeModifyReq;
+import com.ssafy.journeymate.mateservice.dto.request.client.MateBridgeRegistPostReq;
 import com.ssafy.journeymate.mateservice.dto.request.content.ContentDeleteReq;
 import com.ssafy.journeymate.mateservice.dto.request.content.ContentRegistPostReq;
 import com.ssafy.journeymate.mateservice.dto.request.docs.DocsDeleteReq;
@@ -9,6 +12,10 @@ import com.ssafy.journeymate.mateservice.dto.request.docs.DocsUpdateReq;
 import com.ssafy.journeymate.mateservice.dto.request.mate.MateDeleteReq;
 import com.ssafy.journeymate.mateservice.dto.request.mate.MateRegistPostReq;
 import com.ssafy.journeymate.mateservice.dto.request.mate.MateUpdatePostReq;
+import com.ssafy.journeymate.mateservice.dto.request.messagequeue.MateDeleteDto;
+import com.ssafy.journeymate.mateservice.dto.response.client.FindUserRes;
+import com.ssafy.journeymate.mateservice.dto.response.client.MateBridgeRes;
+import com.ssafy.journeymate.mateservice.dto.response.client.MateBridgeUsersRes;
 import com.ssafy.journeymate.mateservice.dto.response.content.ContentListRes;
 import com.ssafy.journeymate.mateservice.dto.response.content.ContentRegistPostRes;
 import com.ssafy.journeymate.mateservice.dto.response.content.ContentRegistPostRes.content;
@@ -30,6 +37,7 @@ import com.ssafy.journeymate.mateservice.exception.ImageNotFoundException;
 import com.ssafy.journeymate.mateservice.exception.ImageUploadException;
 import com.ssafy.journeymate.mateservice.exception.MateNotFoundException;
 import com.ssafy.journeymate.mateservice.exception.UnauthorizedRoleException;
+import com.ssafy.journeymate.mateservice.messagequeue.KafkaProducer;
 import com.ssafy.journeymate.mateservice.repository.ContentsRepository;
 import com.ssafy.journeymate.mateservice.repository.DocsImgRepository;
 import com.ssafy.journeymate.mateservice.repository.DocsRepository;
@@ -42,6 +50,8 @@ import java.util.List;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -59,11 +69,16 @@ public class MateServiceImpl implements MateService {
 
     private final ContentsRepository contentsRepository;
 
+    private final UserServiceClient userServiceClient;
+
+    private final CircuitBreakerFactory circuitBreakerFactory;
+
+    private final KafkaProducer kafkaProducer;
+
     private final FileUtil fileUtil;
 
 
     /**
-     * TODO : 브릿지 테이블은 다른 DB 에 존재 (mate bridge 테이블에 유저 아이디, 그룹 아이디, 그룹 생성자여부 저장)
      * 여행 그룹 저장
      *
      * @param mateRegistPostReq
@@ -72,7 +87,7 @@ public class MateServiceImpl implements MateService {
     @Override
     public MateRegistPostRes registMate(MateRegistPostReq mateRegistPostReq) {
 
-        log.info("회원 등록입니다");
+        log.info("여행 그룹 등록 service");
 
         Mate mate = Mate.builder().name(mateRegistPostReq.getName())
             .destination(mateRegistPostReq.getDestination())
@@ -83,7 +98,24 @@ public class MateServiceImpl implements MateService {
 
         Mate savedMate = mateRepository.save(mate);
 
-        // users 는 mate bridge 에 존재 이후 관련 api 호출 필요
+        MateBridgeRegistPostReq mateBridgeRegistPostReq = MateBridgeRegistPostReq.builder()
+            .mateId(savedMate.getId())
+            .creator(savedMate.getCreator())
+            .users(mateRegistPostReq.getUsers())
+            .build();
+
+        for (String id : mateRegistPostReq.getUsers()) {
+            log.info("회원 ID 입니다 : {}", id);
+        }
+
+        log.info("user-service : user 정보 request");
+        // circuitbreaker O
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("user-regist-circuitbreaker");
+        MateBridgeRes mateBridgeRegistRes = circuitBreaker.run(
+            () -> userServiceClient.registMateBridge(mateBridgeRegistPostReq), throwable -> null);
+
+        // feignclient O
+        List<String> users = savedMateBridgeUsers(mateBridgeRegistRes);
 
         return MateRegistPostRes.builder().mateId(savedMate.getId())
             .name(savedMate.getName())
@@ -92,13 +124,13 @@ public class MateServiceImpl implements MateService {
             .endDate(savedMate.getEndDate())
             .createdDate(savedMate.getCreatedDate())
             .creator(savedMate.getCreator())
+            .users(users)
             .build();
     }
 
 
     /**
-     * TODO : 브릿지 테이블은 다른 DB 에 존재 (브릿지 테이블에 그룹원 수정되면 유저 아이디 수정 필요)
-     * 그룹 수정
+     * 여행 그룹 수정
      *
      * @param mateUpdatePostReq
      * @return
@@ -107,7 +139,7 @@ public class MateServiceImpl implements MateService {
     public MateUpdatePostRes modifyMate(MateUpdatePostReq mateUpdatePostReq)
         throws MateNotFoundException {
 
-        log.info("mate ID : {}", mateUpdatePostReq.getMateId());
+        log.info("수정할 여행 그룹 , mate ID : {}", mateUpdatePostReq.getMateId());
 
         Mate mate = mateRepository.findById(mateUpdatePostReq.getMateId())
             .orElseThrow(MateNotFoundException::new);
@@ -118,9 +150,27 @@ public class MateServiceImpl implements MateService {
         if (!mate.getDestination().equals(mateUpdatePostReq.getDestination())) {
             mate.modifyDestination(mateUpdatePostReq.getDestination());
         }
-        // users 는 mate bridge 에 존재 이후 수정 추가 필요
 
         Mate saveMate = mateRepository.save(mate);
+
+        MateBridgeModifyReq mateBridgeModifyReq = MateBridgeModifyReq.builder()
+            .mateId(saveMate.getId())
+            .creator(saveMate.getCreator())
+            .users(mateUpdatePostReq.getUsers())
+            .build();
+
+        for (String id : mateUpdatePostReq.getUsers()) {
+            log.info("회원 ID 입니다 : {}", id);
+        }
+
+        log.info("user-service : 그룹 유저 수정 request");
+        // circuitbreaker O
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("user-modify-circuitbreaker");
+        MateBridgeRes mateBridgeModifyRes = circuitBreaker.run(
+            () -> userServiceClient.modifyMateBridge(mateBridgeModifyReq), throwable -> null);
+
+        // feignclient O
+        List<String> users = savedMateBridgeUsers(mateBridgeModifyRes);
 
         return MateUpdatePostRes.builder()
             .mateId(saveMate.getId())
@@ -130,15 +180,18 @@ public class MateServiceImpl implements MateService {
             .createdDate(saveMate.getCreatedDate())
             .updatedDate(saveMate.getUpdatedDate())
             .creator(saveMate.getCreator())
+            .users(users)
             .build();
 
     }
 
     /**
-     * 그룹 삭제
+     * 여행 그룹 삭제
      *
      * @param mateDeleteReq
      * @return
+     * @throws MateNotFoundException
+     * @throws UnauthorizedRoleException
      */
     @Override
     public boolean deleteMate(MateDeleteReq mateDeleteReq)
@@ -152,19 +205,48 @@ public class MateServiceImpl implements MateService {
         } else {
             throw new UnauthorizedRoleException();
         }
+
+        MateDeleteDto mateDeleteDto = MateDeleteDto.builder()
+            .mateId(mateDeleteReq.getMateId())
+            .build();
+
+        log.info("삭제할 여행 그룹 mateId : {}", mateDeleteDto.getMateId());
+
+        kafkaProducer.send("journeys-delete", mateDeleteDto);
+
         return true;
     }
 
     /**
-     * 여행 그룹 상세 조회
+     * 여행 그룹 상세 정보
      *
      * @param mateId
      * @return
+     * @throws MateNotFoundException
      */
     @Override
-    public MateDetailRes getMateDetail(Long mateId) throws MateNotFoundException {
+    public MateDetailRes getMateDetail(Long mateId)
+        throws MateNotFoundException {
 
         Mate mate = mateRepository.findById(mateId).orElseThrow(MateNotFoundException::new);
+
+        log.info("여행 그룹에 포함된 user 정보 조회");
+
+        // circuitbreaker O
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create(
+            "user-mate-bridge-circuitbreaker");
+        MateBridgeUsersRes mateBridgeUsersRes = circuitBreaker.run(
+            () -> userServiceClient.getMateBridgeUsers(mateId), throwable -> null);
+
+        List<String> users = new ArrayList<>();
+
+        // feignclient O
+        if (mateBridgeUsersRes != null) {
+            for (MateBridgeUsersRes.MateBridgeUser.User user : mateBridgeUsersRes.getData()
+                .getUsers()) {
+                users.add(user.getNickname());
+            }
+        }
 
         return MateDetailRes.builder()
             .mateId(mate.getId())
@@ -173,21 +255,24 @@ public class MateServiceImpl implements MateService {
             .endDate(mate.getEndDate())
             .createdDate(mate.getCreatedDate())
             .creator(mate.getCreator())
+            .users(users)
+            .destination(mate.getDestination())
             .build();
     }
 
     /**
-     * TODO : 회원 닉네임 조회 호출
-     * 여행 그룹 문서 저장
+     * 여행 그룹 문서 등록
      *
      * @param docsRegistReq
      * @param imgFile
      * @return
+     * @throws MateNotFoundException
+     * @throws ImageUploadException
      */
     @Override
     public DocsRegistPostRes registDocs(DocsRegistPostReq docsRegistReq,
         List<MultipartFile> imgFile)
-        throws MateNotFoundException, IOException {
+        throws MateNotFoundException, ImageUploadException {
 
         Mate mate = mateRepository.findById(docsRegistReq.getMateId())
             .orElseThrow(MateNotFoundException::new);
@@ -204,49 +289,57 @@ public class MateServiceImpl implements MateService {
 
         Docs savedDocs = docsRepository.save(docs);
 
-        /*
-          닉네임 호출 추후 nickname 추가
-         */
+        String nickname = getNickName(docsRegistReq.getUserId());
 
         DocsRegistPostRes.DocsRegistPostResBuilder docsRegistRes = DocsRegistPostRes.builder()
             .docsId(savedDocs.getId())
             .title(savedDocs.getTitle())
             .content(savedDocs.getContent())
+            .nickname(nickname)
             .createdDate(savedDocs.getCreatedDate());
 
         if (imgFile != null) {
 
             List<FileResposeDto> imgFiles = new ArrayList<>();
 
-            log.info("Multipart");
+            log.info("Multipart 파일 업로드 시작");
 
             for (MultipartFile multipartFile : imgFile) {
-                FileUploadResult fileUploadResult = fileUtil.uploadFile(multipartFile);
 
-                DocsImg docsImg = DocsImg.builder()
-                    .docs(savedDocs)
-                    .fileName(fileUploadResult.getFileName())
-                    .imgUrl(fileUploadResult.getImgUrl())
-                    .build();
+                try {
 
-                docsImgRepository.save(docsImg);
+                    FileUploadResult fileUploadResult = fileUtil.uploadFile(multipartFile);
 
-                FileResposeDto fileResposeDto = FileResposeDto.builder()
-                    .filename(fileUploadResult.getFileName())
-                    .imgUrl(fileUploadResult.getImgUrl())
-                    .build();
+                    DocsImg docsImg = DocsImg.builder()
+                        .docs(savedDocs)
+                        .fileName(fileUploadResult.getFileName())
+                        .imgUrl(fileUploadResult.getImgUrl())
+                        .build();
 
-                imgFiles.add(fileResposeDto);
+                    docsImgRepository.save(docsImg);
 
+                    FileResposeDto fileResposeDto = FileResposeDto.builder()
+                        .filename(fileUploadResult.getFileName())
+                        .imgUrl(fileUploadResult.getImgUrl())
+                        .build();
+
+                    imgFiles.add(fileResposeDto);
+
+                } catch (IOException e) {
+                    log.info("이미지 업로드에 문제가 발생했습니다.");
+                    throw new ImageUploadException();
+                }
             }
             docsRegistRes.imgFileInfo(imgFiles);
+        } else {
+            log.info("보내진 이미지 데이터가 없습니다.");
         }
 
         return docsRegistRes.build();
     }
 
+
     /**
-     * TODO : 회원 닉네임 추가
      * 여행 그룹 문서 수정
      *
      * @param docsUpdateReq
@@ -263,9 +356,12 @@ public class MateServiceImpl implements MateService {
         Docs docs = docsRepository.findById(docsUpdateReq.getDocsId()).orElseThrow(
             DocsNotFoundException::new);
 
+        String nickname = getNickName(docsUpdateReq.getUserId());
+
         DocsUpdateRes.DocsUpdateResBuilder updateResBuilder = DocsUpdateRes
             .builder()
             .docsId(docs.getId())
+            .nickname(nickname)
             .createdDate(docs.getCreatedDate());
 
         // 작성자만 수정 가능
@@ -298,7 +394,8 @@ public class MateServiceImpl implements MateService {
 
                         log.info("이미지 파일 개수 {}", imgFile.size());
 
-                        log.info("multipart original filename {}", multipartFile.getOriginalFilename());
+                        log.info("multipart original filename {}",
+                            multipartFile.getOriginalFilename());
 
                         FileUploadResult fileUploadResult = fileUtil.uploadFile(multipartFile);
 
@@ -361,11 +458,12 @@ public class MateServiceImpl implements MateService {
     }
 
     /**
-     * 문서 삭제
+     * 여행 그룹 문서 삭제
      *
      * @param docsDeleteReq
      * @return
      * @throws DocsNotFoundException
+     * @throws UnauthorizedRoleException
      */
     @Override
     public boolean deleteDocs(DocsDeleteReq docsDeleteReq)
@@ -395,12 +493,12 @@ public class MateServiceImpl implements MateService {
 
 
     /**
-     * TODO : 회원 닉네임 호출
-     * 여행 그룹 문서 상세 조회
+     * 여행 그룹 문서 상세 정보 조회
      *
      * @param docsId
      * @return
      * @throws DocsNotFoundException
+     * @throws ImageNotFoundException
      */
     @Override
     public DocsDetailRes getDocsDetail(Long docsId)
@@ -408,9 +506,12 @@ public class MateServiceImpl implements MateService {
 
         Docs docs = docsRepository.findById(docsId).orElseThrow(DocsNotFoundException::new);
 
+        String nickname = getNickName(docs.getUserId());
+
         DocsDetailRes.DocsDetailResBuilder docsDetailRes = DocsDetailRes.builder()
             .title(docs.getTitle())
             .content(docs.getContent())
+            .nickname(nickname)
             .createdDate(docs.getCreatedDate())
             .docsId(docs.getId());
 
@@ -429,19 +530,19 @@ public class MateServiceImpl implements MateService {
 
                 imgFiles.add(fileResposeDto);
             }
-
             docsDetailRes.imgFileInfo(imgFiles);
-
         }
         return docsDetailRes.build();
     }
 
+
     /**
-     * 여행 그룹 문서 전체 조회
+     * 여행 그룹 내의 문서 전체 조회
      *
      * @param mateId
      * @return
      * @throws MateNotFoundException
+     * @throws ImageNotFoundException
      */
     @Override
     public DocsListRes getDocsList(Long mateId)
@@ -488,11 +589,13 @@ public class MateServiceImpl implements MateService {
     }
 
     /**
-     * 여행 그룹 콘텐츠 저장
+     * 여행 그룹 내의 콘텐츠 등록
      *
      * @param contentRegistPostReq
      * @param imgFile
      * @return
+     * @throws ImageUploadException
+     * @throws MateNotFoundException
      */
     @Override
     public ContentRegistPostRes registContent(ContentRegistPostReq contentRegistPostReq,
@@ -533,26 +636,27 @@ public class MateServiceImpl implements MateService {
             } catch (IOException e) {
                 throw new ImageUploadException();
             }
-
         }
 
         ContentRegistPostRes contentRegistPostRes = ContentRegistPostRes.builder()
             .contentInfo(contentList).build();
 
         return contentRegistPostRes;
-
     }
 
     /**
      * 여행 그룹 콘텐츠 삭제
      *
      * @param contentDeleteReq
-     * @return
+     * @throws ImageNotFoundException
      */
     @Override
     public void deleteContent(ContentDeleteReq contentDeleteReq) throws ImageNotFoundException {
 
         for (Long contentId : contentDeleteReq.getContents()) {
+
+            log.info("삭제할 content Id : {}", contentId);
+
             Contents contents = contentsRepository.findById(contentId)
                 .orElseThrow(ImageNotFoundException::new);
 
@@ -588,9 +692,7 @@ public class MateServiceImpl implements MateService {
 
                 contentInfo.add(content);
             }
-
         }
-
         ContentListRes contentListRes = ContentListRes.builder()
             .contentInfo(contentInfo)
             .build();
@@ -598,5 +700,54 @@ public class MateServiceImpl implements MateService {
         return contentListRes;
     }
 
+    /**
+     * ID 로 유저 정보 찾기를 통한 nickname 조회
+     *
+     * @param userId
+     * @return
+     */
+    private String getNickName(String userId) {
 
+        log.info("user service 호출 : 아이디로 유저 찾기");
+        log.info("user Id : {}", userId);
+
+        // circuitbreaker O
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create(
+            "user-nickname-circuitbreaker");
+
+        // feign client O
+        FindUserRes findUserRes = circuitBreaker.run(() -> userServiceClient.getUserInfo(userId),
+            throwable -> null);
+
+        log.info("feign client responseDto data :  {}", findUserRes.getData());
+
+        String nickname = " ";
+
+        if (findUserRes != null) {
+            nickname = findUserRes.getData().getNickname();
+        }
+        return nickname;
+    }
+
+    /**
+     * 여행 그룹 저장, 수정 이후 그룹에 속한 유저들의 nickname 조회
+     *
+     * @param mateBridgeRes
+     * @return
+     */
+    private List<String> savedMateBridgeUsers(MateBridgeRes mateBridgeRes) {
+
+        log.info("여행 그룹 저장 또는 수정 이후 저장된 유저들 정보 조회입니다.");
+
+        List<String> users = new ArrayList<>();
+
+        if (mateBridgeRes != null) {
+
+            for (MateBridgeRes.MateBridgeData mateBridgeData : mateBridgeRes.getData()) {
+                users.add(mateBridgeData.getUser().getNickname());
+            }
+            log.info("여행 그룹에 속해 있는 유저의 수입니다. {}", users.size());
+        }
+        return users;
+    }
 }

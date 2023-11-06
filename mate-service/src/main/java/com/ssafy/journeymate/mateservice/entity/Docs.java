@@ -43,15 +43,15 @@ public class Docs extends BaseEntity {
     @Column(name = "image_exist")
     private Boolean imageExist;
 
-    public void modifyTitle(String title){
+    public void modifyTitle(String title) {
         this.title = title;
     }
 
-    public void modifyContent(String content){
+    public void modifyContent(String content) {
         this.content = content;
     }
 
-    public void modifyImageExist(Boolean imageExist){
+    public void modifyImageExist(Boolean imageExist) {
         this.imageExist = imageExist;
     }
 

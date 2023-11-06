@@ -49,13 +49,12 @@ public class Mate extends BaseEntity {
     @OneToMany(mappedBy = "mate")
     private List<Contents> contents = new ArrayList<>();
 
-    public void modifyDestination(String destination){
+    public void modifyDestination(String destination) {
         this.destination = destination;
     }
 
-    public void modifyName(String name){
+    public void modifyName(String name) {
         this.name = name;
     }
-
 
 }

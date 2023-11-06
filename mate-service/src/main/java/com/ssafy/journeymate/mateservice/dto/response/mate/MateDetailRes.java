@@ -17,4 +17,5 @@ public class MateDetailRes {
     private List<String> users;
     private String creator;
     private LocalDateTime createdDate;
+    private String destination;
 }

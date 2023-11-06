@@ -25,7 +25,6 @@ import com.ssafy.journeymate.mateservice.exception.ImageUploadException;
 import com.ssafy.journeymate.mateservice.exception.MateNotFoundException;
 import com.ssafy.journeymate.mateservice.exception.UnauthorizedRoleException;
 import com.ssafy.journeymate.mateservice.service.MateService;
-import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,11 +50,12 @@ public class MateController {
 
     private final MateService mateService;
 
+
     /**
-     * 그룹 등록
+     * 여행 그룹 등록
      *
-     * @param mateRegistPostReq
-     * @return
+     * @param mateRegistPostReq [MateRegistPostReq]: 여행 그룹 생성 request
+     * @return [ResponseEntity<ResponseDto> - MateRegistPostRes] : 저장된 여행 그룹 정보
      */
     @PostMapping("/regist")
     public ResponseEntity<ResponseDto> registMate(
@@ -72,11 +72,11 @@ public class MateController {
     }
 
     /**
-     * 그룹 수정
+     * 여행 그룹 수정
      *
-     * @param mateUpdatePostReq
-     * @return
-     * @throws MateNotFoundException
+     * @param mateUpdatePostReq [MateUpdatePostReq]: 여행 그룹 수정 request
+     * @return [ResponseEntity<ResponseDto> - MateUpdatePostRes] : 수정된 여행 그룹 정보
+     * @throws MateNotFoundException : 존재하지 않는 여행 그룹 예외
      */
     @PutMapping("/update")
     public ResponseEntity<ResponseDto> modifyMate(
@@ -94,11 +94,12 @@ public class MateController {
 
 
     /**
-     * 그룹 삭제하기
+     * 여행 그룹 삭제
      *
-     * @param mateDeleteReq
-     * @return
-     * @throws UnauthorizedRoleException
+     * @param mateDeleteReq [MateDeleteReq]: 여행 그룹 삭제 request
+     * @return [ResponseEntity<ResponseDto>]
+     * @throws MateNotFoundException     : 존재하지 않는 여행 그룹 예외
+     * @throws UnauthorizedRoleException : 유효하지 않은 유저 권한 접근
      */
     @DeleteMapping("/delete")
     public ResponseEntity<ResponseDto> deleteMate(@RequestBody MateDeleteReq mateDeleteReq)
@@ -115,10 +116,11 @@ public class MateController {
 
 
     /**
-     * 그룹 상세 정보
+     * 여행 그룹 상세 정보
      *
-     * @param mateId
-     * @return
+     * @param mateId [Long] : 여행 그룹 ID
+     * @return [ResponseEntity<ResponseDto> - MateDetailRes] : 해당하는 여행 그룹의 상세 정보
+     * @throws MateNotFoundException : 존재하지 않는 여행 그룹 예외
      */
     @GetMapping("/{mateId}")
     public ResponseEntity<ResponseDto> loadMateInfo(@PathVariable Long mateId)
@@ -135,16 +137,18 @@ public class MateController {
 
 
     /**
-     * 문서 저장
+     * 여행 그룹 문서 등록
      *
-     * @param docsRegistReq
-     * @param imgFile
-     * @return
+     * @param docsRegistReq [DocsRegistPostReq] : 여행 그룹에 속하는 문서 등록 request
+     * @param imgFile       [List<MultipartFile>] : 이미지 파일 (필수 X)
+     * @return [ResponseEntity<ResponseDto> - DocsRegistPostRes] : 등록된 여행 그룹 문서 상세 정보
+     * @throws MateNotFoundException : 존재하지 않는 여행 그룹 예외
+     * @throws ImageUploadException  : S3 이미지 업로도 예외
      */
     @PostMapping("/docs")
     public ResponseEntity<ResponseDto> registDocs(@ModelAttribute DocsRegistPostReq docsRegistReq,
         @RequestParam(name = "imgFile", required = false) List<MultipartFile> imgFile)
-        throws MateNotFoundException, IOException {
+        throws MateNotFoundException, ImageUploadException {
 
         log.info("MateController_registDocs_start : " + docsRegistReq.toString());
 
@@ -156,6 +160,16 @@ public class MateController {
 
     }
 
+    /**
+     * 여행 그룹 문서 수정
+     *
+     * @param docsUpdatePostReq [DocsUpdateReq] : 여행 그룹 문서 수정 request
+     * @param imgFile           [List<MultipartFile>] : 이미지 파일 (필수 X)
+     * @return [ResponseEntity<ResponseDto> - DocsUpdateRes] : 수정된 여행 그룹 문서의 상세 정보
+     * @throws ImageUploadException      : S3 이미지 업로도 예외
+     * @throws DocsNotFoundException     : 존재하지 않는 문서 예외
+     * @throws UnauthorizedRoleException : 유효하지 않은 유저 권한 접근 (작성자가 아닐 경우)
+     */
 
     @PutMapping("/docs")
     public ResponseEntity<ResponseDto> modifyDocs(
@@ -176,10 +190,10 @@ public class MateController {
     /**
      * 여행 그룹 문서 삭제
      *
-     * @param docsDeleteReq
-     * @return
-     * @throws DocsNotFoundException
-     * @throws UnauthorizedRoleException
+     * @param docsDeleteReq [DocsDeleteReq] : 여행 그룹 문서 삭제 request
+     * @return [ResponseEntity<ResponseDto>]
+     * @throws DocsNotFoundException     : 존재하지 않는 문서 예외
+     * @throws UnauthorizedRoleException : 유효하지 않은 유저 권한 접근 (작성자가 아닐 경우)
      */
     @DeleteMapping("/docs")
     public ResponseEntity<ResponseDto> deleteDocs(@RequestBody DocsDeleteReq docsDeleteReq)
@@ -198,10 +212,10 @@ public class MateController {
     /**
      * 여행 그룹 문서 상세 조회
      *
-     * @param docsId
-     * @return
-     * @throws DocsNotFoundException
-     * @throws ImageNotFoundException
+     * @param docsId [Long] : 문서 ID
+     * @return [ResponseEntity<ResponseDto> - DocsDetailRes] : 해당 하는 여행 문서의 상세 정보
+     * @throws DocsNotFoundException  : 존재하지 않는 문서 예외
+     * @throws ImageNotFoundException : 존재하지 않는 이미지 정보 예외
      */
     @GetMapping("/docs/{docsId}")
     public ResponseEntity<ResponseDto> loadDocsDetailInfo(@PathVariable Long docsId)
@@ -219,10 +233,10 @@ public class MateController {
     /**
      * 여행 그룹 전체 문서 조회
      *
-     * @param mateId
-     * @return
-     * @throws MateNotFoundException
-     * @throws ImageNotFoundException
+     * @param mateId [Long] : 여행 그룹 ID
+     * @return [ ResponseEntity<ResponseDto> - DocsListRes] : 여행 그룹에 저장된 전체 문서 정보
+     * @throws MateNotFoundException  : 존재하지 않는 여행 그룹 예외
+     * @throws ImageNotFoundException : 존재하지 않는 이미지 정보 예외
      */
     @GetMapping("/docs/list/{mateId}")
     public ResponseEntity<ResponseDto> loadDocsListInfo(@PathVariable Long mateId)
@@ -241,14 +255,17 @@ public class MateController {
     /**
      * 여행 그룹 콘텐츠 저장
      *
-     * @param contentRegistPostReq
-     * @param imgFile
-     * @return
+     * @param contentRegistPostReq [ContentRegistPostReq] : 여행 콘텐츠 정보 등록 request
+     * @param imgFile              [List<MultipartFile>] : 이미지 파일 (필수)
+     * @return [ResponseEntity<ResponseDto> - ContentRegistPostRes] : 여행 그룹에 저장된 콘텐츠 정보
+     * @throws ImageUploadException  : S3 이미지 업로도 예외
+     * @throws MateNotFoundException : 존재하지 않는 여행 그룹 예외
      */
     @PostMapping("/contents")
     public ResponseEntity<ResponseDto> registContent(
         @ModelAttribute ContentRegistPostReq contentRegistPostReq,
-        @RequestParam(name = "imgFile", required = true) List<MultipartFile> imgFile)  throws ImageUploadException, MateNotFoundException{
+        @RequestParam(name = "imgFile", required = true) List<MultipartFile> imgFile)
+        throws ImageUploadException, MateNotFoundException {
 
         log.info("MateController_registContent_start : " + contentRegistPostReq.toString());
 
@@ -264,8 +281,9 @@ public class MateController {
     /**
      * 여행 그룹 콘텐츠 삭제
      *
-     * @param contentDeleteReq
-     * @return
+     * @param contentDeleteReq [ContentDeleteReq] : 여행 그룹 콘텐츠 삭제 request
+     * @return [ResponseEntity<ResponseDto>]
+     * @throws ImageNotFoundException : 존재하지 않는 이미지 정보 예외
      */
     @DeleteMapping("/contents")
     public ResponseEntity<ResponseDto> deleteContent(
@@ -283,8 +301,8 @@ public class MateController {
     /**
      * 여행 그룹 콘텐츠 조회
      *
-     * @param mateId
-     * @return
+     * @param mateId [Long] : 여행 그룹 ID
+     * @return [ResponseEntity<ResponseDto> - ContentListRes] : 저장되어 있는 여행 그룹의 콘텐츠 전체 정보
      */
     @GetMapping("/contents/list/{mateId}")
     public ResponseEntity<ResponseDto> loadContentDetailInfo(@PathVariable Long mateId) {
