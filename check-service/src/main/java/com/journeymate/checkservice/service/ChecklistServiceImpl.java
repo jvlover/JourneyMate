@@ -14,6 +14,7 @@ import com.journeymate.checkservice.exception.ChecklistNotFoundException;
 import com.journeymate.checkservice.repository.ChecklistRepository;
 import com.journeymate.checkservice.util.BytesHexChanger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -168,36 +169,74 @@ public class ChecklistServiceImpl implements ChecklistService {
 
         log.info("ChecklistService_modifyChecklist_start : " + checklistModifyPutReq);
 
+        // 기존 체크리스트 
         List<Checklist> checklists = checklistRepository.findChecklistByUserIdAndJourneyId(
             bytesHexChanger.hexToBytes(checklistModifyPutReq.getUserId()),
             checklistModifyPutReq.getJourneyId());
 
+        // 새롭게 추가된 체크리스트
         List<Item> items = checklistModifyPutReq.getItems();
 
         List<ChecklistModifyRes> res = new ArrayList<>();
 
-        for (Checklist checklist : checklists) {
+        HashMap<Long, Item> map = new HashMap<>();
 
-            checklist.deleteChecklist();
+        for (Item item : items) {
+
+            // 새롭게 추가된 item의 경우
+            if (item.getId() == 0) {
+
+                Checklist checklist = Checklist.builder()
+                    .userId(bytesHexChanger.hexToBytes(checklistModifyPutReq.getUserId()))
+                    .journeyId(checklistModifyPutReq.getJourneyId())
+                    .name(item.getName()).num(item.getNum()).isChecked(item.getIsChecked())
+                    .isDeleted(item.getIsDeleted())
+                    .build();
+
+                checklistRepository.save(checklist);
+
+                ChecklistModifyRes checklistModifyRes = modelMapper.map(checklist,
+                    ChecklistModifyRes.class);
+
+                checklistModifyRes.setUserId(checklistModifyPutReq.getUserId());
+
+                res.add(checklistModifyRes);
+
+            } else {
+
+                map.put(item.getId(), item);
+
+            }
 
         }
 
-        for (Item item : items) {
-            Checklist checklist = Checklist.builder()
-                .userId(bytesHexChanger.hexToBytes(checklistModifyPutReq.getUserId()))
-                .journeyId(checklistModifyPutReq.getJourneyId())
-                .name(item.getName()).num(item.getNum()).isChecked(item.getIsChecked())
-                .isDeleted(item.getIsDeleted())
-                .build();
+        for (Checklist checklist : checklists) {
 
-            checklistRepository.save(checklist);
+            if (map.containsKey(checklist.getId())) {
 
-            ChecklistModifyRes checklistModifyRes = modelMapper.map(checklist,
-                ChecklistModifyRes.class);
+                Item item = map.get(checklist.getId());
 
-            checklistModifyRes.setUserId(checklistModifyPutReq.getUserId());
+                if (!(item.getNum() == checklist.getNum() && item.getName()
+                    .equals(checklist.getNum())
+                    && item.getIsChecked() == checklist.getIsChecked())) {
 
-            res.add(checklistModifyRes);
+                    checklist.modifyChecklist(item.getName(), item.getNum(), item.getIsChecked());
+
+                }
+
+                ChecklistModifyRes checklistModifyRes = modelMapper.map(checklist,
+                    ChecklistModifyRes.class);
+
+                checklistModifyRes.setUserId(checklistModifyPutReq.getUserId());
+
+                res.add(checklistModifyRes);
+
+            } else {
+                
+                // 수정된 체크리스트에 없다면 삭제
+                checklist.deleteChecklist();
+
+            }
         }
 
         log.info("ChecklistService_modifyChecklist_end : " + res);

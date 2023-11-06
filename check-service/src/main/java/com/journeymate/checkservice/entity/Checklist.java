@@ -60,5 +60,10 @@ public class Checklist {
         this.isDeleted = true;
     }
 
+    public void modifyChecklist(String name, Integer num, Boolean isChecked) {
+        this.name = name;
+        this.num = num;
+        this.isChecked = isChecked;
+    }
 
 }

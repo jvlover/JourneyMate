@@ -17,6 +17,8 @@ public class ChecklistModifyPutReq {
     @Data
     public class Item {
 
+        Long id;
+        
         String name;
 
         Integer num;
