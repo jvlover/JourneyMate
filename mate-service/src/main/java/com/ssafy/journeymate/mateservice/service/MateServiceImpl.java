@@ -558,7 +558,8 @@ public class MateServiceImpl implements MateService {
             DocsListRes.DocsInfo.DocsInfoBuilder docsInfo = DocsListRes.DocsInfo.builder()
                 .title(doc.getTitle())
                 .docsId(doc.getId())
-                .createdDate(doc.getCreatedDate());
+                .createdDate(doc.getCreatedDate())
+                .userId(doc.getUserId());
 
             if (doc.getImageExist()) {
 
