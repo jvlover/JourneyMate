@@ -2,6 +2,7 @@ package com.journeymate.userservice.service;
 
 
 import com.journeymate.userservice.dto.request.UserModifyProfilePutReq;
+import com.journeymate.userservice.dto.request.UserRegistPostReq;
 import com.journeymate.userservice.dto.response.DocsListFindRes.DocsListFindData;
 import com.journeymate.userservice.dto.response.JourneyFindRes.JourneyFindData;
 import com.journeymate.userservice.dto.response.MateFindRes.MateFindData;
@@ -13,7 +14,7 @@ import java.util.List;
 public interface UserService {
 
     // 이건 소셜로그인 좀 더 공부해보자
-    UserRegistRes registUser(byte[] hexId, String nickname);
+    UserRegistRes registUser(UserRegistPostReq userRegistPostReq);
 
     Boolean nicknameDuplicateCheck(String nickname);
 

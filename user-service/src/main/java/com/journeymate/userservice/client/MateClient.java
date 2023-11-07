@@ -12,7 +12,7 @@ public interface MateClient {
     @GetMapping("/mate-service/{mateId}")
     MateFindRes findMate(@PathVariable Long mateId);
 
-    @GetMapping("/docs/list/{mateId}")
+    @GetMapping("/mate-service/docs/list/{mateId}")
     DocsListFindRes findDocs(@PathVariable Long mateId);
 
 }

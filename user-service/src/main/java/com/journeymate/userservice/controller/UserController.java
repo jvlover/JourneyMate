@@ -49,14 +49,12 @@ public class UserController {
     public ResponseEntity<ResponseDto> socialLogin(
         @RequestBody UserRegistPostReq userRegistPostReq) {
 
-        log.info("UserController_socailLogin_start : " + userRegistPostReq);
-
-        byte[] hexId = userService.createUUID();
+        log.info("UserController_socialLogin_start : " + userRegistPostReq);
 
         // TODO: 회원 있으면 login 없으면 registUser
-        UserRegistRes res = userService.registUser(hexId, userRegistPostReq.getNickname());
+        UserRegistRes res = userService.registUser(userRegistPostReq);
 
-        log.info("UserController_socailLogin_end : " + res);
+        log.info("UserController_socialLogin_end : " + res);
 
         return new ResponseEntity<>(new ResponseDto("로그인 완료!", res), HttpStatus.OK);
     }
@@ -141,7 +139,7 @@ public class UserController {
     @PutMapping
     @Transactional
     public ResponseEntity<ResponseDto> modifyProfile(
-        UserModifyProfilePutReq userModifyProfilePutReq) {
+        @RequestBody UserModifyProfilePutReq userModifyProfilePutReq) {
 
         log.info("UserController_modifyProfile_end : " + userModifyProfilePutReq);
 

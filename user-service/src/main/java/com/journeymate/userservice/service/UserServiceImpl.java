@@ -4,6 +4,7 @@ import com.fasterxml.uuid.Generators;
 import com.journeymate.userservice.client.JourneyClient;
 import com.journeymate.userservice.client.MateClient;
 import com.journeymate.userservice.dto.request.UserModifyProfilePutReq;
+import com.journeymate.userservice.dto.request.UserRegistPostReq;
 import com.journeymate.userservice.dto.response.DocsListFindRes.DocsListFindData;
 import com.journeymate.userservice.dto.response.JourneyFindRes.JourneyFindData;
 import com.journeymate.userservice.dto.response.MateFindRes.MateFindData;
@@ -52,11 +53,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserRegistRes registUser(byte[] hexId, String nickname) {
+    public UserRegistRes registUser(UserRegistPostReq userRegistPostReq) {
 
-        log.info("UserService_registUser_start : " + hexId + " " + nickname);
+        log.info("UserService_registUser_start : " + userRegistPostReq);
 
-        User user = userRepository.save(User.builder().id(hexId).nickname(nickname).build());
+        User user = userRepository.save(
+            User.builder().id(createUUID()).nickname(userRegistPostReq.getNickname())
+                .imgUrl(userRegistPostReq.getImgUrl()).build());
 
         UserRegistRes res = modelMapper.map(user, UserRegistRes.class);
 
@@ -267,10 +270,19 @@ public class UserServiceImpl implements UserService {
 
             Long mateId = mateBridge.getMateId();
 
-            List<DocsListFindData> docsListFindData = circuitBreaker.run(
-                () -> mateClient.findDocs(mateId).getData(), throwable -> new ArrayList<>());
+            List<DocsListFindData> docsListFindDatas = circuitBreaker.run(
+                () -> mateClient.findDocs(mateId).getData().getDocsInfoList(),
+                throwable -> new ArrayList<>());
 
-            res.addAll(docsListFindData);
+            // 여기서 userId랑 일치하는 것들만 추가해야함
+            for (DocsListFindData docsListFindData : docsListFindDatas) {
+
+                if (docsListFindData.getUserId().equals(id)) {
+
+                    res.add(docsListFindData);
+
+                }
+            }
         }
 
         log.info("UserService_findDocsById_end : " + res);

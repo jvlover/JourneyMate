@@ -8,4 +8,6 @@ import lombok.NoArgsConstructor;
 public class UserRegistPostReq {
 
     private String nickname;
+
+    private String imgUrl;
 }

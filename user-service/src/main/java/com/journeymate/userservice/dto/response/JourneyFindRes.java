@@ -13,6 +13,7 @@ public class JourneyFindRes {
     private List<JourneyFindData> data;
 
     @Data
+    @NoArgsConstructor
     public static class JourneyFindData {
 
         private Long id;

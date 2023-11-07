@@ -13,6 +13,7 @@ public class MateFindRes {
     private MateFindData data;
 
     @Data
+    @NoArgsConstructor
     public static class MateFindData {
 
         private Long mateId;
@@ -24,6 +25,8 @@ public class MateFindRes {
         private LocalDateTime endDate;
 
         private List<String> users;
+
+        private String destination;
 
         private String creator;
 

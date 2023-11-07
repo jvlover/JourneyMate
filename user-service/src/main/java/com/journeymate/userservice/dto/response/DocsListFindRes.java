@@ -10,26 +10,39 @@ import lombok.NoArgsConstructor;
 public class DocsListFindRes {
 
     private String message;
-    private List<DocsListFindData> data;
+
+    private DocsListRes data;
 
     @Data
+    @NoArgsConstructor
+    public static class DocsListRes {
+
+        private List<DocsListFindData> docsInfoList;
+
+    }
+
+    @Data
+    @NoArgsConstructor
     public static class DocsListFindData {
 
         private String title;
 
         private Long docsId;
 
+        private String userId;
+
         private LocalDateTime createdDate;
 
-        private List<FileFindRes> imgFileInfo;
+        private List<FileResponseDto> imgFileInfo;
 
     }
 
     @Data
-    public static class FileFindRes {
+    @NoArgsConstructor
+    public static class FileResponseDto {
 
         private String filename;
-        
+
         private String imgUrl;
     }
 }
