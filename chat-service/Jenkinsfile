@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+    environment {
+        DOCKER = 'sudo docker'
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                checkout scm
+                echo 'Checkout Scm'
+            }
+        }
+
+        stage('Set Environment') {
+            steps {
+                echo "Copy require file to pipeline folder"
+                sh 'mkdir -p ./chat-service/src/main/resources/secret'
+                sh 'cp /var/jenkins_home/util/chat-service/application-secret.yml ./chat-service/src/main/resources/secret/application-secret.yml'
+            }
+        }
+
+        stage('Build image') {
+            steps {
+                sh 'ls -al'
+                dir('chat-service') {
+                    sh 'ls -al'
+                    sh 'chmod +x ./gradlew'
+                    sh './gradlew build'
+                    sh 'docker build -t chat-service .'
+                }
+                echo 'Build image...'
+            }
+            post {
+                success {
+                    echo 'Build Success'
+                }
+                failure {
+                    echo 'Build Failed'
+                }
+            }
+        }
+
+        stage('Remove Previous image') {
+            steps {
+                script {
+                    try {
+                        sh 'docker stop journeymate-chat-service'
+                        sh 'docker rm journeymate-chat-service'
+                    } catch (e) {
+                        echo 'fail to stop and remove container'
+                    }
+                }
+            }
+        }
+        stage('Run New image') {
+            steps {
+                sh 'docker run --name journeymate-chat-service -d -p 8800:8800 chat-service'
+                echo 'Run New member image'
+            }
+        }
+    }
+}
