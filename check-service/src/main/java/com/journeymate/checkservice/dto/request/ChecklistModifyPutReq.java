@@ -8,24 +8,24 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChecklistModifyPutReq {
 
-    String userId;
+    private String userId;
 
-    Long journeyId;
+    private Long journeyId;
 
-    List<Item> items;
+    private List<PersonalItem> personalItems;
 
     @Data
-    public class Item {
+    public static class PersonalItem {
 
-        Long id;
-        
-        String name;
+        private Long id;
 
-        Integer num;
+        private String name;
 
-        Boolean isChecked;
+        private Integer num;
 
-        Boolean isDeleted;
+        private Boolean isChecked;
+
+        private Boolean isDeleted;
 
     }
 }

@@ -17,9 +17,9 @@ public class KafkaConsumerConfig {
 
     /* 접속하는 카프카의 정보가 들어가는 Bean */
     @Bean
-    public ConsumerFactory<String, String> consumerFactory(){
+    public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> properties = new HashMap<>();
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "k9a204.p.ssafy.io:9092");
         /* 그룹 아이디를 지정해놓으면 그룹단위로 컨트롤 가능 카프카에서 컨슈머들을 그룹핑 할 수 있다. */
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "consumerGroupId");
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
@@ -32,7 +32,7 @@ public class KafkaConsumerConfig {
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory
-                = new ConcurrentKafkaListenerContainerFactory<>();
+            = new ConcurrentKafkaListenerContainerFactory<>();
         kafkaListenerContainerFactory.setConsumerFactory(consumerFactory());
 
         return kafkaListenerContainerFactory;

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.journeymate.checkservice.dto.request.ChecklistKafkaReq;
-import com.journeymate.checkservice.dto.request.ChecklistKafkaReq.DefaultItem;
+import com.journeymate.checkservice.dto.request.ChecklistKafkaReq.Item;
 import com.journeymate.checkservice.dto.response.ChecklistRegistRes;
 import com.journeymate.checkservice.service.ChecklistService;
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class KafkaConsumer {
 
         String type = (String) map.get("type");
 
-        List<DefaultItem> defaultItems = new ArrayList<>();
+        List<Item> items = new ArrayList<>();
 
         Object mateIdObject = map.get("mateId");
 
@@ -88,13 +88,13 @@ public class KafkaConsumer {
         try {
             if (itemObject instanceof List<?>) {
 
-                defaultItems = mapper.convertValue(itemObject, new TypeReference<>() {
+                items = mapper.convertValue(itemObject, new TypeReference<>() {
                 });
 
             }
         } catch (IllegalArgumentException e) {
 
-            throw new IllegalArgumentException("Failed to convert 'items' to List<itemGetRes>");
+            throw new IllegalArgumentException("Failed to convert 'items' to List<defaultItem>");
 
         }
 
@@ -102,12 +102,12 @@ public class KafkaConsumer {
 
         log.info("Kafka_message_journeyId_check: " + journeyId);
 
-        log.info("Kafka_message_items+check: " + defaultItems.toString());
+        log.info("Kafka_message_items+check: " + items.toString());
 
         log.info("Kafka_message_service+type : " + type);
 
         ChecklistKafkaReq checklistKafkaReq = new ChecklistKafkaReq(journeyId, mateId,
-            defaultItems);
+            items);
 
         if (type.equals("REGIST")) {
 
@@ -119,7 +119,7 @@ public class KafkaConsumer {
 
         } else if (type.equals("DELETE")) {
 
-            log.info("Kafka_Consumer_Checklist_Delete_start:  " + checklistKafkaReq);
+            log.info("Kafka_Consumer_Checklist_Delete_start:  " + checklistKafkaReq.getJourneyId());
 
             checklistService.deleteChecklist(checklistKafkaReq.getJourneyId());
 

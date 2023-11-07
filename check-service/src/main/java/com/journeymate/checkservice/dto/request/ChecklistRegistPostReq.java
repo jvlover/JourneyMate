@@ -8,17 +8,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChecklistRegistPostReq {
 
-    Long mateId;
+    private Long mateId;
 
-    Long journeyId;
+    private Long journeyId;
 
-    List<ItemUpdatePutReq> items;
+    private List<ItemUpdatePutReq> items;
 
     @Data
-    public class ItemUpdatePutReq {
+    public static class ItemUpdatePutReq {
 
-        String name;
+        private String name;
 
-        Integer num;
+        private Integer num;
     }
 }

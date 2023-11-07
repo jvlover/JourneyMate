@@ -7,23 +7,25 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class MateBridgeFindRes {
+public class MateBridgeFindKafkaRes {
 
     private String message;
 
-    private MateBridgeFindData data;
+    private MateBridgeFindRes data;
 
     @Data
-    public static class MateBridgeFindData {
+    @NoArgsConstructor
+    public static class MateBridgeFindRes {
 
-        List<UserFindData> users;
+        private List<UserFindRes> users;
 
-        String creator;
+        private String creator;
 
     }
 
     @Data
-    public class UserFindData {
+    @NoArgsConstructor
+    public static class UserFindRes {
 
         private String id;
 

@@ -2,13 +2,13 @@ package com.journeymate.checkservice.service;
 
 import com.journeymate.checkservice.client.UserClient;
 import com.journeymate.checkservice.dto.request.ChecklistKafkaReq;
-import com.journeymate.checkservice.dto.request.ChecklistKafkaReq.DefaultItem;
+import com.journeymate.checkservice.dto.request.ChecklistKafkaReq.Item;
 import com.journeymate.checkservice.dto.request.ChecklistModifyPutReq;
-import com.journeymate.checkservice.dto.request.ChecklistModifyPutReq.Item;
+import com.journeymate.checkservice.dto.request.ChecklistModifyPutReq.PersonalItem;
 import com.journeymate.checkservice.dto.response.ChecklistFindRes;
 import com.journeymate.checkservice.dto.response.ChecklistModifyRes;
 import com.journeymate.checkservice.dto.response.ChecklistRegistRes;
-import com.journeymate.checkservice.dto.response.MateBridgeFindRes.UserFindData;
+import com.journeymate.checkservice.dto.response.MateBridgeFindKafkaRes.UserFindRes;
 import com.journeymate.checkservice.entity.Checklist;
 import com.journeymate.checkservice.exception.ChecklistNotFoundException;
 import com.journeymate.checkservice.repository.ChecklistRepository;
@@ -51,19 +51,24 @@ public class ChecklistServiceImpl implements ChecklistService {
 
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("user-find-circuitbreaker");
 
-        List<UserFindData> users = circuitBreaker.run(
+        List<UserFindRes> users = circuitBreaker.run(
             () -> userClient.findUserByMateId(checklistKafkaReq.getMateId())
                 .getData().getUsers(), throwable -> new ArrayList<>());
 
+        System.out.println(users + "이건 유저");
+
         List<ChecklistRegistRes> res = new ArrayList<>();
 
-        for (DefaultItem defaultItem : checklistKafkaReq.getDefaultItems()) {
+        for (Item item : checklistKafkaReq.getItems()) {
 
-            for (UserFindData user : users) {
+            System.out.println(item + "이거임");
+
+            for (UserFindRes user : users) {
+
                 Checklist checklist = Checklist.builder()
                     .userId(bytesHexChanger.hexToBytes(user.getId()))
                     .journeyId(checklistKafkaReq.getJourneyId())
-                    .name(defaultItem.getName()).num(defaultItem.getNum()).isChecked(false)
+                    .name(item.getName()).num(item.getNum()).isChecked(false)
                     .isDeleted(false)
                     .build();
 
@@ -115,19 +120,20 @@ public class ChecklistServiceImpl implements ChecklistService {
 
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("user-find-circuitbreaker");
 
-        List<UserFindData> users = circuitBreaker.run(
+        List<UserFindRes> users = circuitBreaker.run(
             () -> userClient.findUserByMateId(checklistKafkaReq.getMateId())
                 .getData().getUsers(), throwable -> new ArrayList<>());
 
         List<ChecklistRegistRes> res = new ArrayList<>();
 
-        for (DefaultItem defaultItem : checklistKafkaReq.getDefaultItems()) {
+        for (Item item : checklistKafkaReq.getItems()) {
 
-            for (UserFindData user : users) {
+            for (UserFindRes user : users) {
+
                 Checklist checklist = Checklist.builder()
                     .userId(bytesHexChanger.hexToBytes(user.getId()))
                     .journeyId(checklistKafkaReq.getJourneyId())
-                    .name(defaultItem.getName()).num(defaultItem.getNum()).isChecked(false)
+                    .name(item.getName()).num(item.getNum()).isChecked(false)
                     .isDeleted(false)
                     .build();
 
@@ -153,9 +159,14 @@ public class ChecklistServiceImpl implements ChecklistService {
 
         log.info("ChecklistService_findChecklistById_start : " + id);
 
+        Checklist checklist = checklistRepository.findById(id)
+            .orElseThrow(ChecklistNotFoundException::new);
+
         ChecklistFindRes res = modelMapper.map(
-            checklistRepository.findById(id).orElseThrow(ChecklistNotFoundException::new),
+            checklist,
             ChecklistFindRes.class);
+
+        res.setUserId(bytesHexChanger.bytesToHex(checklist.getUserId()));
 
         log.info("ChecklistService_findChecklistById_end : " + res);
 
@@ -174,22 +185,23 @@ public class ChecklistServiceImpl implements ChecklistService {
             checklistModifyPutReq.getJourneyId());
 
         // 새롭게 추가된 체크리스트
-        List<Item> items = checklistModifyPutReq.getItems();
+        List<PersonalItem> personalItems = checklistModifyPutReq.getPersonalItems();
 
         List<ChecklistModifyRes> res = new ArrayList<>();
 
-        HashMap<Long, Item> map = new HashMap<>();
+        HashMap<Long, PersonalItem> map = new HashMap<>();
 
-        for (Item item : items) {
+        for (PersonalItem personalItem : personalItems) {
 
             // 새롭게 추가된 item의 경우
-            if (item.getId() == 0) {
+            if (personalItem.getId() == 0) {
 
                 Checklist checklist = Checklist.builder()
                     .userId(bytesHexChanger.hexToBytes(checklistModifyPutReq.getUserId()))
                     .journeyId(checklistModifyPutReq.getJourneyId())
-                    .name(item.getName()).num(item.getNum()).isChecked(item.getIsChecked())
-                    .isDeleted(item.getIsDeleted())
+                    .name(personalItem.getName()).num(personalItem.getNum())
+                    .isChecked(personalItem.getIsChecked())
+                    .isDeleted(personalItem.getIsDeleted())
                     .build();
 
                 checklistRepository.save(checklist);
@@ -203,7 +215,7 @@ public class ChecklistServiceImpl implements ChecklistService {
 
             } else {
 
-                map.put(item.getId(), item);
+                map.put(personalItem.getId(), personalItem);
 
             }
 
@@ -213,13 +225,14 @@ public class ChecklistServiceImpl implements ChecklistService {
 
             if (map.containsKey(checklist.getId())) {
 
-                Item item = map.get(checklist.getId());
+                PersonalItem personalItem = map.get(checklist.getId());
 
-                if (!(item.getNum() == checklist.getNum() && item.getName()
+                if (!(personalItem.getNum() == checklist.getNum() && personalItem.getName()
                     .equals(checklist.getNum())
-                    && item.getIsChecked() == checklist.getIsChecked())) {
+                    && personalItem.getIsChecked() == checklist.getIsChecked())) {
 
-                    checklist.modifyChecklist(item.getName(), item.getNum(), item.getIsChecked());
+                    checklist.modifyChecklist(personalItem.getName(), personalItem.getNum(),
+                        personalItem.getIsChecked());
 
                 }
 

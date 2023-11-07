@@ -7,13 +7,13 @@ spring:
   config:
     import: secret/application-secret.yml
   zipkin:
-    base-url: http://localhost:9411
+    base-url: http://k9a204.p.ssafy.io:8999
     enabled: true
 
 eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-  hostname: k9a204.p.ssafy.io
+    hostname: k9a204.p.ssafy.io
   client:
     register-with-eureka: true
     fetch-registry: true

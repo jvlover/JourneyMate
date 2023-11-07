@@ -10,17 +10,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ChecklistKafkaReq {
 
-    Long mateId;
+    private Long mateId;
 
-    Long journeyId;
+    private Long journeyId;
 
-    List<DefaultItem> defaultItems;
+    private List<Item> items;
 
     @Data
-    public class DefaultItem {
+    public static class Item {
 
-        String name;
+        private String name;
 
-        Integer num;
+        private Integer num;
     }
 }
