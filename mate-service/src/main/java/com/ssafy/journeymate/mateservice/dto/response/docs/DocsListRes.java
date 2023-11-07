@@ -19,6 +19,7 @@ public class DocsListRes {
 
         private String title;
         private Long docsId;
+        private String userId;
         private LocalDateTime createdDate;
         private List<FileResposeDto> imgFileInfo;
     }
