@@ -1,14 +1,14 @@
 package com.journeymate.checkservice.client;
 
-import com.journeymate.checkservice.dto.response.MateBridgeFindRes;
+import com.journeymate.checkservice.dto.response.MateBridgeFindKafkaRes;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(value = "user-service", path = "/user-service")
+@FeignClient(name = "user-service")
 public interface UserClient {
 
-    @GetMapping("/feign/{mateId}")
-    MateBridgeFindRes findUserByMateIdForFeign(@PathVariable Long mateId);
+    @GetMapping("user-service/mateBridge/{mateId}")
+    MateBridgeFindKafkaRes findUserByMateId(@PathVariable Long mateId);
 
 }
