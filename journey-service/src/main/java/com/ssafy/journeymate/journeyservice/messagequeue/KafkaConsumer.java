@@ -3,9 +3,15 @@ package com.ssafy.journeymate.journeyservice.messagequeue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.journeymate.journeyservice.dto.ChecklistDto;
+import com.ssafy.journeymate.journeyservice.dto.response.ItemGetRes;
+import com.ssafy.journeymate.journeyservice.dto.response.JourneyGetRes;
 import com.ssafy.journeymate.journeyservice.entity.Journey;
 import com.ssafy.journeymate.journeyservice.repository.JourneyRepository;
+import com.ssafy.journeymate.journeyservice.service.JourneyService;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -18,50 +24,56 @@ import org.springframework.stereotype.Service;
 public class KafkaConsumer {
     JourneyRepository journeyRepository;
 
+    JourneyService journeyService;
+
+    KafkaProducer kafkaProducer;
+
     @Autowired
-    public KafkaConsumer(JourneyRepository journeyRepository) {
+    public KafkaConsumer(JourneyRepository journeyRepository, JourneyService journeyService,
+                         KafkaProducer kafkaProducer) {
         this.journeyRepository = journeyRepository;
+        this.journeyService = journeyService;
+        this.kafkaProducer = kafkaProducer;
     }
 
-    @KafkaListener(topics = "category-journey-topic")
-    public void updateCategoryToJourney(String kafkaMessage){
-        log.info("Kafka Message: -> "+ kafkaMessage);
+    @KafkaListener(topics = "journeys-delete")
+    public void updateCategoryToJourney(String kafkaMessage) {
+        log.info("Kafka Message: -> " + kafkaMessage);
         Map<Object, Object> map = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
         try {
-            map = mapper.readValue(kafkaMessage, new TypeReference<Map<Object, Object>>() {});
-        } catch (JsonProcessingException e){
+            map = mapper.readValue(kafkaMessage, new TypeReference<Map<Object, Object>>() {
+            });
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
-        /*  틀을 위한 예시코드로 상황에 맞게 수정 필요
+        Long mateId;
+        Object mateIdObject = map.get("mateId");
+        if (mateIdObject instanceof Integer) {
+            mateId = ((Integer) mateIdObject).longValue();
+        } else if (mateIdObject instanceof Long) {
+            mateId = (Long) mateIdObject;
+        } else {
+            throw new IllegalArgumentException("Invalid type for mateId");
+        }
 
-        강의 예시 (오더 서비스 -> 카탈로그 서비스인 상황에서 물품 id를 받아서 수정, 해당 물품 아이디를 갖는 수량 수정)
-        CatagoryEntity entity = repository.findByProductId((String) map.get("productId"));
-
-         */
-
-        Long journeyId =0l;
-        Optional<Journey> journey = journeyRepository.findById(journeyId);
-        String categoryIdString = (String) map.get("categoryId");
-        Integer categoryId = 0;
+        log.info("Kafka message mateId check: " + mateId);
         try {
-            if (categoryIdString != null) {
-                categoryId = Integer.valueOf(categoryIdString);
+            if (mateId != null) {
+                List<JourneyGetRes> journeyGetResponses = journeyService.deleteJourneysInMate(mateId);
+//                for (JourneyGetRes journeyGetRes : journeyGetResponses) {
+//                    List<ItemGetRes> items = new ArrayList<>();
+//                    ChecklistDto checklistDto = new ChecklistDto(journeyGetRes.getMateId(),
+//                            journeyGetRes.getId(), "DELETE", items);
+//                    kafkaProducer.sendItems("checklist-update", checklistDto);
+//                }
             }
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException();
         }
-        String categoryName = (String)map.get("name");
-        String categoryIcon = (String)map.get("icon");
-
-//        journey.update(categoryId, icon);
-//        journeyRepository.save(journey);
-
-
 
     }
-
 
 
 }
