@@ -17,6 +17,7 @@ import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 @Getter
 @ToString
@@ -24,6 +25,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @AllArgsConstructor
 @Builder
 @DynamicInsert
+@Where(clause = "is_deleted = '0'")
 @Entity
 public class MateBridge {
 
@@ -53,5 +55,5 @@ public class MateBridge {
     public void deleteBridge() {
         this.isDeleted = true;
     }
-    
+
 }

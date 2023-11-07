@@ -1,6 +1,5 @@
 package com.journeymate.userservice.dto.response;
 
-import com.journeymate.userservice.entity.User;
 import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MateBridgeFindRes {
 
-    List<User> users;
+    private List<UserFindRes> users;
 
-    String creator;
+    private String creator;
 
 }

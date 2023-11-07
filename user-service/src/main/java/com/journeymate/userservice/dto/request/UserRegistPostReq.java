@@ -5,9 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class UserModifyProfilePutReq {
-
-    private String id;
+public class UserRegistPostReq {
 
     private String nickname;
 

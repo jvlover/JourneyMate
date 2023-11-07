@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MateBridgeRegistPostReq {
 
-    Long mateId;
+    private Long mateId;
 
-    List<String> users;
+    private List<String> users;
 
-    String creator;
+    private String creator;
 
 }
