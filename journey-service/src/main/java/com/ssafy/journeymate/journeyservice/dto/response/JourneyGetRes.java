@@ -7,7 +7,7 @@ public class JourneyGetRes {
 
     private Long id;
     private Long mateId;
-    private Integer categoryId;
+    private Long categoryId;
     private String title;
     private Integer day;
     private Integer sequence;
