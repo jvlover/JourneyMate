@@ -6,19 +6,26 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ChecklistRegistPostReq {
+public class ChecklistModifyPutReq {
 
-    private Long mateId;
+    private String userId;
 
     private Long journeyId;
 
-    private List<ItemUpdatePutReq> items;
+    private List<PersonalItem> personalItems;
 
     @Data
-    public static class ItemUpdatePutReq {
+    public static class PersonalItem {
+
+        private Long id;
 
         private String name;
 
         private Integer num;
+
+        private Boolean isChecked;
+
+        private Boolean isDeleted;
+
     }
 }

@@ -1,21 +1,23 @@
 package com.journeymate.checkservice.dto.request;
 
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ChecklistRegistPostReq {
+@AllArgsConstructor
+public class ChecklistKafkaReq {
 
     private Long mateId;
 
     private Long journeyId;
 
-    private List<ItemUpdatePutReq> items;
+    private List<Item> items;
 
     @Data
-    public static class ItemUpdatePutReq {
+    public static class Item {
 
         private String name;
 
