@@ -630,6 +630,7 @@ public class MateServiceImpl implements MateService {
                     .creatorId(savedContent.getUserId())
                     .fileName(savedContent.getFileName())
                     .imgUrl(savedContent.getImgUrl())
+                    .type(savedContent.getType())
                     .build();
 
                 contentList.add(content);
