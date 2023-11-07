@@ -1,6 +1,13 @@
+server:
+  port: 8800
 spring:
-  profiles:
-    active: secret
+  application:
+    name: chat-service
+  config:
+    import: secret/application-secret.yml
+  zipkin:
+    base-url: http://k9a204.p.ssafy.io:8999
+    enabled: true
   devtools:
     livereload:
       enabled: true
@@ -9,3 +16,14 @@ spring:
     add-properties: false
   freemarker:
     cache: false
+
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    hostname: k9a204.p.ssafy.io
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://k9a204.p.ssafy.io:8761/eureka

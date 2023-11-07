@@ -1,6 +1,6 @@
-package com.ssafy.journeymate.comment.config;
+package com.ssafy.journeymate.chatservice.config;
 
-import com.ssafy.journeymate.comment.pubsub.RedisSubscriber;
+import com.ssafy.journeymate.chatservice.pubsub.RedisSubscriber;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

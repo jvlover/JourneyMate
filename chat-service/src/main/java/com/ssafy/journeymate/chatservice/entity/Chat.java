@@ -1,17 +1,21 @@
-package com.ssafy.journeymate.comment.model;
+package com.ssafy.journeymate.chatservice.entity;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
 @Getter
-@Setter
+@NoArgsConstructor
 @Document(collection = "comments")
-public class Comment {
+public class Chat{
 
     @Id
     private String id; // MongoDB의 Document ID
@@ -23,15 +27,33 @@ public class Comment {
     private long userCount; // 채팅방 인원수, 채팅방 내에서 메시지가 전달될때 인원수 갱신시 사용
     private Date timestamp = new Date(); // 메시지가 생성된 시간
 
-    public Comment() {
-    }
 
     @Builder
-    public Comment(CommentType type, long mateId, String sender, String message, long userCount) {
+    public Chat(CommentType type, long mateId, String sender, String message, long userCount) {
         this.type = type;
         this.mateId = mateId;
         this.sender = sender;
         this.message = message;
+        this.userCount = userCount;
+    }
+
+    public void modifyType(CommentType type) {
+        this.type = type;
+    }
+
+    public void modifyMateId(Long mateId) {
+        this.mateId = mateId;
+    }
+
+    public void modifySender(String sender) {
+        this.sender = sender;
+    }
+
+    public void modifyMessage(String message) {
+        this.message = message;
+    }
+
+    public void modifyUserCount(Long userCount) {
         this.userCount = userCount;
     }
 

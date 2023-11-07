@@ -1,4 +1,4 @@
-package com.ssafy.journeymate.comment.config;
+package com.ssafy.journeymate.chatservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

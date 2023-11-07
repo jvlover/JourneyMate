@@ -1,7 +1,7 @@
-package com.ssafy.journeymate.comment.pubsub;
+package com.ssafy.journeymate.chatservice.pubsub;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.journeymate.comment.model.Comment;
+import com.ssafy.journeymate.chatservice.entity.Chat;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -22,9 +22,9 @@ public class RedisSubscriber {
     public void sendComment(String publishComment) {
         try {
             // ChatMessage 객채로 맵핑
-            Comment comment = objectMapper.readValue(publishComment, Comment.class);
+            Chat chat = objectMapper.readValue(publishComment, Chat.class);
             // 채팅방을 구독한 클라이언트에게 메시지 발송
-            messagingTemplate.convertAndSend("/sub/comment-service/mate/" + comment.getMateId(), comment);
+            messagingTemplate.convertAndSend("/sub/comment-service/mate/" + chat.getMateId(), chat);
         } catch (Exception e) {
             log.error("Exception {}", e);
         }

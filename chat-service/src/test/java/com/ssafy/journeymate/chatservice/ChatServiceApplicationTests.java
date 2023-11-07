@@ -1,10 +1,10 @@
-package com.ssafy.journeymate.comment;
+package com.ssafy.journeymate.chatservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class RedisChatApplicationTests {
+class ChatServiceApplicationTests {
 
     @Test
     void contextLoads() {
