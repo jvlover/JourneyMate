@@ -1,0 +1,11 @@
+spring:
+  profiles:
+    active: secret
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: false
+    add-properties: false
+  freemarker:
+    cache: false
