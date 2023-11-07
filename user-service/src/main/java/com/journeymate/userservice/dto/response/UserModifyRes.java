@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserModifyRes {
 
-    String id;
+    private String id;
 
-    String nickname;
+    private String nickname;
 
-    String imgUrl;
+    private String imgUrl;
 
-    LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
 
 }

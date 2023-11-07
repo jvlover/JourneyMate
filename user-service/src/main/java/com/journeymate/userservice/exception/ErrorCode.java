@@ -30,8 +30,6 @@ public enum ErrorCode {
 
     DUPLICATED_LOGIN_ID(HttpStatus.CONFLICT, "중복된 아이디 입니다."),
 
-    DUPLICATED_EMAIL(HttpStatus.CONFLICT, "중복된 이메일 입니다."),
-
     NO_IMAGE(HttpStatus.BAD_REQUEST, "요청에 이미지가 없습니다."),
 
     IMAGE_UPLOAD_FAIL(HttpStatus.BAD_REQUEST, "이미지 업로드를 실패했습니다."),

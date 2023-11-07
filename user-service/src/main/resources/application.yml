@@ -5,18 +5,10 @@ spring:
   application:
     name: user-service
   config:
-    import : secret/application-secret.yml
-
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        # show_sql: true
-        format_sql: true
-    open-in-view: false
-
+    import: secret/application-secret.yml
+  zipkin:
+    base-url: http://k9a204.p.ssafy.io:8999
+    enabled: true
 
 eureka:
   instance:
