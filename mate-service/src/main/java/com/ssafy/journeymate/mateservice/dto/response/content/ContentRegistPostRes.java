@@ -21,5 +21,6 @@ public class ContentRegistPostRes {
         private LocalDateTime createdDate;
         private String imgUrl;
         private String fileName;
+        private Boolean type;
     }
 }
