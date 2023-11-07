@@ -44,7 +44,6 @@ public class CategoryController {
         return "health_check";
     }
 
-
     @GetMapping("/{categoryId}")
     public ResponseEntity<ResponseDto> getCategoryById(@PathVariable Long categoryId) {
 
@@ -69,8 +68,9 @@ public class CategoryController {
         return new ResponseEntity<>(new ResponseDto("카테고리 정보 조회 완료", categoryGetRes), HttpStatus.OK);
     }
 
+    /* Feign Client용 */
     @GetMapping("/{categoryId}/items")
-    public ResponseEntity<ResponseDto> getCategoryItems(@PathVariable Long categoryId) {
+    public List<ItemGetRes> getCategoryItems(@PathVariable Long categoryId) {
 
         log.info("CategoryController_getCategoryItems_start: " + categoryId);
 
@@ -78,7 +78,7 @@ public class CategoryController {
 
         log.info("CategoryController_getCategoryItems_end: " + items.toString());
 
-        return new ResponseEntity<>(new ResponseDto("카테고리 내 아이템 목록 조회 완료", items), HttpStatus.OK);
+        return items;
     }
 
     @PostMapping("/regist")
@@ -128,6 +128,5 @@ public class CategoryController {
 
         return new ResponseEntity<>(new ResponseDto("카테고리 아이템 업데이트 완료", check), HttpStatus.OK);
     }
-
 
 }
