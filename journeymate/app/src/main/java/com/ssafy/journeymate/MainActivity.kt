@@ -2,14 +2,14 @@ package com.ssafy.journeymate
 
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
+import com.google.android.material.snackbar.Snackbar
 import com.ssafy.journeymate.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -34,8 +34,11 @@ class MainActivity : AppCompatActivity() {
                 .setAction("Action", null).show()
         }
 
-        val intent = Intent(this,LoadScreanActivity::class.java)
+        val intent = Intent(this, MateRegistActivity::class.java)
+
         startActivity(intent)
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

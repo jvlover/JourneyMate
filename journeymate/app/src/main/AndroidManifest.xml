@@ -13,10 +13,10 @@
         android:theme="@style/Theme.JourneyMate"
         tools:targetApi="31">
         <activity
-            android:name=".LoadScreanActivity"
+            android:name=".MateRegistActivity"
             android:exported="false" />
         <activity
-            android:name=".LoadActivity"
+            android:name=".LoadScreanActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
