@@ -6,17 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import com.ssafy.journeymate.databinding.FragmentMateRegistBinding
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-/**
- * A simple [Fragment] subclass.
- * Use the [MateRegistFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class MateRegistFragment : Fragment() {
 
     private lateinit var startDateEditText: EditText
@@ -36,37 +32,39 @@ class MateRegistFragment : Fragment() {
 
         startDateEditText = _binding!!.startDateEditText as EditText
         endDateEditText = _binding!!.endDateEditText as EditText
+        val startDateIcon = _binding!!.startDateIcon
+        val endDateIcon = _binding!!.endDateIcon
 
-        endDateEditText.setOnClickListener {
-            showDatePickerDialog()
+
+        startDateIcon.setOnClickListener {
+            showDatePickerDialog(startDateEditText)
+        }
+
+        endDateIcon.setOnClickListener {
+            showDatePickerDialog(endDateEditText)
         }
 
 
-        
-
-
+        val selectedDate = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(calendar.time)
 
         return _binding!!.root
     }
 
-    private fun showDatePickerDialog() {
+    private fun showDatePickerDialog(editText: EditText) {
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
         val datePickerDialog = DatePickerDialog(
             requireContext(),
-            DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
-                calendar.set(year, month, dayOfMonth)
-                val selectedDate =
-                    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
-                endDateEditText.setText(selectedDate)
+            { _, selectedYear, selectedMonth, selectedDay ->
+                editText.setText("$selectedYear-${selectedMonth + 1}-$selectedDay")
             },
             year,
             month,
             day
-        )
 
+        )
         datePickerDialog.show()
     }
 

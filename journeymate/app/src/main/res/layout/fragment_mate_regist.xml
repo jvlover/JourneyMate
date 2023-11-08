@@ -12,11 +12,12 @@
         android:id="@+id/name_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="84dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="80dp"
         android:text="이름"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.169"
+        app:layout_constraintHorizontal_bias="0.126"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -27,7 +28,7 @@
         android:layout_marginTop="72dp"
         android:hint="이름 입력"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.41"
+        app:layout_constraintHorizontal_bias="0.408"
         app:layout_constraintStart_toEndOf="@id/name_text"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -35,11 +36,12 @@
         android:id="@+id/mate_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="160dp"
         android:text="메이트"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.176"
+        app:layout_constraintHorizontal_bias="0.132"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -59,10 +61,10 @@
         android:id="@+id/destination_text_edit"
         android:layout_width="180dp"
         android:layout_height="45dp"
-        android:layout_marginTop="304dp"
+        android:layout_marginTop="272dp"
         android:hint="여행지 입력"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.33"
+        app:layout_constraintHorizontal_bias="0.333"
         app:layout_constraintStart_toEndOf="@+id/destination_text"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -70,11 +72,12 @@
         android:id="@+id/destination_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="316dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="280dp"
         android:text="여행지"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.165"
+        app:layout_constraintHorizontal_bias="0.13"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -82,11 +85,11 @@
         android:id="@+id/start_date_icon"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:layout_marginTop="392dp"
+        android:layout_marginTop="376dp"
         android:clickable="true"
         android:src="@drawable/baseline_calendar_month_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.636"
+        app:layout_constraintHorizontal_bias="0.632"
         app:layout_constraintStart_toEndOf="@+id/start_date_edit_text"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -94,25 +97,26 @@
         android:id="@+id/end_date_edit_text"
         android:layout_width="180dp"
         android:layout_height="45dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="48dp"
         android:gravity="center_vertical"
         android:paddingHorizontal="5dp"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.352"
+        app:layout_constraintHorizontal_bias="0.305"
         app:layout_constraintStart_toEndOf="@+id/end_date_text"
         app:layout_constraintTop_toBottomOf="@+id/start_date_edit_text" />
+
 
     <TextView
         android:id="@+id/end_date_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="64dp"
         android:text="끝 날짜"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.134"
+        app:layout_constraintHorizontal_bias="0.132"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/start_date_text" />
 
@@ -120,25 +124,24 @@
         android:id="@+id/start_date_edit_text"
         android:layout_width="180dp"
         android:layout_height="45dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="48dp"
         android:gravity="center_vertical"
         android:paddingHorizontal="5dp"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.254"
+        app:layout_constraintHorizontal_bias="0.214"
         app:layout_constraintStart_toEndOf="@+id/start_date_text"
         app:layout_constraintTop_toBottomOf="@+id/destination_text_edit" />
-
 
     <ImageView
         android:id="@+id/end_date_icon"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:layout_marginTop="500dp"
+        android:layout_marginTop="460dp"
         android:clickable="true"
         android:src="@drawable/baseline_calendar_month_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.636"
+        app:layout_constraintHorizontal_bias="0.673"
         app:layout_constraintStart_toEndOf="@+id/end_date_edit_text"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -146,11 +149,12 @@
         android:id="@+id/start_date_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="72dp"
         android:text="시작 날짜"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.161"
+        app:layout_constraintHorizontal_bias="0.135"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/destination_text" />
 
@@ -158,9 +162,11 @@
         android:id="@+id/mate_regist_button"
         android:layout_width="160dp"
         android:layout_height="60dp"
-        android:layout_marginBottom="64dp"
+        android:layout_marginBottom="96dp"
+        android:background="@drawable/large_button"
         android:text="그룹 생성하기"
         android:textStyle="bold"
+        app:iconTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
