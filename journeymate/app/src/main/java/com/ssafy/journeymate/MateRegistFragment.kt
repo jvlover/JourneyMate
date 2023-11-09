@@ -5,19 +5,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.ssafy.journeymate.databinding.FragmentMateRegistBinding
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 
 class MateRegistFragment : Fragment() {
 
-    private lateinit var startDateEditText: EditText
+    private lateinit var startDateEditText: TextView
 
-    private lateinit var endDateEditText: EditText
+    private lateinit var endDateEditText: TextView
 
     private var calendar = Calendar.getInstance()
 
@@ -30,8 +28,8 @@ class MateRegistFragment : Fragment() {
 
         _binding = FragmentMateRegistBinding.inflate(inflater, container, false)
 
-        startDateEditText = _binding!!.startDateEditText as EditText
-        endDateEditText = _binding!!.endDateEditText as EditText
+        startDateEditText = _binding!!.startDateEditText
+        endDateEditText = _binding!!.endDateEditText
 
 
         val startDateIcon: ImageView? = view?.findViewById(R.id.start_date_icon)
@@ -51,18 +49,18 @@ class MateRegistFragment : Fragment() {
         }
 
 
-        val selectedStartDate =
-            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(startDateEditText)
-
-        val selectEndDate =
-            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(endDateEditText)
-
+//        val selectedStartDate =
+//            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(startDateEditText.text)
+//
+//        val selectEndDate =
+//            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(endDateEditText.text)
+//
 
 
         return _binding!!.root
     }
 
-    private fun showDatePickerDialog(editText: EditText) {
+    private fun showDatePickerDialog(textView: TextView) {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
@@ -73,7 +71,7 @@ class MateRegistFragment : Fragment() {
         val datePickerDialog =
             DatePickerDialog(context, { _, selectedYear, selectedMonth, selectedDay ->
                 val selectedDate = "${selectedYear}/${selectedMonth + 1}/${selectedDay}"
-                editText.setText(selectedDate)
+                textView.setText(selectedDate)
             }, year, month, day)
 
         datePickerDialog.show()

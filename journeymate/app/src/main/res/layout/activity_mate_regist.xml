@@ -62,5 +62,4 @@
     <include layout="@layout/fragment_mate_regist" />
 
 
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

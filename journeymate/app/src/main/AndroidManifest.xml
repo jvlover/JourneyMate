@@ -13,6 +13,9 @@
         android:theme="@style/Theme.JourneyMate"
         tools:targetApi="31">
         <activity
+            android:name=".mate.MateListActivity"
+            android:exported="false" />
+        <activity
             android:name=".MateRegistActivity"
             android:exported="false" />
         <activity
