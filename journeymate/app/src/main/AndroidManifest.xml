@@ -16,7 +16,7 @@
             android:name=".mate.MateListActivity"
             android:exported="false" />
         <activity
-            android:name=".MateRegistActivity"
+            android:name=".mate.MateRegistActivity"
             android:exported="false" />
         <activity
             android:name=".LoadScreanActivity"

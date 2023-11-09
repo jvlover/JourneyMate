@@ -1,4 +1,4 @@
-package com.ssafy.journeymate
+package com.ssafy.journeymate.mate
 
 import android.app.DatePickerDialog
 import android.os.Bundle
@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.ssafy.journeymate.R
 import com.ssafy.journeymate.databinding.FragmentMateRegistBinding
 import java.util.Calendar
 

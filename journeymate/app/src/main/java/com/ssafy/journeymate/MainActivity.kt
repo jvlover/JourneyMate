@@ -11,6 +11,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.android.material.snackbar.Snackbar
 import com.ssafy.journeymate.databinding.ActivityMainBinding
+import com.ssafy.journeymate.mate.MateRegistActivity
 
 class MainActivity : AppCompatActivity() {
 
