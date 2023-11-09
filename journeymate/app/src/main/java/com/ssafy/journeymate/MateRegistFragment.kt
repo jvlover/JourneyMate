@@ -32,39 +32,50 @@ class MateRegistFragment : Fragment() {
 
         startDateEditText = _binding!!.startDateEditText as EditText
         endDateEditText = _binding!!.endDateEditText as EditText
-        val startDateIcon = _binding!!.startDateIcon
-        val endDateIcon = _binding!!.endDateIcon
 
 
-        startDateIcon.setOnClickListener {
-            showDatePickerDialog(startDateEditText)
+        val startDateIcon: ImageView? = view?.findViewById(R.id.start_date_icon)
+
+        if (startDateIcon != null) {
+            startDateIcon.setOnClickListener {
+                showDatePickerDialog(startDateEditText)
+            }
         }
 
-        endDateIcon.setOnClickListener {
-            showDatePickerDialog(endDateEditText)
+        val endDateIcon: ImageView? = view?.findViewById(R.id.end_date_icon)
+
+        if (endDateIcon != null) {
+            endDateIcon.setOnClickListener {
+                showDatePickerDialog(endDateEditText)
+            }
         }
 
 
-        val selectedDate = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(calendar.time)
+        val selectedStartDate =
+            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(startDateEditText)
+
+        val selectEndDate =
+            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(endDateEditText)
+
+
 
         return _binding!!.root
     }
 
     private fun showDatePickerDialog(editText: EditText) {
+        val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-        val datePickerDialog = DatePickerDialog(
-            requireContext(),
-            { _, selectedYear, selectedMonth, selectedDay ->
-                editText.setText("$selectedYear-${selectedMonth + 1}-$selectedDay")
-            },
-            year,
-            month,
-            day
+        val context = requireContext() // requireContext()는 context가 null이 아님을 보장합니다.
 
-        )
+        val datePickerDialog =
+            DatePickerDialog(context, { _, selectedYear, selectedMonth, selectedDay ->
+                val selectedDate = "${selectedYear}/${selectedMonth + 1}/${selectedDay}"
+                editText.setText(selectedDate)
+            }, year, month, day)
+
         datePickerDialog.show()
     }
 
