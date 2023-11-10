@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/loading"
-    android:scaleX="0.8"
-    android:scaleY="0.37"
-    tools:context=".LoadScreanActivity">
+    android:scaleX="0.7"
+    android:scaleY="0.30"
+    tools:context=".LoadScreenActivity">
 
 </androidx.constraintlayout.widget.ConstraintLayout>
