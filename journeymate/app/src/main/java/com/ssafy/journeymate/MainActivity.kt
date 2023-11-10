@@ -3,7 +3,6 @@ package com.ssafy.journeymate
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -13,6 +12,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.ssafy.journeymate.databinding.ActivityMainBinding
+import com.ssafy.journeymate.mate.MateRegistActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,6 +33,13 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         val intent = Intent(this,LoadScreenActivity::class.java)
+//        binding.fab.setOnClickListener { view ->
+//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                .setAction("Action", null).show()
+//        }
+//
+//        val intent = Intent(this, MateRegistActivity::class.java)
+
         startActivity(intent)
     }
 
