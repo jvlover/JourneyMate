@@ -16,6 +16,15 @@
         android:theme="@style/Theme.JourneyMate"
         tools:targetApi="31">
         <activity
+            android:name=".mate.MateListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".mate.MateRegistActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoadScreenActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
