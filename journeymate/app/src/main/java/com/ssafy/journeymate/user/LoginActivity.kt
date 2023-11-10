@@ -13,6 +13,7 @@ import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import com.ssafy.journeymate.LoadScreanActivity
 import com.ssafy.journeymate.MainActivity
 import com.ssafy.journeymate.databinding.ActivityLoginBinding
 
@@ -81,6 +82,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(binding.root)
 
         binding.btnLogin.setOnClickListener(this)
+
+        val intent = Intent(this, LoadScreanActivity::class.java)
+        startActivity(intent)
     }
 
     private fun nextMainActivity() {
