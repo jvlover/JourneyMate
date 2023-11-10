@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
@@ -101,7 +102,6 @@ class MateRegistActivity : AppCompatActivity() {
         }
 
 
-
     }
 
     private fun showDatePickerDialog(textView: TextView, isStartDate: Boolean) {
@@ -146,10 +146,11 @@ class MateRegistActivity : AppCompatActivity() {
 
     private fun searchUser(input: String) {
         // TODO: API 호출 및 회원 검색 수행
-        // 가정: searchResult는 API 응답으로 받은 회원 검색 결과입니다.
+
         val searchResult = arrayOf("11ee7ebf112c1927aa4b85e38939408d", "User2", "User3")
 
-        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, searchResult)
+        val adapter =
+            ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, searchResult)
         mateEditText.setAdapter(adapter)
         mateEditText.showDropDown()
 
@@ -241,7 +242,7 @@ class MateRegistActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<RegistMateResponse>, t: Throwable) {
-                // TODO: 실패 처리
+                Log.e("error log", "실패했습니다. ")
             }
         })
     }

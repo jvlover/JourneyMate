@@ -12,11 +12,12 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
+import java.io.Serializable
 import java.time.LocalDateTime
 import java.util.Objects
 
 
-data class RegistMateResponse(val message: String, val data: MateGroupData)
+data class RegistMateResponse(val message: String, val data: MateGroupData) : Serializable
 
 data class MateGroupData(
     val name: String,
