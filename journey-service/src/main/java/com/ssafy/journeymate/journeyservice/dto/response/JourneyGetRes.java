@@ -11,8 +11,8 @@ public class JourneyGetRes {
     private String title;
     private Integer day;
     private Integer sequence;
-    private float xcoordinate;
-    private float ycoordinate;
+    private double xcoordinate;
+    private double ycoordinate;
 
 
 }
