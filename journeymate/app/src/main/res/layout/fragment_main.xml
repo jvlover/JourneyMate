@@ -40,48 +40,51 @@
 
     <ImageButton
         android:id="@+id/img2"
-        android:layout_width="125dp"
-        android:layout_height="150dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:background="@android:color/transparent"
         android:scaleType="centerCrop"
-        android:src="@drawable/journey_image"
-        android:background="@drawable/rounded_corners"
+        android:src="@drawable/journey_image_round"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.825"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.596" />
+        app:layout_constraintVertical_bias="0.598" />
 
     <ImageButton
         android:id="@+id/img1"
-        android:layout_width="140dp"
-        android:layout_height="110dp"
+        android:layout_width="190dp"
+        android:layout_height="190dp"
+        android:background="@android:color/transparent"
         android:scaleType="centerCrop"
-        android:src="@drawable/docs_image"
+        android:src="@drawable/passport_round"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
-        app:layout_constraintHorizontal_bias="0.191"
+        app:layout_constraintHorizontal_bias="0.072"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.552" />
+        app:layout_constraintVertical_bias="0.585" />
 
     <ImageButton
         android:id="@+id/img3"
-        android:layout_width="140dp"
-        android:layout_height="140dp"
+        android:layout_width="190dp"
+        android:layout_height="150dp"
+        android:background="@android:color/transparent"
         android:scaleType="centerCrop"
-        android:src="@drawable/mate_image"
+        android:src="@drawable/mate_image_round"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.191"
+        app:layout_constraintHorizontal_bias="0.095"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.896" />
+        app:layout_constraintVertical_bias="0.952" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_variable"
         android:text="문서관리"
         android:textColor="@color/white"
         android:textSize="24sp"
@@ -108,6 +111,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:fontFamily="@font/pretendard_variable"
         android:text="Journeymate"
         android:textColor="@color/white"
         android:textSize="34sp"
@@ -120,29 +124,31 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_variable"
         android:text="일정관리"
         android:textColor="@color/white"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="@+id/img2"
         app:layout_constraintEnd_toEndOf="@+id/img2"
-        app:layout_constraintHorizontal_bias="0.216"
+        app:layout_constraintHorizontal_bias="0.205"
         app:layout_constraintStart_toStartOf="@+id/img2"
         app:layout_constraintTop_toTopOf="@+id/img2"
-        app:layout_constraintVertical_bias="0.147" />
+        app:layout_constraintVertical_bias="0.084" />
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_variable"
         android:text="여행그룹"
         android:textColor="@color/white"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="@+id/img3"
         app:layout_constraintEnd_toEndOf="@+id/img3"
-        app:layout_constraintHorizontal_bias="0.173"
+        app:layout_constraintHorizontal_bias="0.127"
         app:layout_constraintStart_toStartOf="@+id/img3"
         app:layout_constraintTop_toTopOf="@+id/img3"
-        app:layout_constraintVertical_bias="0.152" />
+        app:layout_constraintVertical_bias="0.043" />
 
     <ImageView
         android:id="@+id/imageView2"
