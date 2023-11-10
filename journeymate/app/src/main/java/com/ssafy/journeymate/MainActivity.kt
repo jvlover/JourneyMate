@@ -32,13 +32,13 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        val intent = Intent(this,LoadScreenActivity::class.java)
+//        val intent = Intent(this,LoadScreenActivity::class.java)
 //        binding.fab.setOnClickListener { view ->
 //            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                .setAction("Action", null).show()
 //        }
 //
-//        val intent = Intent(this, MateRegistActivity::class.java)
+        val intent = Intent(this, MateRegistActivity::class.java)
 
         startActivity(intent)
     }
