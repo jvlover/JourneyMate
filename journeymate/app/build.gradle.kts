@@ -57,4 +57,10 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
 
+    // Kakao Login
+    implementation("com.kakao.sdk:v2-all:2.17.0")
+
+    // 사진 원형으로
+    implementation("de.hdodenhof:circleimageview:3.1.0")
+
 }
