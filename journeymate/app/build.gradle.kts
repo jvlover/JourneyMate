@@ -63,4 +63,6 @@ dependencies {
     // 사진 원형으로
     implementation("de.hdodenhof:circleimageview:3.1.0")
 
+    // Stomp
+    implementation ("com.github.bishoybasily:stomp:2.0.5")
 }
