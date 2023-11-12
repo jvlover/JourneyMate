@@ -37,8 +37,7 @@ class MainActivity : AppCompatActivity() {
 //                .setAction("Action", null).show()
 //        }
 //
-//        val intent = Intent(this, MateListActivity::class.java)
-        //val intent = Intent(this, MateDetailActivity::class.java)
+        val intent = Intent(this, MateRegistActivity::class.java)
 
     }
 

@@ -27,8 +27,10 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.*
 import java.util.Calendar
 import java.util.Locale
 
@@ -38,7 +40,8 @@ class MateRegistActivity : AppCompatActivity() {
     private lateinit var endDateEditText: TextView
     private lateinit var mateEditText: AutoCompleteTextView
     private lateinit var mateLinearLayout: LinearLayout
-    private val userList = mutableListOf<String>()
+    private var userList = mutableListOf<String>()
+
     private lateinit var mateApi: MateApi
 
     // 선택된 시작 날짜를 저장하기 위한 변수를 추가합니다.
@@ -48,7 +51,7 @@ class MateRegistActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mate_regist)
-
+        userList.add("김민범")
         startDateEditText = findViewById(R.id.start_date_text_view)
         endDateEditText = findViewById(R.id.end_date_text_view)
 
@@ -88,7 +91,7 @@ class MateRegistActivity : AppCompatActivity() {
         }
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://k9a204.p.ssafy.io:8000/mate-service/regist/") // 여기에 실제 Base URL을 넣으세요.
+            .baseUrl("http://k9a204.p.ssafy.io:8000/mate-service/regist/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
@@ -131,8 +134,7 @@ class MateRegistActivity : AppCompatActivity() {
             },
             year, month, day
         )
-
-        // endDateEditText에 대한 DatePickerDialog가 표시되는 경우, 선택 가능한 최소 날짜를 설정합니다.
+        
         if (!isStartDate) {
             val startDate = SimpleDateFormat("yyyy/MM/dd", Locale.KOREA).parse(selectedStartDate)
 
@@ -211,9 +213,11 @@ class MateRegistActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun callMateRegisterApi(userList: List<String>) {
 
-        val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
-        val startDate = LocalDateTime.parse(startDateEditText.text.toString(), dateTimeFormatter)
-        val endDate = LocalDateTime.parse(endDateEditText.text.toString(), dateTimeFormatter)
+        val inputTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
+        val sDateTime = LocalDate.parse(startDateEditText.text.toString(),inputTimeFormatter)
+        val startDate = sDateTime.atStartOfDay()
+        val eDateTime = LocalDate.parse(endDateEditText.text.toString(),inputTimeFormatter)
+        val endDate = eDateTime.atStartOfDay()
 
         val registMateRequest = RegistMateRequest(
             destination = findViewById<EditText>(R.id.destination_text_edit).text.toString(),
@@ -231,12 +235,13 @@ class MateRegistActivity : AppCompatActivity() {
                 response: Response<RegistMateResponse>
             ) {
                 if (response.isSuccessful) {
-
+                    Log.d("sucess log", "됬냐")
                     val intent = Intent(this@MateRegistActivity, MateListActivity::class.java)
                     intent.putExtra("response", response.body())  // 응답을 새 액티비티로 전달
                     startActivity(intent)
 
                 } else {
+                    Log.i("failed log", "됬다")
                     // TODO: 오류 처리
                 }
             }
