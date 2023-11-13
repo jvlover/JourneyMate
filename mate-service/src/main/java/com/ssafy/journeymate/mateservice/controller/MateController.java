@@ -111,7 +111,7 @@ public class MateController {
 
         log.info("MateController_deleteMate_end : ");
 
-        return new ResponseEntity<>(new ResponseDto("회원 그룹 삭제 완료", null), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto("회원 그룹 삭제 완료", true), HttpStatus.OK);
     }
 
 
@@ -205,7 +205,7 @@ public class MateController {
 
         log.info("MateController_deleteDocs_end : ");
 
-        return new ResponseEntity<>(new ResponseDto("문서 삭제 완료", null), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto("문서 삭제 완료", true), HttpStatus.OK);
     }
 
 
@@ -295,7 +295,7 @@ public class MateController {
 
         log.info("MateController_deleteContent_end : ");
 
-        return new ResponseEntity<>(new ResponseDto("콘텐츠를 삭제했습니다.", null), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto("콘텐츠를 삭제했습니다.", true), HttpStatus.OK);
     }
 
     /**
