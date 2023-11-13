@@ -22,27 +22,14 @@ public class ChatServiceImpl implements ChatService{
         this.redisTemplate = redisTemplate;
     }
 
-    @Override
-    public Integer getMateId(String destination) {
-        int lastIndex = destination.lastIndexOf('/');
-        if (lastIndex != -1)
-            return lastIndex + 1;
-        else
-            return null;
-    }
-
-
-
-
-
     /**
      * 채팅방에 메시지 발송
      */
     @Override
     public void sendComment(Chat chat) {
         if(Chat.CommentType.TALK.equals(chat.getType())){
-            chat.modifyMessage(chat.getSender() + "님이 메시지를 보내셨습니다.");
-            chat.modifySender("[알림]");
+            chat.modifyMessage(chat.getMessage());
+            chat.modifySender(chat.getSender() + "님이 메시지를 보내셨습니다.");
         }
         redisTemplate.convertAndSend(channelTopic.getTopic(), chat);
     }
