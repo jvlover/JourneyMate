@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@android:color/white"/>
-    <corners android:radius="15dp" />
+    <solid android:color="@color/white"/>
     <stroke android:color="@android:color/darker_gray" android:width="1dp"/>
-
-    <!-- 그림자 효과 추가 -->
+    <corners android:radius="30dp" />
     <padding
         android:bottom="3dp"
-        android:left="1dp"
-        android:right="1dp"
-        android:top="1dp" />
+        android:left="2dp"
+        android:right="2dp"
+        android:top="2dp" />
 </shape>
