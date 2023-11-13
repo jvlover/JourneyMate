@@ -17,6 +17,15 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".mate.DocsWriteActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ToolBarActivity"
+            android:exported="false" />
+        <activity
+            android:name=".mate.DocsListActivity"
+            android:exported="false" />
+        <activity
             android:name=".mate.MateContentsActivity"
             android:exported="false" />
         <activity

@@ -1,12 +1,12 @@
 package com.ssafy.journeymate.mate
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.ssafy.journeymate.R
 import com.ssafy.journeymate.api.FindDocsListResponse
 import com.ssafy.journeymate.api.UserApi
@@ -20,12 +20,13 @@ class MateListActivity : AppCompatActivity() {
 
     private lateinit var userApi: UserApi
     private lateinit var retrofit: Retrofit
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mate_list)
 
-
+        // userId 변경 필요
         val userId = "11ee7c7b3842d729b20e1d0553c96277"
 
         retrofit = Retrofit.Builder()
@@ -41,12 +42,16 @@ class MateListActivity : AppCompatActivity() {
 
         val call = userApi.findDocsById(userId) // 여기에 실제 id 값을 넣어야 합니다.
         call.enqueue(object : Callback<FindDocsListResponse> {
-            override fun onResponse(call: Call<FindDocsListResponse>, response: Response<FindDocsListResponse>) {
+            override fun onResponse(
+                call: Call<FindDocsListResponse>,
+                response: Response<FindDocsListResponse>
+            ) {
                 if (response.isSuccessful) {
                     val responseData = response.body()?.data?.docsInfoList
                     responseData?.forEach { data ->
 
-                        val view = inflater.inflate(R.layout.layout_mate_list_data, mateListLayout, false)
+                        val view =
+                            inflater.inflate(R.layout.layout_mate_list_data, mateListLayout, false)
 
                         val textView = view.findViewById<TextView>(R.id.mate_name)
                         textView.text = data.title // 제목 설정
