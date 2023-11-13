@@ -3,16 +3,16 @@ package com.ssafy.journeymate
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
 import com.ssafy.journeymate.databinding.ActivityMainBinding
-import com.ssafy.journeymate.mate.MateRegistActivity
+import com.ssafy.journeymate.user.MyPageActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
 //
 //        val intent = Intent(this, MateRegistActivity::class.java)
 
+        startActivity(Intent(this, MyPageActivity::class.java))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

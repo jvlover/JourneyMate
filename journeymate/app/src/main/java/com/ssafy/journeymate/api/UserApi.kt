@@ -14,6 +14,7 @@ data class RegistUserData(
     val id: String,
     val nickname: String,
     val imgUrl: String,
+    val accessToken: String,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 )
@@ -24,6 +25,7 @@ data class FindUserData(
     val id: String,
     val nickname: String,
     val imgUrl: String,
+    val accessToken: String,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 )
