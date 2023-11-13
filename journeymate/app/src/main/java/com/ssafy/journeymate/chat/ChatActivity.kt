@@ -1,29 +1,94 @@
+import android.graphics.ColorSpace
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.gmail.bishoybasily.stomp.lib.*
+import com.gmail.bishoybasily.stomp.lib.Event.Type.*
 import com.gmail.bishoybasily.stomp.lib.StompClient
 import com.gmail.bishoybasily.stomp.lib.constants.*
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.ssafy.journeymate.R
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import okhttp3.OkHttpClient
+import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
+import ua.naiksoftware.stomp.Stomp
+import ua.naiksoftware.stomp.dto.LifecycleEvent
 
 class ChatActivity : AppCompatActivity() {
 
+
     private var mateId: Long = 1 // 예시 채팅방 ID
     private var userId: String = "user_id" // 예시 사용자 ID
-    private lateinit var stompClient: StompClient
+
+
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: RecyclerViewAdapter
+    lateinit var stompConnection: Disposable
+    lateinit var topic: Disposable
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
+
+//        val url = "ws://example.com/endpoint"
+//        val intervalMillis = 1000L
+//        val client = OkHttpClient()
+//
+//        val stomp = StompClient(url, intervalMillis, client)
+//
+//// connect
+//        stompConnection = stomp.connect().subscribe {
+//            when (it.type) {
+//                OPENED -> {
+//
+//                }
+//                CLOSED -> {
+//
+//                }
+//                ERROR -> {
+//
+//                }
+//
+//            }
+//        }
+//        var mateId = 8;
+//        // subscribe
+//        topic = stomp.subscribe("/sub/chat-service/mate"+mateId).subscribe { Log.i(TAG, it) }
+//
+//// unsubscribe
+//        topic.dispose()
+//
+//// send
+//        stomp.send("/destination", "dummy message").subscribe {
+//            if (it) {
+//            }
+//        }
+//
+//// disconnect
+//        stompConnection.dispose()
+//        topic = stomp.join("/destination").subscribe { it ->
+//            val responseData = JSONObject(it).getString("message")
+//
+//            val modelList = Gson().fromJson<ArrayList<ColorSpace.Model>>(
+//                responseData, TypeToken.getParameterized(
+//                    MutableList::class.java,
+//                    ColorSpace.Model::class.java
+//                ).type)
+//        }
+
 
         recyclerView = findViewById(R.id.messageActivity_recyclerview)
         adapter = RecyclerViewAdapter()
