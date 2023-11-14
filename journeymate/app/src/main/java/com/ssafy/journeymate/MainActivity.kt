@@ -38,8 +38,7 @@ class MainActivity : AppCompatActivity() {
 //        }
 //
 //        val intent = Intent(this, MateRegistActivity::class.java)
-
-        startActivity(Intent(this, MyPageActivity::class.java))
+        
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

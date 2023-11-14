@@ -23,5 +23,7 @@ class App : Application() {
     var profileImg = ""
 
     var accessToken = ""
-    
+
+    var mateId = ""
+
 }

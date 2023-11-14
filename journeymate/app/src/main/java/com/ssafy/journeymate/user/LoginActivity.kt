@@ -2,6 +2,7 @@ package com.ssafy.journeymate.user
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,7 @@ import com.ssafy.journeymate.MainActivity
 import com.ssafy.journeymate.api.FindUserResponse
 import com.ssafy.journeymate.api.RegistUserRequest
 import com.ssafy.journeymate.api.RegistUserResponse
+import com.ssafy.journeymate.api.UserApi
 import com.ssafy.journeymate.databinding.ActivityLoginBinding
 import com.ssafy.journeymate.global.App
 import retrofit2.Call
@@ -28,7 +30,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     private val binding by lazy { ActivityLoginBinding.inflate(layoutInflater) }
-    private lateinit var userApi: com.ssafy.journeymate.api.UserApi
+    private lateinit var userApi: UserApi
 
     private val mCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
         if (error != null) {
@@ -78,7 +80,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        userApi = retrofit.create(com.ssafy.journeymate.api.UserApi::class.java)
+        userApi = retrofit.create(UserApi::class.java)
 
         if (AuthApiClient.instance.hasToken()) {
             UserApiClient.instance.accessTokenInfo { _, error ->
@@ -98,9 +100,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun nextMainActivity() {
         setUserProfile()
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
+        Handler().postDelayed({
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }, 500)
     }
 
     private fun setUserProfile() {
@@ -117,25 +121,23 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                         userApi.findUserById(user.properties?.get("user_id").toString())
 
                     findUserResponse.enqueue(object : Callback<FindUserResponse> {
-
                         override fun onResponse(
                             call: Call<FindUserResponse>,
                             response: Response<FindUserResponse>
                         ) {
                             val result = response.body()
                             if (result == null) {
-                                // 없을 때 ?
+                                Log.e("API 에러", "로그인 에러", error)
                             } else if (result != null) {
                                 App.INSTANCE.nickname = result.data.nickname
                                 App.INSTANCE.id = result.data.id
                                 App.INSTANCE.profileImg = result.data.imgUrl
-                                App.INSTANCE.accessToken = result.data.accessToken
                                 // 엑세스 토큰 반환할 것
                             }
                         }
 
                         override fun onFailure(call: Call<FindUserResponse>, t: Throwable) {
-                            Log.e("메인액티비티 에러", "${t.localizedMessage}")
+                            Log.e("로그인 에러", "${t.localizedMessage}")
                         }
                     })
                 } else {
@@ -145,6 +147,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                         user.kakaoAccount?.profile?.nickname.toString(),
                         user.kakaoAccount?.profile?.profileImageUrl.toString()
                     )
+
                     var registUserResponse: Call<RegistUserResponse> =
                         userApi.registUser(registUserRequest)
 
@@ -156,13 +159,22 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                         ) {
                             val result = response.body()
                             if (result == null) {
+                                Log.e("API 에러", "회원가입 에러", error)
                                 // 없을 때 ?
                             } else if (result != null) {
-                                App.INSTANCE.nickname = result.data.nickname
-                                App.INSTANCE.id = result.data.id
-                                App.INSTANCE.profileImg = result.data.imgUrl
-                                App.INSTANCE.accessToken = result.data.accessToken
-                                // 엑세스 토큰 반환할 것
+                                val properties = mapOf("user_id" to "${result.data.id}")
+
+                                UserApiClient.instance.updateProfile(properties) { error ->
+                                    if (error != null) {
+                                        Log.e("유저 정보 저장 실패", "사용자 정보 저장 실패", error)
+                                    } else {
+                                        Log.i("유저 정보 저장 성공", "사용자 정보 저장 성공")
+                                        App.INSTANCE.nickname = result.data.nickname
+                                        App.INSTANCE.id = result.data.id
+                                        App.INSTANCE.profileImg = result.data.imgUrl
+                                        // 엑세스 토큰 반환할 것
+                                    }
+                                }
                             }
                         }
 
@@ -171,7 +183,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                         }
                     })
                 }
-
             }
         }
     }
