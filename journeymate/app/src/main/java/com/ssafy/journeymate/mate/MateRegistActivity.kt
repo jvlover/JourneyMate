@@ -5,8 +5,11 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
@@ -17,6 +20,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.ssafy.journeymate.R
 import com.ssafy.journeymate.api.FindUserResponse
 import com.ssafy.journeymate.api.MateApi
@@ -28,11 +32,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.time.format.*
 import java.util.Calendar
 import java.util.Locale
@@ -43,7 +44,12 @@ class MateRegistActivity : AppCompatActivity() {
     private lateinit var endDateEditText: TextView
     private lateinit var mateEditText: AutoCompleteTextView
     private lateinit var mateLinearLayout: LinearLayout
+
+    // id 담는 배열
     private var userList = mutableListOf<String>()
+
+    // nickname 담는 배열
+    private var nicknameList = mutableListOf<String>()
 
     private lateinit var mateApi: MateApi
 
@@ -52,15 +58,22 @@ class MateRegistActivity : AppCompatActivity() {
     // 선택된 시작 날짜 저장
     private var selectedStartDate: String? = null
 
+    // 드롭다운
+    private lateinit var mateEditTextAdapter: ArrayAdapter<String>
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mate_regist)
 
-        // creatorId 포함 시키기
-        val loggedInUserId = "11ee7ebf112c1927aa4b85e38939408d"
-        addTextToLayout(loggedInUserId)
+        val toolbarInclude = findViewById<View>(R.id.mate_regsit_toolbar) as Toolbar
 
+        val toolbarTitleTextView = toolbarInclude.findViewById<TextView>(R.id.toolbarTitle)
+
+        toolbarTitleTextView.text = "여행 그룹 생성"
+
+
+        // 시작 날짜, 끝 날짜
         startDateEditText = findViewById(R.id.start_date_text_view)
         endDateEditText = findViewById(R.id.end_date_text_view)
 
@@ -85,8 +98,36 @@ class MateRegistActivity : AppCompatActivity() {
         }
 
 
+        // 메이트 찾기
         mateEditText = findViewById(R.id.mate_edit_text)
         mateLinearLayout = findViewById(R.id.mates_linearlayout)
+
+        // creatorId -> userList 에 포함 시키기
+        // 서버에는 ID 를 보내고 front 에서는 nickname 을 보여줘야 한다.
+        val loggedInUserId = "11ee7ebf112c1927aa4b85e38939408d"
+        // nicknameList.add(App.INSTANCE.nickname)
+
+
+        // 지금 로그인된 회원은 무조건 추가
+        addTextToLayout(loggedInUserId)
+
+        mateEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                val input = s.toString()
+
+                searchUser(input)
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+
+            }
+        })
+
 
         mateEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -112,10 +153,10 @@ class MateRegistActivity : AppCompatActivity() {
                 callMateRegisterApi(userList)
             }
         }
-
-
     }
 
+
+    // O
     private fun showDatePickerDialog(textView: TextView, isStartDate: Boolean) {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -130,10 +171,6 @@ class MateRegistActivity : AppCompatActivity() {
                 // String to Date
                 val originalFormat = SimpleDateFormat("yyyy/MM/dd", Locale.KOREA)
                 val date = originalFormat.parse(selectedDate)
-
-                // Date to new String format
-//                val newFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREA)
-//                val formattedDate = newFormat.format(date)
 
                 if (isStartDate) {
                     selectedStartDate = originalFormat.format(date)
@@ -155,6 +192,8 @@ class MateRegistActivity : AppCompatActivity() {
         datePickerDialog.show()
     }
 
+    // X
+
     private fun searchUser(input: String) {
 
 
@@ -167,13 +206,20 @@ class MateRegistActivity : AppCompatActivity() {
         userApi = retrofit.create(UserApi::class.java)
 
         userApi.findUserByNickname(input).enqueue(object : Callback<FindUserResponse> {
-            override fun onResponse(call: Call<FindUserResponse>, response: Response<FindUserResponse>) {
+            override fun onResponse(
+                call: Call<FindUserResponse>,
+                response: Response<FindUserResponse>
+            ) {
                 if (response.isSuccessful) {
 
                     Log.d("sucess log", "api 응답 성공")
                     val searchResult = arrayOf(response.body()?.data?.nickname)
                     val adapter =
-                        ArrayAdapter<String>(this@MateRegistActivity, android.R.layout.simple_dropdown_item_1line, searchResult)
+                        ArrayAdapter<String>(
+                            this@MateRegistActivity,
+                            android.R.layout.simple_dropdown_item_1line,
+                            searchResult
+                        )
                     mateEditText.setAdapter(adapter)
                     mateEditText.showDropDown()
 
@@ -228,10 +274,17 @@ class MateRegistActivity : AppCompatActivity() {
             mateLinearLayout.removeView(textView)
             mateLinearLayout.removeView(imageView)
             userList.remove(user)
+
         }
 
         mateLinearLayout.addView(textView)
         mateLinearLayout.addView(imageView)
+
+        // Set visibility to INVISIBLE for the first element
+        if (mateLinearLayout.childCount == 2) {
+            imageView.visibility = View.INVISIBLE
+        }
+
         userList.add(user)
     }
 
@@ -256,9 +309,9 @@ class MateRegistActivity : AppCompatActivity() {
     private fun callMateRegisterApi(userList: List<String>) {
 
         val inputTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
-        val sDateTime = LocalDate.parse(startDateEditText.text.toString(),inputTimeFormatter)
+        val sDateTime = LocalDate.parse(startDateEditText.text.toString(), inputTimeFormatter)
         val startDate = sDateTime.atStartOfDay()
-        val eDateTime = LocalDate.parse(endDateEditText.text.toString(),inputTimeFormatter)
+        val eDateTime = LocalDate.parse(endDateEditText.text.toString(), inputTimeFormatter)
         val endDate = eDateTime.atStartOfDay()
 
         val registMateRequest = RegistMateRequest(

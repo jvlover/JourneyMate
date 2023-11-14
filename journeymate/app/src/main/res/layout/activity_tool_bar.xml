@@ -23,7 +23,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="여행 그룹 상세"
             android:textColor="@color/black"
             android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
 

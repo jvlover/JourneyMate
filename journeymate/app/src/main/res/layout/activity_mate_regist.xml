@@ -6,74 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".mate.MateRegistActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout2"
+    <include
+        android:id="@+id/mate_regsit_toolbar"
+        layout="@layout/activity_tool_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        tools:ignore="MissingConstraints">
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            app:layout_scrollFlags="scroll|enterAlways">
-
-
-        </androidx.appcompat.widget.Toolbar>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </RelativeLayout>
-    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-    <ImageView
-        android:id="@+id/arrow_left"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/baseline_keyboard_arrow_left_24"
-        app:layout_anchor="@+id/appBarLayout2"
-        app:layout_anchorGravity="start|center"
-        app:layout_constraintBottom_toBottomOf="@+id/appBarLayout2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/appBarLayout2"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="34dp"
-        android:text="여행 그룹 생성"
-        android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
-        app:layout_anchor="@+id/appBarLayout2"
-        app:layout_anchorGravity="center"
-        app:layout_constraintBottom_toBottomOf="@+id/appBarLayout2"
-        app:layout_constraintEnd_toStartOf="@+id/hamburger"
-        app:layout_constraintStart_toEndOf="@+id/arrow_left"
-        tools:ignore="MissingConstraints" />
-
-    <ImageView
-        android:id="@+id/hamburger"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        android:src="@drawable/baseline_dehaze_24"
-        app:layout_anchor="@+id/appBarLayout2"
-        app:layout_anchorGravity="end|center"
-        app:layout_constraintBottom_toBottomOf="@+id/appBarLayout2"
-        app:layout_constraintEnd_toEndOf="@+id/appBarLayout2"
-        tools:ignore="MissingConstraints" />
 
     <!--    <include layout="@layout/fragment_mate_regist" />-->
 
@@ -88,7 +33,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.126"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
+        app:layout_constraintTop_toBottomOf="@+id/mate_regsit_toolbar"
+        tools:ignore="MissingConstraints" />
 
     <EditText
         android:id="@+id/name_edit_text"
@@ -99,7 +45,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.346"
         app:layout_constraintStart_toEndOf="@id/name_text"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
+        app:layout_constraintTop_toBottomOf="@+id/mate_regsit_toolbar"
+        tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/mate_text"
@@ -133,7 +80,7 @@
         app:layout_constraintTop_toBottomOf="@+id/mate_edit_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
-        <!-- 이 곳에 추가적인 뷰가 들어갈 수 있습니다. -->
+
     </LinearLayout>
 
     <EditText
