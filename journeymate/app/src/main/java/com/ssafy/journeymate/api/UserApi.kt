@@ -14,8 +14,6 @@ data class RegistUserData(
     val id: String,
     val nickname: String,
     val imgUrl: String,
-    val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime
 )
 
 data class FindUserResponse(val message: String, val data: FindUserData)
@@ -24,8 +22,6 @@ data class FindUserData(
     val id: String,
     val nickname: String,
     val imgUrl: String,
-    val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime
 )
 
 data class ModifyUserProfileResponse(val message: String, val data: ModifyUserProfileData)
@@ -143,7 +139,7 @@ interface UserApi {
 
 }
 
-data class RegistUserRequest(val name: String, val imgUrl: String)
+data class RegistUserRequest(val nickname: String, val imgUrl: String)
 
 data class ModifyUserProfileRequest(val id: String, val nickname: String, val imgUrl: String)
 
