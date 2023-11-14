@@ -90,12 +90,12 @@ class ChatActivity : AppCompatActivity() {
 //        }
 
 
-        recyclerView = findViewById(R.id.messageActivity_recyclerview)
-        adapter = RecyclerViewAdapter()
-        recyclerView.adapter = adapter
-
-        initializeWebSocketConnection()
-        fetchChatRoomDetails()
+//        recyclerView = findViewById(R.id.messageActivity_recyclerview)
+//        adapter = RecyclerViewAdapter()
+//        recyclerView.adapter = adapter
+//
+//        initializeWebSocketConnection()
+//        fetchChatRoomDetails()
     }
 
     private fun initializeWebSocketConnection() {

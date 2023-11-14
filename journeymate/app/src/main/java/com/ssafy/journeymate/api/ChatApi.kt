@@ -24,21 +24,27 @@ data class ChatResponse(val message: String, val data: ChatData) : Serializable
 
 
 data class ChatData(
-    val chatType: String,
-    val chatMessage: String,
-    val creator: String,
+    val type: String,
     val mateId: Long,
-    val userCount : Long
+    val sender: String,
+    val message: String,
+    val userCount: Long,
+    val timestamp: LocalDateTime
 )
 
+data class ResponseDto(
+    val message: String,
+    val data: List<ChatData>
+)
 data class LoadCommentResponse(val message: String, val data: List<ChatData>)
 
 data class SendCommentRequest(val chat: ChatData)
 
 interface ChatApi {
 
-    @GET("/comment-service/{mateId}")
-    fun loadComment(@Path(value = "mateId") mateId : Long): Call<List<LoadCommentResponse>>
+    @GET("/chat-service/{mateId}")
+    fun loadComment(@Path("mateId") mateId: Long): Call<ResponseDto>
+
 
 }
 
