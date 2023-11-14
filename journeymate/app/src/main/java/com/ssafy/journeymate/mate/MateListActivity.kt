@@ -2,17 +2,23 @@ package com.ssafy.journeymate.mate
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.ssafy.journeymate.R
 import com.ssafy.journeymate.api.FindDocsListResponse
+import com.ssafy.journeymate.api.FindMateData
+import com.ssafy.journeymate.api.FindMateResponse
 import com.ssafy.journeymate.api.UserApi
 import retrofit2.Call
 import retrofit2.Callback
@@ -87,41 +93,67 @@ class MateListActivity : AppCompatActivity() {
 
 
         retrofit = Retrofit.Builder()
-            .baseUrl("http://k9a204.p.ssafy.io:8000/user-service/mate/{$userId}/") // 여기에 실제 API 서버 주소를 넣어야 합니다.
+            .baseUrl("http://k9a204.p.ssafy.io:8000/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-
 
         userApi = retrofit.create(UserApi::class.java)
 
         val mateListLayout: ConstraintLayout = findViewById<ConstraintLayout>(R.id.mate_list_layout)
         val inflater = LayoutInflater.from(this)
 
-        val call = userApi.findMateById()
-        call.enqueue(object : Callback<FindDocsListResponse> {
-            override fun onResponse(
-                call: Call<FindDocsListResponse>,
-                response: Response<FindDocsListResponse>
-            ) {
+        val call = userApi.findMateById(userId)
+
+        call.enqueue(object : Callback<List<FindMateResponse>> {
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onResponse(call: Call<List<FindMateResponse>>, response: Response<List<FindMateResponse>>) {
                 if (response.isSuccessful) {
-                    val responseData = response.body()?.data?.docsInfoList
-                    responseData?.forEach { data ->
+                    val mateList = response.body()
 
-                        val view =
-                            inflater.inflate(R.layout.layout_mate_list_data, mateListLayout, false)
+                    mateList?.forEach { findMateResponse ->
+                        findMateResponse.data.forEach { findMateData ->
 
-                        val textView = view.findViewById<TextView>(R.id.mate_name)
-                        textView.text = data.title // 제목 설정
-
-                        mateListLayout.addView(view)
+                            val mateView = createImageButton(findMateData)
+                            mateListLayout.addView(mateView)
+                        }
                     }
+                } else {
+
+                    Log.e("MateListActivity", "Failed to fetch mate list: ${response.message()}")
                 }
             }
 
-            override fun onFailure(call: Call<FindDocsListResponse>, t: Throwable) {
-                Log.e("error log", "실패했습니다. ")
+            override fun onFailure(call: Call<List<FindMateResponse>>, t: Throwable) {
+
+                Log.e("MateListActivity", "Failed to fetch mate list", t)
             }
         })
 
+
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createImageButton(findMateData: FindMateData): View {
+        val inflater = LayoutInflater.from(this)
+        val view = inflater.inflate(R.layout.layout_mate_list_data, null)
+
+        val mateInfoImageButton = view.findViewById<ImageButton>(R.id.mate_info)
+        val mateNameTextView = view.findViewById<TextView>(R.id.mate_name)
+        val airplaneIconImageView = view.findViewById<ImageView>(R.id.airplane_icon)
+        val mateDestinationTextView = view.findViewById<TextView>(R.id.mate_destination)
+        val startDateTextView = view.findViewById<TextView>(R.id.mate_start_date_input)
+        val endDateTextView = view.findViewById<TextView>(R.id.mate_end_date_input)
+        val durationTextView = view.findViewById<TextView>(R.id.mate_duration_text)
+
+        mateInfoImageButton.setImageResource(R.drawable.blue_rectangle)
+        mateNameTextView.text = findMateData.name
+
+        mateDestinationTextView.text = findMateData.destination
+        startDateTextView.text = findMateData.startDate.toString()
+        endDateTextView.text = findMateData.endDate.toString()
+
+
+        return view
     }
 }

@@ -61,6 +61,9 @@ class MateRegistActivity : AppCompatActivity() {
     // 드롭다운
     private lateinit var mateEditTextAdapter: ArrayAdapter<String>
 
+    val loggedInUserId = "11ee7ebf112c1927aa4b85e38939408d"
+    val loggedInUserNickname = "coffee"
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +74,9 @@ class MateRegistActivity : AppCompatActivity() {
         val toolbarTitleTextView = toolbarInclude.findViewById<TextView>(R.id.toolbarTitle)
 
         toolbarTitleTextView.text = "여행 그룹 생성"
+
+
+
 
 
         // 시작 날짜, 끝 날짜
@@ -104,12 +110,11 @@ class MateRegistActivity : AppCompatActivity() {
 
         // creatorId -> userList 에 포함 시키기
         // 서버에는 ID 를 보내고 front 에서는 nickname 을 보여줘야 한다.
-        val loggedInUserId = "11ee7ebf112c1927aa4b85e38939408d"
         // nicknameList.add(App.INSTANCE.nickname)
 
 
         // 지금 로그인된 회원은 무조건 추가
-        addTextToLayout(loggedInUserId)
+        addTextToLayout(loggedInUserNickname, loggedInUserId )
 
         mateEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -147,6 +152,7 @@ class MateRegistActivity : AppCompatActivity() {
 
         mateApi = retrofit.create(MateApi::class.java)
 
+        // 그룹 생성하기 버튼 클릭
         val mateRegistButton: Button = findViewById(R.id.mate_regist_button)
         mateRegistButton.setOnClickListener {
             if (validateInput()) {
@@ -156,7 +162,7 @@ class MateRegistActivity : AppCompatActivity() {
     }
 
 
-    // O
+    // 시작 날짜, 끝 날짜 선택
     private fun showDatePickerDialog(textView: TextView, isStartDate: Boolean) {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -192,16 +198,14 @@ class MateRegistActivity : AppCompatActivity() {
         datePickerDialog.show()
     }
 
-    // X
+    // 메이트 검색
 
     private fun searchUser(input: String) {
 
-
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://k9a204.p.ssafy.io:8000//user-service/findbyNickname/{$input}")
+            .baseUrl("http://k9a204.p.ssafy.io:8000/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-
 
         userApi = retrofit.create(UserApi::class.java)
 
@@ -211,81 +215,91 @@ class MateRegistActivity : AppCompatActivity() {
                 response: Response<FindUserResponse>
             ) {
                 if (response.isSuccessful) {
-
-                    Log.d("sucess log", "api 응답 성공")
-                    val searchResult = arrayOf(response.body()?.data?.nickname)
-                    val adapter =
-                        ArrayAdapter<String>(
+                    val userData = response.body()?.data
+                    if (userData != null) {
+                        // 닉네임을 ArrayAdapter에 설정
+                        val nicknames = listOf(userData.nickname)
+                        mateEditTextAdapter = ArrayAdapter(
                             this@MateRegistActivity,
                             android.R.layout.simple_dropdown_item_1line,
-                            searchResult
+                            nicknames
                         )
-                    mateEditText.setAdapter(adapter)
-                    mateEditText.showDropDown()
+                        mateEditText.setAdapter(mateEditTextAdapter)
+                        mateEditText.showDropDown()
 
-                    //  클릭시 추가
-                    mateEditText.setOnItemClickListener { _, _, _, _ ->
-                        val selectedUser = mateEditText.text.toString()
-                        addTextToLayout(selectedUser)
+                        // 클릭시 userList와 nicknameList에 추가
+                        mateEditText.setOnItemClickListener { _, _, position, _ ->
+                            val selectedNickname = mateEditTextAdapter.getItem(position) ?: ""
+                            addTextToLayout(selectedNickname, userData.id)
+                        }
+                    } else {
+                        // 응답이 성공적이지만, body가 null인 경우
+                        Log.e("에러", "응답은 성공했지만 데이터가 없습니다.")
                     }
+                } else {
+                    // 응답에 실패한 경우 (4xx 또는 5xx 응답)
+                    val errorMessage = response.errorBody()?.string()
+                    Log.e("에러", "user 검색 에러 발생: $errorMessage")
                 }
             }
 
             override fun onFailure(call: Call<FindUserResponse>, t: Throwable) {
-                Log.e("error log", "실패했습니다. ")
+                Log.e("에러", "user 검색 에러 발생: ${t.message}")
             }
         })
-
-
-        val searchResult = arrayOf("11ee7ebf112c1927aa4b85e38939408d", "User2", "User3")
-
-        val adapter =
-            ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, searchResult)
-        mateEditText.setAdapter(adapter)
-        mateEditText.showDropDown()
-
-        mateEditText.setOnItemClickListener { _, _, _, _ ->
-            val selectedUser = mateEditText.text.toString()
-            addTextToLayout(selectedUser)
-        }
     }
 
-    private fun addTextToLayout(user: String) {
-        val textView = TextView(this)
-        textView.text = user
-        textView.layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply {
-            gravity = Gravity.START
-            setMargins(10, 10, 10, 10)
+    private fun addTextToLayout(nickname: String, id: String) {
+        val textView = TextView(this).apply {
+            text = nickname
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                gravity = Gravity.START
+                setMargins(10, 10, 10, 10)
+            }
         }
 
-        val imageView = ImageView(this)
-        imageView.setImageResource(android.R.drawable.ic_delete)
-        imageView.layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply {
-            gravity = Gravity.END
+        val imageView = ImageView(this).apply {
+            setImageResource(android.R.drawable.ic_delete)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                gravity = Gravity.END
+            }
+            setOnClickListener {
+                // 첫 번째 요소는 삭제 불가능하게 설정
+                if (nickname != nicknameList.firstOrNull()) {
+                    mateLinearLayout.removeView(textView.parent as View)
+                    userList.remove(id)
+                    nicknameList.remove(nickname)
+                }
+            }
         }
 
-        imageView.setOnClickListener {
-            mateLinearLayout.removeView(textView)
-            mateLinearLayout.removeView(imageView)
-            userList.remove(user)
-
+        // Horizontal LinearLayout을 만들어 TextView와 ImageView를 포함시킵니다.
+        val userLayout = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_HORIZONTAL // 가운데 정렬을 위해 gravity 설정
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, // 너비를 MATCH_PARENT로 설정
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            addView(textView)
+            addView(imageView)
         }
 
-        mateLinearLayout.addView(textView)
-        mateLinearLayout.addView(imageView)
+        mateLinearLayout.addView(userLayout)
 
-        // Set visibility to INVISIBLE for the first element
-        if (mateLinearLayout.childCount == 2) {
+        // 첫 번째 요소는 삭제 불가능하게 설정
+        if (userList.isEmpty()) {
             imageView.visibility = View.INVISIBLE
         }
 
-        userList.add(user)
+        userList.add(id)
+        nicknameList.add(nickname)
     }
 
     private fun validateInput(): Boolean {
@@ -320,8 +334,10 @@ class MateRegistActivity : AppCompatActivity() {
             startDate = startDate,
             endDate = endDate,
             users = userList.toMutableList(),
-            creator = "11ee7ebf112c1927aa4b85e38939408d"
+            creator = loggedInUserId
         )
+
+        Log.i("MateRegistActivity", "등록될 user id: ${userList.joinToString()}")
 
         val call = mateApi.registMate(registMateRequest)
         call.enqueue(object : Callback<RegistMateResponse> {

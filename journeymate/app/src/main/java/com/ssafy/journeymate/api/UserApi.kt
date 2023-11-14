@@ -24,8 +24,8 @@ data class FindUserData(
     val id: String,
     val nickname: String,
     val imgUrl: String,
-    val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime
+    val createdAt: String,
+    val updatedAt: String
 )
 
 data class ModifyUserProfileResponse(val message: String, val data: ModifyUserProfileData)
@@ -89,13 +89,13 @@ data class FindJourneyData(
     val ycoordinate: Float
 )
 
-data class FindMateResponse(val message: String, val data: FindMateData)
+data class FindMateResponse(val message: String, val data: List<FindMateData>)
 
 data class FindMateData(
     val mateId: Long,
     val name: String,
     val startDate: LocalDateTime,
-    val endData: LocalDateTime,
+    val endDate: LocalDateTime,
     val users: List<String>,
     val destination: String,
     val creator: String,
@@ -132,7 +132,7 @@ interface UserApi {
     fun nicknameDuplicateCheck(@Path(value = "nickname") nickname: String): Call<Boolean>
 
     @GET("/user-service/mate/{id}")
-    fun findMateById(@Path(value = "id") id: Long): Call<List<FindMateResponse>>
+    fun findMateById(@Path(value = "id") id: String): Call<List<FindMateResponse>>
 
     @GET("/user-service/journey/{id}")
     fun findTodayJourneyById(@Path(value = "id") id: String): Call<FindJourneyResponse>
