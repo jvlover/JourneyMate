@@ -18,17 +18,22 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.ssafy.journeymate.R
+import com.ssafy.journeymate.api.FindUserResponse
 import com.ssafy.journeymate.api.MateApi
 import com.ssafy.journeymate.api.RegistMateRequest
 import com.ssafy.journeymate.api.RegistMateResponse
+import com.ssafy.journeymate.api.UserApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.*
 import java.util.Calendar
 import java.util.Locale
 
@@ -38,16 +43,23 @@ class MateRegistActivity : AppCompatActivity() {
     private lateinit var endDateEditText: TextView
     private lateinit var mateEditText: AutoCompleteTextView
     private lateinit var mateLinearLayout: LinearLayout
-    private val userList = mutableListOf<String>()
+    private var userList = mutableListOf<String>()
+
     private lateinit var mateApi: MateApi
 
-    // 선택된 시작 날짜를 저장하기 위한 변수를 추가합니다.
+    private lateinit var userApi: UserApi
+
+    // 선택된 시작 날짜 저장
     private var selectedStartDate: String? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mate_regist)
+
+        // creatorId 포함 시키기
+        val loggedInUserId = "11ee7ebf112c1927aa4b85e38939408d"
+        addTextToLayout(loggedInUserId)
 
         startDateEditText = findViewById(R.id.start_date_text_view)
         endDateEditText = findViewById(R.id.end_date_text_view)
@@ -59,11 +71,11 @@ class MateRegistActivity : AppCompatActivity() {
 
         val endDateIcon: ImageView? = findViewById(R.id.end_date_icon)
         endDateIcon?.setOnClickListener {
-            // startDateEditText에 값이 없는 경우 endDateIcon을 클릭해도 아무런 동작을 하지 않습니다.
+            // endDate 클릭시 startDate 에 값 존재
             if (startDateEditText.text.isNotEmpty()) {
                 showDatePickerDialog(endDateEditText, isStartDate = false)
             } else {
-                // startDateEditText에 값이 없는 경우 AlertDialog를 표시합니다.
+
                 AlertDialog.Builder(this)
                     .setTitle("알림")
                     .setMessage("시작 날짜를 먼저 선택해주세요.")
@@ -88,7 +100,7 @@ class MateRegistActivity : AppCompatActivity() {
         }
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://k9a204.p.ssafy.io:8000/mate-service/regist/") // 여기에 실제 Base URL을 넣으세요.
+            .baseUrl("http://k9a204.p.ssafy.io:8000/mate-service/regist/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
@@ -132,7 +144,6 @@ class MateRegistActivity : AppCompatActivity() {
             year, month, day
         )
 
-        // endDateEditText에 대한 DatePickerDialog가 표시되는 경우, 선택 가능한 최소 날짜를 설정합니다.
         if (!isStartDate) {
             val startDate = SimpleDateFormat("yyyy/MM/dd", Locale.KOREA).parse(selectedStartDate)
 
@@ -145,7 +156,40 @@ class MateRegistActivity : AppCompatActivity() {
     }
 
     private fun searchUser(input: String) {
-        // TODO: API 호출 및 회원 검색 수행
+
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://k9a204.p.ssafy.io:8000//user-service/findbyNickname/{$input}")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+
+        userApi = retrofit.create(UserApi::class.java)
+
+        userApi.findUserByNickname(input).enqueue(object : Callback<FindUserResponse> {
+            override fun onResponse(call: Call<FindUserResponse>, response: Response<FindUserResponse>) {
+                if (response.isSuccessful) {
+
+                    Log.d("sucess log", "api 응답 성공")
+                    val searchResult = arrayOf(response.body()?.data?.nickname)
+                    val adapter =
+                        ArrayAdapter<String>(this@MateRegistActivity, android.R.layout.simple_dropdown_item_1line, searchResult)
+                    mateEditText.setAdapter(adapter)
+                    mateEditText.showDropDown()
+
+                    //  클릭시 추가
+                    mateEditText.setOnItemClickListener { _, _, _, _ ->
+                        val selectedUser = mateEditText.text.toString()
+                        addTextToLayout(selectedUser)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<FindUserResponse>, t: Throwable) {
+                Log.e("error log", "실패했습니다. ")
+            }
+        })
+
 
         val searchResult = arrayOf("11ee7ebf112c1927aa4b85e38939408d", "User2", "User3")
 
@@ -211,9 +255,11 @@ class MateRegistActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun callMateRegisterApi(userList: List<String>) {
 
-        val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
-        val startDate = LocalDateTime.parse(startDateEditText.text.toString(), dateTimeFormatter)
-        val endDate = LocalDateTime.parse(endDateEditText.text.toString(), dateTimeFormatter)
+        val inputTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
+        val sDateTime = LocalDate.parse(startDateEditText.text.toString(),inputTimeFormatter)
+        val startDate = sDateTime.atStartOfDay()
+        val eDateTime = LocalDate.parse(endDateEditText.text.toString(),inputTimeFormatter)
+        val endDate = eDateTime.atStartOfDay()
 
         val registMateRequest = RegistMateRequest(
             destination = findViewById<EditText>(R.id.destination_text_edit).text.toString(),
@@ -231,13 +277,14 @@ class MateRegistActivity : AppCompatActivity() {
                 response: Response<RegistMateResponse>
             ) {
                 if (response.isSuccessful) {
-
+                    Log.d("sucess log", "api 응답 성공")
                     val intent = Intent(this@MateRegistActivity, MateListActivity::class.java)
                     intent.putExtra("response", response.body())  // 응답을 새 액티비티로 전달
                     startActivity(intent)
 
                 } else {
-                    // TODO: 오류 처리
+                    Log.i("Api Response Unsuccessful", "api 응답 문제")
+
                 }
             }
 

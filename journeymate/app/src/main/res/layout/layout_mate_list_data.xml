@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/layout_mate_list_data"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageButton
+        android:id="@+id/mate_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="140dp"
+        android:layout_marginBottom="200dp"
+        android:background="@android:color/transparent"
+        android:padding="0dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar2"
+        app:layout_constraintVertical_bias="0.977"
+        app:srcCompat="@drawable/blue_rectangle"
+        tools:ignore="MissingConstraints,UnknownIdInLayout" />
+
+    <TextView
+        android:id="@+id/mate_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/mate_info"
+        android:layout_alignTop="@+id/mate_info"
+        android:layout_alignEnd="@+id/mate_info"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="19dp"
+        android:layout_marginEnd="47dp"
+        android:text="그룹 이름"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/mate_info"
+        app:layout_constraintHorizontal_bias="0.258"
+        app:layout_constraintStart_toStartOf="@+id/mate_info"
+        app:layout_constraintTop_toTopOf="@+id/mate_info"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/airplane_icon"
+        android:layout_width="44dp"
+        android:layout_height="46dp"
+        android:layout_alignStart="@+id/mate_info"
+        android:layout_alignEnd="@+id/mate_info"
+        android:layout_alignBottom="@+id/mate_info"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="92dp"
+        android:layout_marginBottom="92dp"
+        app:layout_constraintStart_toStartOf="@+id/mate_info"
+        app:layout_constraintTop_toBottomOf="@+id/mate_name"
+        app:srcCompat="@drawable/baseline_airplanemode_active_24"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/mate_destination"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/mate_info"
+        android:layout_alignBottom="@+id/mate_info"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="42dp"
+        android:layout_marginBottom="101dp"
+        android:text="여행지"
+        app:layout_constraintEnd_toEndOf="@+id/mate_info"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/airplane_icon"
+        app:layout_constraintTop_toBottomOf="@+id/mate_name"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/mate_start_date_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/mate_info"
+        android:layout_alignEnd="@+id/mate_info"
+        android:layout_alignBottom="@+id/mate_info"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="81dp"
+        android:layout_marginBottom="52dp"
+        android:text="시작 날짜 "
+        app:layout_constraintEnd_toEndOf="@+id/mate_info"
+        app:layout_constraintHorizontal_bias="0.247"
+        app:layout_constraintStart_toStartOf="@+id/mate_info"
+        app:layout_constraintTop_toBottomOf="@+id/airplane_icon"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/mate_end_date_input"
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/mate_info"
+        android:layout_alignEnd="@+id/mate_info"
+        android:layout_alignBottom="@+id/mate_info"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="67dp"
+        android:layout_marginBottom="24dp"
+        android:text="끝 날짜"
+        app:layout_constraintBottom_toBottomOf="@+id/mate_info"
+        app:layout_constraintEnd_toEndOf="@+id/mate_info"
+        app:layout_constraintHorizontal_bias="0.21"
+        app:layout_constraintStart_toStartOf="@+id/mate_info"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/mate_duration_text"
+        android:layout_width="8dp"
+        android:layout_height="22dp"
+        android:layout_alignStart="@+id/mate_info"
+        android:layout_alignEnd="@+id/mate_info"
+        android:layout_alignBottom="@+id/mate_info"
+        android:layout_marginStart="89dp"
+        android:layout_marginEnd="59dp"
+        android:layout_marginBottom="38dp"
+        android:text="~"
+        app:layout_constraintEnd_toEndOf="@+id/mate_info"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/mate_start_date_input"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteY="385dp" />
+
+</RelativeLayout>

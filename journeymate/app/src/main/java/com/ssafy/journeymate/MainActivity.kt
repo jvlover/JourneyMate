@@ -37,8 +37,8 @@ class MainActivity : AppCompatActivity() {
 //                .setAction("Action", null).show()
 //        }
 //
-//        val intent = Intent(this, MateRegistActivity::class.java)
-        
+        val intent = Intent(this, MateRegistActivity::class.java)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
