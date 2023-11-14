@@ -13,10 +13,10 @@
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/contensToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

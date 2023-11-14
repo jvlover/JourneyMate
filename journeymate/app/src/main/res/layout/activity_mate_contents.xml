@@ -6,4 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".mate.MateContentsActivity">
 
+    <include
+        android:id="@+id/mate_contents_toolbar"
+        layout="@layout/activity_tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

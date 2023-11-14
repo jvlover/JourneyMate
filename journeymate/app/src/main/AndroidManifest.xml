@@ -17,6 +17,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".toolbar.ContentsToolbarActivity"
+            android:exported="false" />
+        <activity
             android:name=".mate.DocsWriteActivity"
             android:exported="false" />
         <activity
@@ -42,12 +45,8 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".user.LoginActivity"
             android:exported="true"
-            android:label="@string/app_name">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -55,13 +54,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".user.LoginActivity"
+            android:exported="false"
+            android:label="@string/app_name"></activity>
+        <activity
             android:name=".user.MyPageActivity"
-            android:exported="false" />
-        <activity
-            android:name=".checklist.ChecklistActivity"
-            android:exported="false" />
-        <activity
-            android:name=".LoadScreanActivity"
             android:exported="false" />
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
