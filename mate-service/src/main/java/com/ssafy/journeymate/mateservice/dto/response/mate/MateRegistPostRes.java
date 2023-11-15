@@ -13,13 +13,19 @@ import lombok.Data;
 
 @Data
 @Builder
-@JsonSerialize(using =  LocalDateTimeSerializer.class)
-@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 public class MateRegistPostRes {
 
     private String name;
     private String destination;
+
+    @JsonSerialize(using =  LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime startDate;
+
+    @JsonSerialize(using =  LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime endDate;
     private List<String> users;
     private String creator;
