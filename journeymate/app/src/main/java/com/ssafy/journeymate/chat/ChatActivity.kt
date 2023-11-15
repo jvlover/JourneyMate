@@ -8,21 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
+import com.gmail.bishoybasily.stomp.lib.StompClient
 import com.ssafy.journeymate.R
 import com.ssafy.journeymate.api.ChatApi
 import com.ssafy.journeymate.api.ChatMessage
 import com.ssafy.journeymate.api.ResponseDto
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import ua.naiksoftware.stomp.Stomp
-import ua.naiksoftware.stomp.StompClient
+import java.util.concurrent.TimeUnit
 
 class ChatActivity : AppCompatActivity() {
 
@@ -30,14 +28,24 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var adapter: RecyclerViewAdapter
     lateinit var stompConnection: Disposable
     lateinit var topic: Disposable
-    private lateinit var stompClient: StompClient
-
+    var url = "http://k9a204.p.ssafy.io:8000/"
+    val client = OkHttpClient.Builder()
+        .readTimeout(10, TimeUnit.SECONDS)
+        .writeTimeout(10, TimeUnit.SECONDS)
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .build()
+    private var stompUrl = "ws://k9a204.p.ssafy.io:8000/"
+    private var pub = "/pub/chat-service"
+    private var sub = "/sub/chat-service/8"
+    private var mateId : Long = 8;
+    private var userName : String = "김민범"
+    val stomp = StompClient(client,1000L).apply { this@apply.url = url }
     private val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl("http://k9a204.p.ssafy.io:8000/") // 여기서 API의 기본 URL을 설정
+        .baseUrl(url) // 여기서 API의 기본 URL을 설정
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    private val chatApi: ChatApi = retrofit.create(ChatApi::class.java) 
+    private val chatApi: ChatApi = retrofit.create(ChatApi::class.java)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,47 +76,8 @@ class ChatActivity : AppCompatActivity() {
                 Log.e("NetworkError", "요청 실패: ${t.message}")
             }
         })
-        initializeWebSocketConnection()
 
     }
-
-    private fun initializeWebSocketConnection() {
-        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://k9a204.p.ssafy.io:8000/chat-service")
-        stompClient.connect()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                // 연결 성공 처리
-                sendMessage("초기 메시지 또는 연결 확인 메시지")
-            }, {
-                // 연결 실패 처리
-                Log.e("WebSocket", "연결 실패", it)
-            })
-    }
-    private fun sendMessage(messageContent: String) {
-        val message = ChatMessage(mateId = 8, sender = "김민범", message = messageContent, userCount = 8)
-        val messageJson = Gson().toJson(message) // 메시지 객체를 JSON 문자열로 변환
-
-        stompClient.send("/pub/chat-service", messageJson)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                // 메시지 전송 성공 처리
-                Log.i("WebSocket", "메시지 전송 성공")
-            }, {
-                // 메시지 전송 실패 처리
-                Log.e("WebSocket", "메시지 전송 실패", it)
-            })
-    }
-
-    private fun fetchChatRoomDetails() {
-        // Retrofit을 사용하여 채팅방 관련 데이터 가져오기
-        // 예: 채팅방 메시지 목록, 참여자 정보 등
-    }
-
-//    private fun convertJsonToChatMessage(json: String): ChatMessage {
-//        // JSON 문자열을 ChatMessage 객체로 변환하는 로직
-//    }
 
 
     inner class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerViewAdapter.MessageViewHolder>() {
