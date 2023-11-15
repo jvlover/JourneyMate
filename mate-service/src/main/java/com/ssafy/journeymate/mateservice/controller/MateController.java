@@ -59,7 +59,7 @@ public class MateController {
      */
     @PostMapping("/regist")
     public ResponseEntity<ResponseDto> registMate(
-        @ModelAttribute MateRegistPostReq mateRegistPostReq) {
+        @RequestBody MateRegistPostReq mateRegistPostReq) {
 
         log.info("MateController_registMate_start : " + mateRegistPostReq.toString());
 
@@ -80,7 +80,7 @@ public class MateController {
      */
     @PutMapping("/update")
     public ResponseEntity<ResponseDto> modifyMate(
-        @ModelAttribute MateUpdatePostReq mateUpdatePostReq) throws MateNotFoundException {
+        @RequestBody MateUpdatePostReq mateUpdatePostReq) throws MateNotFoundException {
 
         log.info("MateController_modifyMate_start : " + mateUpdatePostReq.toString());
 
