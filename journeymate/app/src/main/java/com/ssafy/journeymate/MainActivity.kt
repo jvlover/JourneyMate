@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
+        setSupportActionBar(binding.contensToolbar)
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
@@ -37,8 +37,8 @@ class MainActivity : AppCompatActivity() {
 //                .setAction("Action", null).show()
 //        }
 //
-        val intent = Intent(this, MateRegistActivity::class.java)
-
+        val intent = Intent(this, DocsWriteActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

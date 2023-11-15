@@ -13,7 +13,7 @@ class ToolBarActivity : AppCompatActivity() {
         setContentView(R.layout.activity_tool_bar)
 
         // Toolbar 설정
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        val toolbar: Toolbar = findViewById(R.id.contensToolbar)
         setSupportActionBar(toolbar)
 
         // 뒤로 가기 버튼 (내비게이션 버튼) 설정
