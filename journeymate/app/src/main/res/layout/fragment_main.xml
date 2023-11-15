@@ -69,16 +69,16 @@
     <ImageButton
         android:id="@+id/img3"
         android:layout_width="190dp"
-        android:layout_height="150dp"
+        android:layout_height="170dp"
         android:background="@android:color/transparent"
         android:scaleType="centerCrop"
         android:src="@drawable/mate_image_round"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.095"
+        app:layout_constraintHorizontal_bias="0.073"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.952" />
+        app:layout_constraintVertical_bias="0.895" />
 
     <TextView
         android:id="@+id/textView2"
