@@ -11,8 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="140dp"
-        android:layout_marginBottom="200dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         android:background="@android:color/transparent"
         android:padding="0dp"
         android:scaleType="centerCrop"
@@ -123,5 +123,15 @@
         app:layout_constraintStart_toEndOf="@+id/mate_start_date_input"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteY="385dp" />
+
+    <TextView
+        android:id="@+id/mate_id"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignEnd="@+id/mate_info"
+        android:layout_alignBottom="@+id/mate_info"
+        android:layout_marginEnd="188dp"
+        android:layout_marginBottom="168dp"
+        android:visibility="gone" />
 
 </RelativeLayout>

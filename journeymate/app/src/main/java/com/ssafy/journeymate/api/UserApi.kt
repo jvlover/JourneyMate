@@ -6,6 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import java.io.Serializable
 import java.time.LocalDateTime
 
 data class RegistUserResponse(val message: String, val data: RegistUserData)
@@ -100,7 +101,7 @@ data class FindMateData(
     val destination: String,
     val creator: String,
     val createdDate: String
-)
+) : Serializable
 
 interface UserApi {
 

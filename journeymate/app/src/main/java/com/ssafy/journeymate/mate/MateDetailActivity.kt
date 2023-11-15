@@ -11,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.ssafy.journeymate.R
 import com.ssafy.journeymate.api.DeleteMateRequest
 import com.ssafy.journeymate.api.DeleteResponse
+import com.ssafy.journeymate.api.FindMateData
 import com.ssafy.journeymate.api.LoadMateInfoResponse
 import com.ssafy.journeymate.api.MateApi
 import retrofit2.Call
@@ -23,22 +24,26 @@ class MateDetailActivity : AppCompatActivity() {
     private lateinit var retrofit: Retrofit
     private lateinit var mateApi: MateApi
 
+    var mateData: FindMateData? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mate_detail)
 
         // mateId 변경 필요
-        val mateId = 2L
+        mateData = intent.getSerializableExtra("mateData") as FindMateData
+
+        //Log.i("mateId 받아온 데이터 입니다", "${mateId} : 번호")
 
         retrofit = Retrofit.Builder()
-            .baseUrl("http://k9a204.p.ssafy.io:8000//mate-service/{$mateId}/")
+            .baseUrl("http://k9a204.p.ssafy.io:8000/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
         mateApi = retrofit.create(MateApi::class.java)
 
         // API 호출
-        val callMateDataLoad = mateApi.loadMateInfo(mateId)
+        val callMateDataLoad = mateApi.loadMateInfo(mateData!!.mateId)
         callMateDataLoad.enqueue(object : Callback<LoadMateInfoResponse> {
             override fun onResponse(
                 call: Call<LoadMateInfoResponse>,
@@ -54,7 +59,6 @@ class MateDetailActivity : AppCompatActivity() {
                     // userProfile의 nickname 수만큼 프로필 필요
                     val mateDetailActivity = findViewById<ConstraintLayout>(R.id.mate_detail_layout)
                     val inflater = LayoutInflater.from(this@MateDetailActivity)
-
 
                 }
             }
@@ -89,29 +93,34 @@ class MateDetailActivity : AppCompatActivity() {
         mateApi = retrofit.create(MateApi::class.java)
 
 
-        val deleteMateRequest = DeleteMateRequest(
-            mateId = 8,
-            creator = "11ee81bb69fe87aaaa4bb7bbd1e82908"
-        )
+        val deleteMateRequest = mateData?.let {
+            DeleteMateRequest(
+                mateId = it.mateId,
+                creator = "11ee81bb69fe87aaaa4bb7bbd1e82908"
+                // creator = App.Instance.id
+            )
+        }
 
-        mateApi.deleteMate(deleteMateRequest).enqueue(object : Callback<DeleteResponse> {
-            override fun onResponse(
-                call: Call<DeleteResponse>,
-                response: Response<DeleteResponse>
-            ) {
-                if (response.isSuccessful) {
-                    // 성공적으로 삭제된 경우 처리
-                    Log.d("MATE_DELETE", "메이트 삭제 완료")
-                } else {
-                    // 실패했을 경우 처리
-                    Log.d("MATE_DELETE", "메이트 삭제 실패.")
+        if (deleteMateRequest != null) {
+            mateApi.deleteMate(deleteMateRequest).enqueue(object : Callback<DeleteResponse> {
+                override fun onResponse(
+                    call: Call<DeleteResponse>,
+                    response: Response<DeleteResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        // 성공적으로 삭제된 경우 처리
+                        Log.d("MATE_DELETE", "메이트 삭제 완료")
+                    } else {
+                        // 실패했을 경우 처리
+                        Log.d("MATE_DELETE", "메이트 삭제 실패.")
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<DeleteResponse>, t: Throwable) {
-                TODO("Not yet implemented")
-            }
-        })
+                override fun onFailure(call: Call<DeleteResponse>, t: Throwable) {
+                    TODO("Not yet implemented")
+                }
+            })
+        }
 
     }
 

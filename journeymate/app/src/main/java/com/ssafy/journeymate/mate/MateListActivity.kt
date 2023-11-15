@@ -1,6 +1,7 @@
 package com.ssafy.journeymate.mate
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
@@ -97,7 +98,7 @@ class MateListActivity : AppCompatActivity() {
 
         userApi = retrofit.create(UserApi::class.java)
 
-        val mateListLayout: GridLayout =
+        val mateListLayout =
             findViewById<GridLayout>(R.id.mate_info_result)
         val inflater = LayoutInflater.from(this)
 
@@ -115,18 +116,13 @@ class MateListActivity : AppCompatActivity() {
                     mateList?.data?.forEachIndexed { index, findMateData ->
                         val mateView = createImageButton(findMateData)
 
+                        val row = index / 2
+                        val col = index % 2
                         val params = GridLayout.LayoutParams()
+                        params.rowSpec = GridLayout.spec(row)
+                        params.columnSpec = GridLayout.spec(col)
 
-                        // index가 2의 배수인 경우 다음 행으로 이동
-                        if (index % 2 == 0 && index > 0) {
-                            params.rowSpec = GridLayout.spec(index / 2)
-                            params.columnSpec = GridLayout.spec(0)
-                        } else {
-                            params.rowSpec = GridLayout.spec(index / 2)
-                            params.columnSpec = GridLayout.spec(1)
-                        }
-
-                        mateListLayout.addView(mateView)
+                        mateListLayout.addView(mateView, params)
                     }
 
                     Log.d("Response Body", response.toString())
@@ -143,6 +139,7 @@ class MateListActivity : AppCompatActivity() {
 
     }
 
+    @SuppressLint("MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createImageButton(findMateData: FindMateData): View {
         val inflater = LayoutInflater.from(this)
@@ -153,6 +150,7 @@ class MateListActivity : AppCompatActivity() {
         val mateDestinationTextView = view.findViewById<TextView>(R.id.mate_destination)
         val startDateTextView = view.findViewById<TextView>(R.id.mate_start_date_input)
         val endDateTextView = view.findViewById<TextView>(R.id.mate_end_date_input)
+        val mateIdTextView = view.findViewById<TextView>(R.id.mate_id)
 
 
         mateInfoImageButton.setImageResource(R.drawable.blue_rectangle)
@@ -161,6 +159,14 @@ class MateListActivity : AppCompatActivity() {
         mateDestinationTextView.text = findMateData.destination
         startDateTextView.text = findMateData.startDate.substringBefore("T")
         endDateTextView.text = findMateData.endDate.substringBefore("T")
+        mateIdTextView.text = findMateData.mateId.toString()
+
+        mateInfoImageButton.setOnClickListener {
+            // 클릭된 mateInfoImageButton에 포함된 데이터를 Intent에 담아 다른 페이지로 전달
+            val intent = Intent(this@MateListActivity, MateDetailActivity::class.java)
+            intent.putExtra("mateData", findMateData)
+            startActivity(intent)
+        }
 
 
         val params = GridLayout.LayoutParams()
@@ -171,4 +177,6 @@ class MateListActivity : AppCompatActivity() {
 
         return view
     }
+
+
 }
