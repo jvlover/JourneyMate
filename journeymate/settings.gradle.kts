@@ -10,6 +10,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        jcenter()
         maven ("https://devrepo.kakao.com/nexus/content/groups/public/")
         maven ( "https://jitpack.io" )
     }
