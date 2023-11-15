@@ -164,6 +164,7 @@ class MateListActivity : AppCompatActivity() {
         mateInfoImageButton.setOnClickListener {
             // 클릭된 mateInfoImageButton에 포함된 데이터를 Intent에 담아 다른 페이지로 전달
             val intent = Intent(this@MateListActivity, MateDetailActivity::class.java)
+            // 전역 변수에 mateId추가
             intent.putExtra("mateData", findMateData)
             startActivity(intent)
         }

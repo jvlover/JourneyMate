@@ -63,4 +63,7 @@ dependencies {
     // 사진 원형으로
     implementation("de.hdodenhof:circleimageview:3.1.0")
 
+    // OkHttp
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+
 }

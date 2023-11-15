@@ -7,14 +7,14 @@
     android:layout_height="match_parent"
     tools:context=".mate.MateDetailActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar3"
+    <include
+        android:id="@+id/mate_detail_toolbar"
+        layout="@layout/activity_tool_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        tools:ignore="MissingConstraints" />
+        android:layout_height="?attr/actionBarSize"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
 
     <TextView
         android:id="@+id/detail_mate_name"
@@ -26,9 +26,9 @@
         android:textSize="24dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.06"
+        app:layout_constraintHorizontal_bias="0.058"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar3"
+        app:layout_constraintTop_toBottomOf="@+id/mate_detail_toolbar"
         tools:ignore="MissingConstraints" />
 
     <TextView
@@ -52,7 +52,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginTop="115dp"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar3"
+        app:layout_constraintTop_toBottomOf="@+id/mate_detail_toolbar"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="126dp"
         tools:srcCompat="@tools:sample/avatars" />
@@ -64,7 +64,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="112dp"
         app:layout_constraintStart_toEndOf="@+id/user_profile_1"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar3"
+        app:layout_constraintTop_toBottomOf="@+id/mate_detail_toolbar"
         tools:ignore="MissingConstraints"
         tools:srcCompat="@tools:sample/avatars" />
 
@@ -77,7 +77,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/user_profile_2"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar3"
+        app:layout_constraintTop_toBottomOf="@+id/mate_detail_toolbar"
         tools:ignore="MissingConstraints"
         tools:srcCompat="@tools:sample/avatars" />
 
@@ -108,7 +108,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/destination_text_title"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar3"
+        app:layout_constraintTop_toBottomOf="@+id/mate_detail_toolbar"
         tools:ignore="MissingConstraints" />
 
     <TextView

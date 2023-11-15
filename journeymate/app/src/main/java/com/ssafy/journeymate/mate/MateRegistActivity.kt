@@ -371,8 +371,6 @@ class MateRegistActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("sucess log", "api 응답 성공")
                     val intent = Intent(this@MateRegistActivity, MateListActivity::class.java)
-
-
                     startActivity(intent)
 
                 } else {

@@ -43,7 +43,7 @@ data class RegistContentInfoData(val contentInfo: List<ContentData>)
 data class ContentData(
     val creatorId: String,
     val contentId: Long,
-    val createdDate: LocalDateTime,
+    val createdDate: String,
     val imgUrl: HttpUrl,
     val fileName: String,
     val type: Boolean
@@ -55,13 +55,13 @@ data class LoadContentInfoData(val contentInfo: List<ContentData>)
 
 data class LoadDocsListInfoResponse(val message: String, val data: LoadDocsListInfoData)
 
-data class LoadDocsListInfoData(val docsInfoList: DocsListData)
+data class LoadDocsListInfoData(val docsInfoList: List<DocsListData>)
 
 data class DocsListData(
     val title: String,
     val docsId: Long,
     val userId: String,
-    val createdDate: LocalDateTime,
+    val createdDate: String,
     val imgFileInfo: List<ImageFileInfo>
 )
 
@@ -74,7 +74,7 @@ data class DocsDetailData(
     val title: String,
     val content: String,
     val docsId: Long,
-    val createdDate: LocalDateTime,
+    val createdDate: String,
     val imgFileInfo: List<ImageFileInfo>
 )
 
@@ -87,8 +87,8 @@ data class ModifyDocsData(
     val title: String,
     val content: String,
     val docsId: Long,
-    val createdDate: LocalDateTime,
-    val updatedDate: LocalDateTime,
+    val createdDate: String,
+    val updatedDate: String,
     val imgFileInfo: List<ImageFileInfo>
 )
 
