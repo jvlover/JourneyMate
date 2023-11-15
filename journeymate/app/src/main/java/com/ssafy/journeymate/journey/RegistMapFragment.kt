@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.ssafy.journeymate.R
+import com.ssafy.journeymate.util.OnMapClickListener
 
 class RegistMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMapClickListener {
 
@@ -25,6 +26,8 @@ class RegistMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMapClickLi
     private lateinit var mapView: MapView
     private var mMap: GoogleMap? = null
     private var currentMarker: Marker? = null
+    private var mapClickListener: OnMapClickListener? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -79,17 +82,27 @@ class RegistMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMapClickLi
     }
 
     override fun onMapClick(latLng: LatLng) {
-        currentMarker?.remove()
-        val title = "새로운 일정"
-        val snippet = "두근두근! 저니메이트!"
-        // 클릭한 위치에 마커 추가
-        currentMarker =
-            mMap?.addMarker(
-                MarkerOptions().position(latLng).title(title).snippet(snippet).icon(
-                    BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
+
+        if (!RegistJourneyActivity.isDimScreen) {
+
+            // 기존 마커 제거
+            currentMarker?.remove()
+            val title = "새로운 일정"
+            val snippet = "두근두근! 저니메이트!"
+
+            // 클릭한 위치에 마커 추가
+            currentMarker =
+                mMap?.addMarker(
+                    MarkerOptions().position(latLng).title(title).snippet(snippet).icon(
+                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
+                    )
                 )
-            )
-        (activity as? RegistJourneyActivity)?.dimScreen()
+            // 화면 어둡게 하기
+            (activity as? RegistJourneyActivity)?.dimScreen()
+
+            //Activity에 데이터 전달
+            mapClickListener?.setJourneyLatLng(latLng)
+        }
     }
 
 
@@ -145,4 +158,10 @@ class RegistMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMapClickLi
             }.start()
         }
     }
+
+    fun setListener(listener: OnMapClickListener) {
+        this.mapClickListener = listener
+    }
+
+
 }
