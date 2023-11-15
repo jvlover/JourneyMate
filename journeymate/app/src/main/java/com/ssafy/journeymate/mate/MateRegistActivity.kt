@@ -5,6 +5,8 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -61,8 +63,8 @@ class MateRegistActivity : AppCompatActivity() {
     // 드롭다운
     private lateinit var mateEditTextAdapter: ArrayAdapter<String>
 
-    val loggedInUserId = "11ee7ebf112c1927aa4b85e38939408d"
-    val loggedInUserNickname = "coffee"
+    val loggedInUserId = "11ee7ebf5b8bb5c8aa4bcb99876bba64"
+    val loggedInUserNickname = "travel"
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,9 +76,6 @@ class MateRegistActivity : AppCompatActivity() {
         val toolbarTitleTextView = toolbarInclude.findViewById<TextView>(R.id.toolbarTitle)
 
         toolbarTitleTextView.text = "여행 그룹 생성"
-
-
-
 
 
         // 시작 날짜, 끝 날짜
@@ -108,14 +107,16 @@ class MateRegistActivity : AppCompatActivity() {
         mateEditText = findViewById(R.id.mate_edit_text)
         mateLinearLayout = findViewById(R.id.mates_linearlayout)
 
-        // creatorId -> userList 에 포함 시키기
+        // creatorId -> userList 에 포함 시키기 ( O )
         // 서버에는 ID 를 보내고 front 에서는 nickname 을 보여줘야 한다.
         // nicknameList.add(App.INSTANCE.nickname)
 
 
         // 지금 로그인된 회원은 무조건 추가
-        addTextToLayout(loggedInUserNickname, loggedInUserId )
+        // addTextToLayout(App.INSTANCE.nickname, App.INSTANCE.id)
+        addTextToLayout(loggedInUserNickname, loggedInUserId)
 
+        // 멤버 추가
         mateEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
@@ -230,7 +231,28 @@ class MateRegistActivity : AppCompatActivity() {
                         // 클릭시 userList와 nicknameList에 추가
                         mateEditText.setOnItemClickListener { _, _, position, _ ->
                             val selectedNickname = mateEditTextAdapter.getItem(position) ?: ""
-                            addTextToLayout(selectedNickname, userData.id)
+
+                            // 이미 해당하는 닉네임이 존재하는지 확인
+                            if (!nicknameList.contains(selectedNickname)) {
+
+                                addTextToLayout(selectedNickname, userData.id)
+
+                                Handler(Looper.getMainLooper()).post {
+                                    mateEditText.dismissDropDown()
+                                    mateEditText.setText("")
+                                }
+                            } else {
+
+                                Handler(Looper.getMainLooper()).post {
+                                    mateEditText.dismissDropDown()
+                                    mateEditText.setText("")
+                                }
+
+                                Log.e(
+                                    "Duplicate",
+                                    "Nickname $selectedNickname 이미 존재"
+                                )
+                            }
                         }
                     } else {
                         // 응답이 성공적이지만, body가 null인 경우
@@ -262,7 +284,7 @@ class MateRegistActivity : AppCompatActivity() {
         }
 
         val imageView = ImageView(this).apply {
-            setImageResource(android.R.drawable.ic_delete)
+            setImageResource(R.drawable.baseline_clear_24)
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -279,12 +301,11 @@ class MateRegistActivity : AppCompatActivity() {
             }
         }
 
-        // Horizontal LinearLayout을 만들어 TextView와 ImageView를 포함시킵니다.
         val userLayout = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_HORIZONTAL // 가운데 정렬을 위해 gravity 설정
             layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, // 너비를 MATCH_PARENT로 설정
+                LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
             addView(textView)
@@ -322,17 +343,19 @@ class MateRegistActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun callMateRegisterApi(userList: List<String>) {
 
-        val inputTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
+        val inputTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd", Locale.KOREA)
         val sDateTime = LocalDate.parse(startDateEditText.text.toString(), inputTimeFormatter)
         val startDate = sDateTime.atStartOfDay()
         val eDateTime = LocalDate.parse(endDateEditText.text.toString(), inputTimeFormatter)
         val endDate = eDateTime.atStartOfDay()
 
+        val outputTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREA)
+
         val registMateRequest = RegistMateRequest(
             destination = findViewById<EditText>(R.id.destination_text_edit).text.toString(),
             name = findViewById<EditText>(R.id.name_edit_text).text.toString(),
-            startDate = startDate,
-            endDate = endDate,
+            startDate = startDate.format(outputTimeFormatter).toString(),
+            endDate = endDate.format(outputTimeFormatter).toString(),
             users = userList.toMutableList(),
             creator = loggedInUserId
         )
@@ -348,7 +371,8 @@ class MateRegistActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("sucess log", "api 응답 성공")
                     val intent = Intent(this@MateRegistActivity, MateListActivity::class.java)
-                    intent.putExtra("response", response.body())  // 응답을 새 액티비티로 전달
+
+
                     startActivity(intent)
 
                 } else {
@@ -362,6 +386,4 @@ class MateRegistActivity : AppCompatActivity() {
             }
         })
     }
-
-
 }

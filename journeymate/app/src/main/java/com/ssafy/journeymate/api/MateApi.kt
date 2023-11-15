@@ -22,11 +22,11 @@ data class RegistMateResponse(val message: String, val data: MateGroupData) : Se
 data class MateGroupData(
     val name: String,
     val destination: String,
-    val startDate: LocalDateTime,
-    val endDate: LocalDateTime,
+    val startDate: String,
+    val endDate: String,
     val users: MutableList<String>,
     val creator: String,
-    val createdDate: LocalDateTime,
+    val createdDate: String,
     val mateId: Long
 )
 
@@ -144,8 +144,8 @@ interface MateApi {
 data class RegistMateRequest(
     val destination: String,
     val name: String,
-    val startDate: LocalDateTime,
-    val endDate: LocalDateTime,
+    val startDate: String,
+    val endDate: String,
     val users: MutableList<String>,
     val creator: String
 )

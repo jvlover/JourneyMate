@@ -94,12 +94,12 @@ data class FindMateResponse(val message: String, val data: List<FindMateData>)
 data class FindMateData(
     val mateId: Long,
     val name: String,
-    val startDate: LocalDateTime,
-    val endDate: LocalDateTime,
+    val startDate: String,
+    val endDate: String,
     val users: List<String>,
     val destination: String,
     val creator: String,
-    val createdDate: LocalDateTime
+    val createdDate: String
 )
 
 interface UserApi {
@@ -132,7 +132,7 @@ interface UserApi {
     fun nicknameDuplicateCheck(@Path(value = "nickname") nickname: String): Call<Boolean>
 
     @GET("/user-service/mate/{id}")
-    fun findMateById(@Path(value = "id") id: String): Call<List<FindMateResponse>>
+    fun findMateById(@Path(value = "id") id: String): Call<FindMateResponse>
 
     @GET("/user-service/journey/{id}")
     fun findTodayJourneyById(@Path(value = "id") id: String): Call<FindJourneyResponse>
