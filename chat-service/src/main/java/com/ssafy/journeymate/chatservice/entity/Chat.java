@@ -34,7 +34,7 @@ public class Chat{
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm")
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-ddTHH:mm")
     private LocalDateTime timestamp; // 메시지가 생성된 시간
 
 
