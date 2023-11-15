@@ -46,6 +46,8 @@ dependencies {
     /* zipkin 설정 */
     implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
     implementation 'org.springframework.cloud:spring-cloud-starter-zipkin:2.2.3.RELEASE'
+
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3'
 }
 
 dependencyManagement {
