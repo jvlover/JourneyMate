@@ -13,7 +13,6 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.ssafy.journeymate.databinding.ActivityMainBinding
 import com.ssafy.journeymate.mate.MateListActivity
-import com.ssafy.journeymate.mate.MateRegistActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,7 +37,7 @@ class MainActivity : AppCompatActivity() {
 //                .setAction("Action", null).show()
 //        }
 //
-        val intent = Intent(this, MateRegistActivity::class.java)
+        val intent = Intent(this, MateListActivity::class.java)
         startActivity(intent)
     }
 

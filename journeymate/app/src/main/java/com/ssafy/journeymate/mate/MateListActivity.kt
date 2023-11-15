@@ -112,8 +112,20 @@ class MateListActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val mateList = response.body()
 
-                    mateList?.data?.forEach { findMateData ->
+                    mateList?.data?.forEachIndexed { index, findMateData ->
                         val mateView = createImageButton(findMateData)
+
+                        val params = GridLayout.LayoutParams()
+
+                        // index가 2의 배수인 경우 다음 행으로 이동
+                        if (index % 2 == 0 && index > 0) {
+                            params.rowSpec = GridLayout.spec(index / 2)
+                            params.columnSpec = GridLayout.spec(0)
+                        } else {
+                            params.rowSpec = GridLayout.spec(index / 2)
+                            params.columnSpec = GridLayout.spec(1)
+                        }
+
                         mateListLayout.addView(mateView)
                     }
 
@@ -150,6 +162,12 @@ class MateListActivity : AppCompatActivity() {
         startDateTextView.text = findMateData.startDate.substringBefore("T")
         endDateTextView.text = findMateData.endDate.substringBefore("T")
 
+
+        val params = GridLayout.LayoutParams()
+        params.rowSpec =
+            GridLayout.spec(GridLayout.UNDEFINED, 1f) // 1f는 행의 비율을 나타내며, 모든 행의 비율을 동일하게 하려면 1f로 지정
+
+        view.layoutParams = params
 
         return view
     }

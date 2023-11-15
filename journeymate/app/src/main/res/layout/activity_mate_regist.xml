@@ -91,18 +91,18 @@
         android:id="@+id/destination_text_edit"
         android:layout_width="180dp"
         android:layout_height="45dp"
-        android:layout_marginTop="68dp"
+        android:layout_marginTop="70dp"
         android:hint="여행지 입력"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.279"
         app:layout_constraintStart_toEndOf="@+id/destination_text"
-        app:layout_constraintTop_toBottomOf="@+id/mate_edit_text" />
+        app:layout_constraintTop_toBottomOf="@+id/mates_linearlayout" />
 
     <TextView
         android:id="@+id/destination_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="88dp"
+        android:layout_marginTop="70dp"
         android:text="여행지"
         android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -114,7 +114,7 @@
         android:id="@+id/start_date_icon"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="44dp"
         android:clickable="true"
         android:src="@drawable/baseline_calendar_month_24"
         app:layout_constraintEnd_toEndOf="parent"
@@ -151,7 +151,7 @@
         android:id="@+id/start_date_text_view"
         android:layout_width="180dp"
         android:layout_height="45dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="44dp"
         android:gravity="center_vertical"
         android:paddingHorizontal="5dp"
         android:textSize="18sp"
@@ -188,6 +188,7 @@
         android:id="@+id/mate_regist_button"
         android:layout_width="160dp"
         android:layout_height="60dp"
+        android:layout_marginTop="80dp"
         android:layout_marginBottom="96dp"
         android:background="@drawable/large_button"
         android:text="그룹 생성하기"
@@ -197,6 +198,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/end_date_text_view"
         app:rippleColor="@color/white" />
 
 

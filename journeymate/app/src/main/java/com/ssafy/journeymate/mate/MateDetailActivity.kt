@@ -82,7 +82,7 @@ class MateDetailActivity : AppCompatActivity() {
     fun deleteMateData() {
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://k9a204.p.ssafy.io:8000//mate-service/delete/")
+            .baseUrl("http://k9a204.p.ssafy.io:8000/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
