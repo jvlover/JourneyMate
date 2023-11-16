@@ -58,7 +58,6 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <EditText
-
             android:id="@+id/messageActivity_editText"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -70,14 +69,15 @@
             android:layout_marginEnd="55dp"
             android:layout_marginRight="55dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/messageActivity_ImageView"
+            app:layout_constraintEnd_toStartOf="@+id/messageActivity_ImageButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/messageActivity_ImageView"
+        <ImageButton
+            android:id="@+id/messageActivity_ImageButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:background="@null"
 
             android:src="@drawable/baseline_send_24"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -54,6 +54,11 @@ interface ChatApi {
 
 }
 
+fun main(args : Array<String>) {
+
+
+}
+
 
 
 

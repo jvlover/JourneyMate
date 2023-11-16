@@ -72,5 +72,4 @@ dependencies {
     implementation ("org.java-websocket:Java-WebSocket:1.5.1")
     implementation ("io.reactivex.rxjava2:rxjava:2.2.5")
     implementation ("io.reactivex.rxjava2:rxandroid:2.1.0")
-
 }
