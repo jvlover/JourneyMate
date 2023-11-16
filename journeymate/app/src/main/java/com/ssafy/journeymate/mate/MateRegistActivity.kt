@@ -162,6 +162,11 @@ class MateRegistActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        // 여기에 뒤로 가기 버튼을 눌렀을 때 실행할 로직을 작성
+        super.onBackPressed() // 기본 동작 (현재 액티비티 종료)
+    }
+
 
     // 시작 날짜, 끝 날짜 선택
     private fun showDatePickerDialog(textView: TextView, isStartDate: Boolean) {
