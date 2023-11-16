@@ -204,6 +204,7 @@ public class UserController {
     }
 
     @PutMapping("/mateBridge/{mateId}")
+    @Transactional
     public void deleteMateBridge(@PathVariable Long mateId) {
 
         log.info("UserController_deleteMateBridge_start : " + mateId);
