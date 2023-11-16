@@ -102,7 +102,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/journeyregistviewswitcher"
-        android:layout_width="410dp"
+        android:layout_width="match_parent"
         android:layout_height="580dp"
         android:background="@drawable/rounded_corners_white"
         android:scaleX="1"
@@ -112,7 +112,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        android:visibility="visible">
+        android:visibility="gone">
 
 
         <TextView
@@ -131,16 +131,17 @@
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="380dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="20dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintTop_toBottomOf="@+id/journeyregistmessage"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
+
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_marginLeft="24dp"
+                android:layout_marginLeft="16dp"
                 android:src="@drawable/baseline_location_on_24" />
 
             <TextView
@@ -149,6 +150,7 @@
                 android:layout_height="24dp"
                 android:layout_marginLeft="8dp"
                 android:text="장소"
+                android:fontFamily="@font/pretendardregular"
                 android:textSize="16dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -157,20 +159,21 @@
 
         <EditText
             android:id="@+id/editJourneyTitleText"
-            android:layout_width="336dp"
-            android:layout_height="42dp"
+            android:layout_width="360dp"
+            android:layout_height="36dp"
             android:layout_marginHorizontal="32dp"
-            android:paddingLeft="12dp"
+            android:paddingLeft="6dp"
             android:hint="장소명을 입력해주세요"
             android:fontFamily="@font/pretendardregular"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout"
             android:background="@drawable/rounded_small_corners" />
 
+
         <LinearLayout
             android:layout_width="380dp"
-            android:layout_height="42dp"
-            android:id="@+id/categoryicon"
+            android:layout_height="36dp"
+            android:id="@+id/dayAndSequence"
             app:layout_constraintTop_toBottomOf="@+id/editJourneyTitleText"
             android:layout_marginTop="12dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -179,14 +182,88 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_marginLeft="24dp"
+                android:layout_marginLeft="16dp"
+                android:src="@drawable/baseline_today_24"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_gravity="center_vertical" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_marginLeft="8dp"
+                android:text="날짜"
+                android:textSize="18dp"
+                android:fontFamily="@font/pretendardregular"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/editJourneyDay"
+                android:layout_width="48dp"
+                android:layout_height="36dp"
+                android:layout_marginHorizontal="16dp"
+                android:paddingLeft="20dp"
+                android:hint="1"
+                android:inputType="number"
+                android:fontFamily="@font/pretendardregular"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+                android:background="@drawable/rounded_small_corners" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginLeft="48dp"
+                android:src="@drawable/baseline_route_24"
+                android:layout_gravity="center_vertical" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_marginLeft="8dp"
+                android:text="순서"
+                android:fontFamily="@font/pretendardregular"
+                android:textSize="18dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/editJourneySequence"
+                android:layout_width="48dp"
+                android:layout_height="36dp"
+                android:layout_marginHorizontal="16dp"
+                android:paddingLeft="20dp"
+                android:hint="1"
+                android:inputType="number"
+                android:fontFamily="@font/pretendardregular"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+                android:background="@drawable/rounded_small_corners" />
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="380dp"
+            android:layout_height="32dp"
+            android:id="@+id/categoryicon"
+            app:layout_constraintTop_toBottomOf="@+id/dayAndSequence"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginLeft="16dp"
                 android:src="@drawable/baseline_backpack_24" />
 
             <TextView
                 android:id="@+id/journeycategory"
                 android:layout_width="wrap_content"
                 android:layout_height="24dp"
-                android:layout_marginHorizontal="8dp"
+                android:layout_marginLeft="16dp"
                 android:text="카테고리"
                 android:fontFamily="@font/pretendardregular"
                 android:textSize="16dp"
@@ -200,7 +277,7 @@
             android:id="@+id/gridView"
             android:layout_width="400dp"
             android:layout_height="280dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:numColumns="2"
@@ -215,10 +292,13 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/registJourneyButton"
-            android:layout_width="120dp"
-            android:layout_height="36dp"
-            android:layout_marginBottom="24dp"
+            android:layout_width="180dp"
+            android:layout_height="42dp"
+            android:layout_marginBottom="16dp"
+            android:textSize="18dp"
             android:text="일정등록"
+            android:fontFamily="@font/pretendardregular"
+            android:background="@drawable/rounded_small_corners"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

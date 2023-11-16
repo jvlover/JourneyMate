@@ -21,8 +21,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.navigation.ui.AppBarConfiguration
 import com.google.android.gms.maps.model.LatLng
-import com.ssafy.journeymate.JourneyMainActivity
 import com.ssafy.journeymate.R
+import com.ssafy.journeymate.api.JourneyApi
+import com.ssafy.journeymate.api.JourneyRegistPostReq
+import com.ssafy.journeymate.api.registJourneyResponse
 import com.ssafy.journeymate.databinding.ActivityRegistJourneyBinding
 import com.ssafy.journeymate.util.OnMapClickListener
 import kotlinx.coroutines.CoroutineScope
@@ -30,6 +32,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class RegistJourneyActivity : AppCompatActivity(), OnMapClickListener {
 
@@ -41,6 +48,7 @@ class RegistJourneyActivity : AppCompatActivity(), OnMapClickListener {
     private lateinit var currentLatLag: LatLng
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private var selectedCategory: Long = 0
+    private lateinit var journeyApi: JourneyApi
 
     /* 카테고리명 다른 api 다하면 가장 마지막에 변경 예정 */
     private val categorys: List<Category> = listOf(
@@ -72,6 +80,8 @@ class RegistJourneyActivity : AppCompatActivity(), OnMapClickListener {
         viewSwitcher = findViewById(R.id.journeyregistviewswitcher)
         val registJourneyButton = findViewById<Button>(R.id.registJourneyButton)
         val editTitleInput = findViewById<EditText>(R.id.editJourneyTitleText)
+        val editDayInput = findViewById<EditText>(R.id.editJourneyDay)
+        val editSequenceInput = findViewById<EditText>(R.id.editJourneySequence)
 
 
         val moveToJourneyMainButton = findViewById<ImageButton>(R.id.backtojourneymainbutton)
@@ -91,13 +101,43 @@ class RegistJourneyActivity : AppCompatActivity(), OnMapClickListener {
         }
 
         registJourneyButton.setOnClickListener() {
-            Log.i("텍스트", "${editTitleInput.text}")
+            try {
+                val dayInputText = editDayInput.text.toString()
+                val sequenceInputText = editSequenceInput.text.toString()
+
+                val day = Integer.parseInt(dayInputText)
+                val sequence = Integer.parseInt(sequenceInputText)
+
+                Log.i("registJourneyButton 확인", "${editTitleInput.text}")
+
+                /* registJourney api 보내기 */
+                var journeyRegistPostReq = JourneyRegistPostReq(
+                    1L,
+                    selectedCategory,
+                    "${editTitleInput.text}",
+                    day,
+                    sequence,
+                    currentLatLag.latitude,
+                    currentLatLag.longitude
+                )
+                registJourneyAPI(journeyRegistPostReq)
+                val message = "일정이 등록되었습니다.."
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                var intent = Intent(this, JourneyMainActivity::class.java)
+                startActivity(intent)
+
+            } catch (e: NumberFormatException) {
+                // 숫자로 변환할 수 없는 경우 예외처리
+                Log.e("registJourneyButton 오류", "숫자로 변환할 수 없는 값이 입력되었습니다.")
+            }
+
         }
 
         cardDimScreen.setOnClickListener {
             unDimScreen()
         }
 
+        /* 아래 요소 눌리는거 차단용  */
         viewSwitcher.setOnClickListener() {
         }
 
@@ -118,32 +158,11 @@ class RegistJourneyActivity : AppCompatActivity(), OnMapClickListener {
 
                 textView.text = category?.name
 
-                if (category?.id == selectedCategory) {
-                    view.setBackgroundResource(R.drawable.rounded_small_corners_reverse)
-                    textView.setTextColor(Color.WHITE)
-                } else {
-                    view.setBackgroundResource(R.drawable.rounded_small_corners)
-                    textView.setTextColor(Color.BLACK)
-                }
+                updateViewAppearance(view, textView, imageView, category?.id == selectedCategory)
 
-                // 클릭 이벤트 처리
                 view.setOnClickListener {
-                    Log.i("gridcheck", "${category?.id}")
                     selectedCategory = category?.id ?: 0
-
-                    // 선택된 아이템의 배경과 텍스트 색상 변경
-                    view.setBackgroundResource(R.drawable.rounded_small_corners_reverse)
-                    textView.setTextColor(Color.WHITE) // 텍스트 색상 변경
-
-                    // 다른 아이템들의 배경과 텍스트 색상을 원래대로 되돌림
-                    for (i in 0 until parent.childCount) {
-                        if (i != position) {
-                            val otherView = parent.getChildAt(i)
-                            otherView.setBackgroundResource(R.drawable.rounded_small_corners) // 원래의 배경 리소스로 변경
-                            val otherTextView = otherView.findViewById<TextView>(R.id.categoryName)
-                            otherTextView.setTextColor(Color.BLACK) // 원래의 텍스트 색상으로 변경
-                        }
-                    }
+                    notifyDataSetChanged() // 뷰 업데이트 됐다고 notify 시켜주는 것
                 }
 
 
@@ -153,6 +172,25 @@ class RegistJourneyActivity : AppCompatActivity(), OnMapClickListener {
 
         gridView.adapter = adapter
 
+
+    }
+
+    private fun updateViewAppearance(
+        view: View,
+        textView: TextView,
+        imageView: ImageView,
+        isSelected: Boolean
+    ) {
+        if (isSelected) {
+            view.setBackgroundResource(R.drawable.rounded_small_corners_reverse)
+            textView.setTextColor(Color.WHITE)
+            imageView.setColorFilter(Color.WHITE)
+
+        } else {
+            view.setBackgroundResource(R.drawable.rounded_small_corners)
+            textView.setTextColor(Color.BLACK)
+            imageView.setColorFilter(Color.BLACK)
+        }
     }
 
 
@@ -197,6 +235,42 @@ class RegistJourneyActivity : AppCompatActivity(), OnMapClickListener {
         val icon: String,
         val name: String
     )
+
+    private fun registJourneyAPI(journeyRegistPostReq: JourneyRegistPostReq): Boolean {
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://k9a204.p.ssafy.io:8000/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        journeyApi = retrofit.create(JourneyApi::class.java)
+
+        journeyApi.registJourney(journeyRegistPostReq)
+            .enqueue(object : Callback<registJourneyResponse> {
+                override fun onResponse(
+                    call: Call<registJourneyResponse>,
+                    response: Response<registJourneyResponse>
+                ) {
+                    if (response.isSuccessful) {
+
+                        val journeyData = response.body()?.data
+                        Log.i("registJourneyAPI 성공", journeyData.toString())
+
+                    } else {
+                        val errorMessage = response.errorBody()?.string()
+                        Log.e("registJourneyAPI 에러", "에러 발생: $errorMessage")
+                    }
+                }
+
+                override fun onFailure(call: Call<registJourneyResponse>, t: Throwable) {
+                    Log.e("registJourneyAPI 실패", "에러 발생: ${t.message}")
+                }
+
+            })
+
+        return true
+
+    }
 
 
 }

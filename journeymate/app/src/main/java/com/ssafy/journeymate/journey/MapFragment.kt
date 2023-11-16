@@ -3,6 +3,7 @@ package com.ssafy.journeymate.journey
 import android.content.Context
 import android.location.Geocoder
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,12 +17,12 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.ssafy.journeymate.R
+import com.ssafy.journeymate.api.JourneyGetRes
 
 class MapFragment : Fragment(), OnMapReadyCallback {
 
     lateinit var mContent: Context
     private var markers: List<MarkerData>? = null
-
     private lateinit var mapView: MapView
     private var mMap: GoogleMap? = null
 
@@ -53,38 +54,55 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
         }
 
+        val journeys: List<JourneyGetRes>? =
+            arguments?.getSerializable("journeys") as? List<JourneyGetRes>
+
+        Log.i("마커 확인", "${journeys.toString()}")
+
+        if (journeys != null) {
+            Log.i("map fragment 확인", "${journeys.size}")
+            var tempMarkers: MutableList<MarkerData> = mutableListOf()
+
+            for (journey in journeys) {
+                tempMarkers.add(MarkerData(journey.xcoordinate, journey.ycoordinate, journey.title))
+            }
+            setMarkersData(tempMarkers)
+        }
+
+
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
         return rootView
     }
 
+    private fun updateMarkers() {
+        mMap?.let { map ->
+            if (markers == null) {
+                markers = listOf(
+                    MarkerData(
+                        xcoordinate = 37.503325,
+                        ycoordinate = 127.044034,
+                        title = "기본위치",
+                    )
+                )
+            } else {
+                markers!!.forEach { markerData ->
+                    map.addMarker(
+                        MarkerOptions()
+                            .position(LatLng(markerData.xcoordinate, markerData.ycoordinate))
+                            .title(markerData.title)
+                    )
+                }
+            }
+            val startMarker = LatLng(markers!!.get(0).xcoordinate, markers!!.get(0).ycoordinate)
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(startMarker, 11f))
+        }
+    }
+
     //지도 객체를 사용할 수 있을 때 자동으로 호출되는 함수
     override fun onMapReady(map: GoogleMap) {
         mMap = map
-        val marker = LatLng(37.514655, 126.979974)
-        map.addMarker(
-            MarkerOptions().position(marker).title("기본위치").snippet("서울")
-        )
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker, 11f))
-
-        if (markers == null) {
-            markers = listOf(
-                MarkerData(
-                    xcoordinate = 37.503325,
-                    ycoordinate = 127.044034,
-                    title = "기본위치2",
-                )
-            )
-        }
-
-        markers!!.forEach { markerData ->
-            map.addMarker(
-                MarkerOptions()
-                    .position(LatLng(markerData.xcoordinate, markerData.ycoordinate))
-                    .title(markerData.title)
-            )
-        }
-
+        updateMarkers()
     }
 
     override fun onStart() {

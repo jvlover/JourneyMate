@@ -6,6 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import java.io.Serializable
 
 
 data class getJourneyResponse(
@@ -44,7 +45,7 @@ class JourneyGetRes(
     val xcoordinate: Double,
     val ycoordinate: Double
 
-)
+) : Serializable
 
 class ItemGetRes(
     val name: String,
@@ -57,22 +58,22 @@ interface JourneyApi {
     @GET("journey-service/{journeyId}")
     fun getJourney(@Path(value = "journeyId") journeyId: Long): Call<getJourneyResponse>
 
-    @GET("/{mateId}")
+    @GET("journey-service/{mateId}")
     fun getMateJourneys(@Path(value = "mateId") mateId: Long): Call<getMateJourneysResponse>
 
-    @GET("/sendChecklist/{journeyId}")
+    @GET("journey-service/sendChecklist/{journeyId}")
     fun sendChecklist(@Path(value = "journeyId") journeyId: Long): Call<sendChecklistResponse>
 
-    @POST("/regist")
+    @POST("journey-service/regist")
     fun registJourney(@Body journeyRegistPostReq: JourneyRegistPostReq): Call<registJourneyResponse>
 
-    @PUT("/update")
+    @PUT("journey-service/update")
     fun updateJourney(@Body journeyModifyPutReq: JourneyModifyPutReq): Call<updateJourneyResponse>
 
-    @PUT("/delete/{journeyId}")
+    @PUT("journey-service/delete/{journeyId}")
     fun deleteJourney(@Path(value = "journeyId") journeyId: Long): Call<JourneyGetRes>
 
-    @PUT("/deletejourneys/{mateId}")
+    @PUT("journey-service/deletejourneys/{mateId}")
     fun deleteJourneysInMate(@Path(value = "mateId") mateId: Long): Call<List<JourneyGetRes>>
 
 
