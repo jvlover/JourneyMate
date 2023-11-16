@@ -22,11 +22,14 @@ public interface UserServiceClient {
     @GetMapping("/user-service/mateBridge/{mateId}")
     MateBridgeUsersRes getMateBridgeUsers(@PathVariable Long mateId);
 
-    @GetMapping("/user-service//findById/{id}")
+    @GetMapping("/user-service/findById/{id}")
     FindUserRes getUserInfo(@PathVariable String id);
 
     @PutMapping("/user-service/mateBridge")
     MateBridgeRes modifyMateBridge(@RequestBody MateBridgeModifyReq mateBridgeModifyReq);
+
+    @PutMapping("/user-service/mateBridge/{mateId}")
+    void deleteMateBridge(@PathVariable Long mateId);
 
 
 }
