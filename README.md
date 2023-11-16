@@ -69,17 +69,17 @@
   <tr>
     <td align="center">
       <a href="https://github.com/Noopy94" target="_blank">
-        이두현<br />(Front-end)
+        이두현<br />(Full-stack)
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/jvlover" target="_blank">
-        박민혁<br />(Front-end)
+        박민혁<br />(Infra)
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/mongsuokki" target="_blank">
-        최주호<br />(Front-end)
+        최주호<br />(Full-stack)
       </a>
     </td>
   </tr>
@@ -98,12 +98,12 @@
   <tr>
     <td align="center">
       <a href="https://github.com/fnejd" target="_blank">
-        김도현<br />(Back-end)
+        김도현<br />(Full-stack)
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/">
-        김민범<br />(Back-end)
+        김민범<br />(Full-stack)
       </a>
     </td>
   </tr>
