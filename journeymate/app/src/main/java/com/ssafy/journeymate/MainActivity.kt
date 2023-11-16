@@ -12,7 +12,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.ssafy.journeymate.databinding.ActivityMainBinding
-import com.ssafy.journeymate.mate.MateListActivity
+import com.ssafy.journeymate.mate.DocsWriteActivity
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
+        setSupportActionBar(binding.contensToolbar)
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
@@ -37,7 +38,10 @@ class MainActivity : AppCompatActivity() {
 //                .setAction("Action", null).show()
 //        }
 //
-        val intent = Intent(this, MateListActivity::class.java)
+
+//        val intent = Intent(this, MateListActivity::class.java)
+        val intent = Intent(this, DocsWriteActivity::class.java)
+
         startActivity(intent)
     }
 
