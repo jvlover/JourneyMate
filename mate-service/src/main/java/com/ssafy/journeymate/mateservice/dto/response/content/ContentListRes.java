@@ -1,6 +1,7 @@
 package com.ssafy.journeymate.mateservice.dto.response.content;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -23,8 +24,9 @@ public class ContentListRes {
         private String creatorId;
         private Long contentId;
 
-        @JsonSerialize(using =  LocalDateTimeSerializer.class)
+        @JsonSerialize(using = LocalDateTimeSerializer.class)
         @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime createdDate;
         private String imgUrl;
         private String fileName;
