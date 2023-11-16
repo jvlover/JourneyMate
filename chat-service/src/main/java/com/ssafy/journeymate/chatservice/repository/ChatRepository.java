@@ -11,7 +11,7 @@ import java.util.List;
 public interface ChatRepository extends MongoRepository<Chat, String> {
 
     // 특정 채팅방의 메시지를 조회하는 메서드
-    List<Chat> findByMateIdOrderByTimestampDesc(long mateId);
+    List<Chat> findByMateIdOrderByTimestampAsc(long mateId);
 
     // 특정 사용자가 보낸 메시지를 조회하는 메서드
     List<Chat> findBySenderOrderByTimestampAsc(String sender);

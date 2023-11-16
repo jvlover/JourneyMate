@@ -46,7 +46,7 @@ public class ChatController {
 
     @GetMapping("/chat-service/{mateId}")
     public ResponseEntity<ResponseDto> getComments(@PathVariable long mateId) {
-        List<Chat> chats = chatRepository.findByMateIdOrderByTimestampDesc(mateId);
+        List<Chat> chats = chatRepository.findByMateIdOrderByTimestampAsc(mateId);
         return new ResponseEntity<>(new ResponseDto("채팅 오름차순 정렬 완료", chats), HttpStatus.OK);
     }
 
