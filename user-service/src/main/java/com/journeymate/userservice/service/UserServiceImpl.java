@@ -175,6 +175,7 @@ public class UserServiceImpl implements UserService {
         }
 
         log.info("UserService_findMateById_end : " + res);
+        
         return res;
     }
 
