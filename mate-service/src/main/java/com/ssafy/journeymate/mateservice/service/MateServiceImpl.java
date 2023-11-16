@@ -212,6 +212,8 @@ public class MateServiceImpl implements MateService {
 
         log.info("삭제할 여행 그룹 mateId : {}", mateDeleteDto.getMateId());
 
+        userServiceClient.deleteMateBridge(mateDeleteReq.getMateId());
+
         kafkaProducer.send("journeys-delete", mateDeleteDto);
 
         return true;
@@ -720,7 +722,7 @@ public class MateServiceImpl implements MateService {
         // feign client O
         FindUserRes findUserRes = circuitBreaker.run(() -> userServiceClient.getUserInfo(userId),
             throwable -> null);
-        
+
         String nickname = " ";
 
         if (findUserRes != null) {
