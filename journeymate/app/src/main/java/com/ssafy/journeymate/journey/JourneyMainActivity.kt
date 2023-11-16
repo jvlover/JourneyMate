@@ -50,7 +50,6 @@ class JourneyMainActivity : AppCompatActivity() {
     private lateinit var journeyMainLayout: LinearLayout
 //    lateinit var markers: List<MapFragment.MarkerData>
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_journey_main)
@@ -134,7 +133,6 @@ class JourneyMainActivity : AppCompatActivity() {
         })
 
         return true
-
 
     }
 
@@ -256,7 +254,6 @@ class JourneyMainActivity : AppCompatActivity() {
                     params.setMargins(12, 0, 12, 0)
                     layoutParams = params
                 }
-
 
                 val rangeTextView = TextView(this).apply {
 
@@ -496,7 +493,7 @@ class JourneyMainActivity : AppCompatActivity() {
             }
 
             val firstButton = Button(this).apply {
-                background = getDrawable(R.drawable.baseline_dehaze_24) // 배경 설정
+                background = getDrawable(R.drawable.baseline_edit_24) // 배경 설정
                 val params = LinearLayout.LayoutParams(
                     TypedValue.applyDimension(
                         TypedValue.COMPLEX_UNIT_DIP,

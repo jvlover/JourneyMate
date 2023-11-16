@@ -1,7 +1,5 @@
 package com.ssafy.journeymate.journey
 
-import android.app.ActivityOptions
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -86,9 +84,7 @@ class RegistJourneyActivity : AppCompatActivity(), OnMapClickListener {
 
         val moveToJourneyMainButton = findViewById<ImageButton>(R.id.backtojourneymainbutton)
         moveToJourneyMainButton.setOnClickListener {
-            val intent = Intent(this, JourneyMainActivity::class.java)
-            val options = ActivityOptions.makeSceneTransitionAnimation(this).toBundle()
-            startActivity(intent, options)
+            onBackPressed()
         }
 
         val mapFragment =
@@ -121,10 +117,6 @@ class RegistJourneyActivity : AppCompatActivity(), OnMapClickListener {
                     currentLatLag.longitude
                 )
                 registJourneyAPI(journeyRegistPostReq)
-                val message = "일정이 등록되었습니다.."
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-                var intent = Intent(this, JourneyMainActivity::class.java)
-                startActivity(intent)
 
             } catch (e: NumberFormatException) {
                 // 숫자로 변환할 수 없는 경우 예외처리
@@ -165,13 +157,11 @@ class RegistJourneyActivity : AppCompatActivity(), OnMapClickListener {
                     notifyDataSetChanged() // 뷰 업데이트 됐다고 notify 시켜주는 것
                 }
 
-
                 return view
             }
         }
 
         gridView.adapter = adapter
-
 
     }
 
@@ -236,6 +226,11 @@ class RegistJourneyActivity : AppCompatActivity(), OnMapClickListener {
         val name: String
     )
 
+    override fun onBackPressed() {
+        // 여기에 뒤로 가기 버튼을 눌렀을 때 실행할 로직을 작성
+        super.onBackPressed() // 기본 동작 (현재 액티비티 종료)
+    }
+
     private fun registJourneyAPI(journeyRegistPostReq: JourneyRegistPostReq): Boolean {
 
         val retrofit = Retrofit.Builder()
@@ -255,6 +250,11 @@ class RegistJourneyActivity : AppCompatActivity(), OnMapClickListener {
 
                         val journeyData = response.body()?.data
                         Log.i("registJourneyAPI 성공", journeyData.toString())
+
+                        val message = "일정이 등록되었습니다.."
+                        Toast.makeText(this@RegistJourneyActivity, message, Toast.LENGTH_SHORT)
+                            .show()
+                        onBackPressed()
 
                     } else {
                         val errorMessage = response.errorBody()?.string()
