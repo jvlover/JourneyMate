@@ -6,6 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import java.io.Serializable
 import java.time.LocalDateTime
 
 data class RegistUserResponse(val message: String, val data: RegistUserData)
@@ -14,6 +15,8 @@ data class RegistUserData(
     val id: String,
     val nickname: String,
     val imgUrl: String,
+    val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime
 )
 
 data class FindUserResponse(val message: String, val data: FindUserData)
@@ -22,6 +25,8 @@ data class FindUserData(
     val id: String,
     val nickname: String,
     val imgUrl: String,
+    val createdAt: String,
+    val updatedAt: String
 )
 
 data class ModifyUserProfileResponse(val message: String, val data: ModifyUserProfileData)
@@ -85,18 +90,18 @@ data class FindJourneyData(
     val ycoordinate: Float
 )
 
-data class FindMateResponse(val message: String, val data: FindMateData)
+data class FindMateResponse(val message: String, val data: List<FindMateData>)
 
 data class FindMateData(
     val mateId: Long,
     val name: String,
-    val startDate: LocalDateTime,
-    val endData: LocalDateTime,
+    val startDate: String,
+    val endDate: String,
     val users: List<String>,
     val destination: String,
     val creator: String,
-    val createdDate: LocalDateTime
-)
+    val createdDate: String
+) : Serializable
 
 interface UserApi {
 
@@ -128,7 +133,7 @@ interface UserApi {
     fun nicknameDuplicateCheck(@Path(value = "nickname") nickname: String): Call<Boolean>
 
     @GET("/user-service/mate/{id}")
-    fun findMateById(@Path(value = "id") id: Long): Call<List<FindMateResponse>>
+    fun findMateById(@Path(value = "id") id: String): Call<FindMateResponse>
 
     @GET("/user-service/journey/{id}")
     fun findTodayJourneyById(@Path(value = "id") id: String): Call<FindJourneyResponse>
@@ -139,7 +144,7 @@ interface UserApi {
 
 }
 
-data class RegistUserRequest(val nickname: String, val imgUrl: String)
+data class RegistUserRequest(val name: String, val imgUrl: String)
 
 data class ModifyUserProfileRequest(val id: String, val nickname: String, val imgUrl: String)
 

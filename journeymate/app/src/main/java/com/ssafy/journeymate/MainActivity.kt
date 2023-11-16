@@ -13,6 +13,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.ssafy.journeymate.databinding.ActivityMainBinding
+import com.ssafy.journeymate.mate.DocsWriteActivity
 import com.ssafy.journeymate.mate.MateListActivity
 
 class MainActivity : AppCompatActivity() {
@@ -38,6 +39,7 @@ class MainActivity : AppCompatActivity() {
 //                .setAction("Action", null).show()
 //        }
 //
+
 //        val intent = Intent(this, DocsWriteActivity::class.java)
 //        startActivity(intent)
         val popupBarButton: ImageButton = findViewById(R.id.btnMenu)
@@ -56,6 +58,10 @@ class MainActivity : AppCompatActivity() {
         mateButton.setOnClickListener {
             startActivity(Intent(this, MateListActivity::class.java))
         }
+
+        val intent = Intent(this, DocsWriteActivity::class.java)
+
+        startActivity(intent)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
