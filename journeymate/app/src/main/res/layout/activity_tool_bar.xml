@@ -1,0 +1,41 @@
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/contensToolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@color/white"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    android:elevation="4dp">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackground"
+            android:src="@drawable/ic_back_arrow" /> <!-- 이 부분에 뒤로 가기 이미지 리소스를 설정하세요 -->
+
+        <TextView
+            android:id="@+id/toolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textColor="@color/black"
+            android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
+
+        <ImageButton
+            android:id="@+id/menuButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="19dp"
+            android:background="?attr/selectableItemBackground"
+            android:src="@drawable/baseline_menu_24_black" /> <!-- 이 부분에 메뉴 이미지 리소스를 설정하세요 -->
+
+    </RelativeLayout>
+</androidx.appcompat.widget.Toolbar>
