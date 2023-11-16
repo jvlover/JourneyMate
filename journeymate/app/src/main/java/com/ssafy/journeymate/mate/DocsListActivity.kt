@@ -1,6 +1,7 @@
 package com.ssafy.journeymate.mate
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -93,6 +94,15 @@ class DocsListActivity : AppCompatActivity() {
                 Log.e("MateListActivity", "Failed to fetch mate list", t)
             }
         })
+
+
+        val writeButton = findViewById<ImageButton>(R.id.write_docs_button)
+        writeButton.setOnClickListener {
+            val intent = Intent(this@DocsListActivity, DocsWriteActivity::class.java)
+            // 전역 변수에 mateId추가
+            intent.putExtra("mateData", mateData)
+            startActivity(intent)
+        }
     }
 
     @SuppressLint("MissingInflatedId")
