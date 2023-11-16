@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acdc3101-6e2c-49dd-ab21-f3337c5e2903" name="Changes" comment="" />
+    <list default="true" id="acdc3101-6e2c-49dd-ab21-f3337c5e2903" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/journeymate/app/src/main/java/com/ssafy/journeymate/chat/ChatActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/journeymate/app/src/main/java/com/ssafy/journeymate/chat/ChatActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/journeymate/app/src/main/res/drawable/baseline_send_24.xml" beforeDir="false" afterPath="$PROJECT_DIR$/journeymate/app/src/main/res/drawable/baseline_send_blue_24.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/journeymate/app/src/main/res/layout/activity_chat.xml" beforeDir="false" afterPath="$PROJECT_DIR$/journeymate/app/src/main/res/layout/activity_chat.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/journeymate/app/src/main/res/layout/activity_my_page.xml" beforeDir="false" afterPath="$PROJECT_DIR$/journeymate/app/src/main/res/layout/activity_my_page.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/journeymate/app/src/main/res/layout/item_chat.xml" beforeDir="false" afterPath="$PROJECT_DIR$/journeymate/app/src/main/res/layout/item_chat.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -27,7 +33,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "cidr.known.project.marker": "true",
-    "last_opened_file_path": "C:/Users/SSAFY/Desktop/S09P31A204/journeymate"
+    "last_opened_file_path": "C:/Users/User/Desktop/S09P31A204/journeymate"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />

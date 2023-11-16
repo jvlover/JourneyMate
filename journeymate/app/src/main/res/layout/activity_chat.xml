@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/chatTitle"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="#FFAE37"
@@ -39,7 +39,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+        app:layout_constraintTop_toBottomOf="@+id/chatTitle">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/messageActivity_recyclerview"
@@ -78,7 +78,7 @@
             android:layout_height="50dp"
             android:background="@null"
 
-            android:src="@drawable/baseline_send_24"
+            android:src="@drawable/baseline_send_blue_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

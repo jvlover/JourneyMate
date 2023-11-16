@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gmail.bishoybasily.stomp.lib.Event
 import com.gmail.bishoybasily.stomp.lib.StompClient
@@ -25,6 +27,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Scanner
+import java.util.StringTokenizer
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -32,14 +35,21 @@ import java.util.logging.Logger
 class ChatActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
+    private lateinit var chatTitleView: TextView
     private lateinit var adapter: RecyclerViewAdapter
     private var stomp: StompClient? = null
     var url = "http://k9a204.p.ssafy.io:8000/"
-    private var mateId : Long = 8;
-    private var userName : String = "김민범"
+    
+    
+    // 전역 변수 들어가야할 목록
+    private var mateId : Long = 8;          // 채팅방 아이디고 이거에 따라서 받아오는 채팅방이 달라져요
+    private var userName : String = "김민범" // 이거 수정하면 보내는 사람이 달라져요
+                                            // 만약 이 이름과 채팅 보낸 사람이 다르면 좌측 같으면 우측에서 나와요
+    private var chatTitle : String = "채팅방 이름"       // 이거 수정하면 위의 채팅방 타이틀이 바뀌어요
     var stompUrl = "ws://k9a204.p.ssafy.io:8000/chat-service"
-    var pub = "/pub/chat-service"
-    var sub = "/sub/chat-service/mate"
+    var pub = "/pub/chat-service"       // 메세지 매핑 pub
+    var sub = "/sub/chat-service/mate"  // 메세지 매핑 sub
+    //
     private val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(url) // 여기서 API의 기본 URL을 설정
         .addConverterFactory(GsonConverterFactory.create())
@@ -52,6 +62,8 @@ class ChatActivity : AppCompatActivity() {
         setContentView(R.layout.activity_chat)
 
         recyclerView = findViewById(R.id.messageActivity_recyclerview)
+        chatTitleView = findViewById(R.id.messageActivity_textView_topName)
+        chatTitleView.text = chatTitle
         adapter = RecyclerViewAdapter()
         recyclerView.adapter = adapter
 
@@ -65,8 +77,10 @@ class ChatActivity : AppCompatActivity() {
             override fun onResponse(call: Call<ResponseDto>, response: Response<ResponseDto>) {
                 if (response.isSuccessful) {
                     val responseDto = response.body()
+                    Log.i("정보",responseDto?.data.toString())
                     responseDto?.data?.forEach { chatMessage ->
-                        adapter.addMessage(ChatMessage(chatMessage.sender, chatMessage.message))
+                        var st = chatMessage.sender.split("님")
+                        adapter.addMessage(ChatMessage(st[0], chatMessage.message))
                     }
                 }
             }
@@ -81,6 +95,7 @@ class ChatActivity : AppCompatActivity() {
         sendButton.setOnClickListener {
             sendMessage()
         }
+        recyclerView.layoutManager = LinearLayoutManager(this)
     }
 
     fun stompMain() {
@@ -120,7 +135,7 @@ class ChatActivity : AppCompatActivity() {
             var data = JSONObject()
             data.put("type","TALK")
             data.put("mateId",8)
-            data.put("sender","김민범")
+            data.put("sender",userName)
             data.put("message",messageText)
             data.put("userCount",8)
             stomp?.send("${pub}", data.toString())?.subscribe()
@@ -128,6 +143,7 @@ class ChatActivity : AppCompatActivity() {
             // EditText 초기화
             findViewById<EditText>(R.id.messageActivity_editText).text.clear()
         }
+        adapter.addMessage(ChatMessage(userName, messageText))
     }
 
 
@@ -135,9 +151,11 @@ class ChatActivity : AppCompatActivity() {
         private val messages = ArrayList<ChatMessage>()
         fun addMessage(message: ChatMessage) {
             messages.add(message)
+            Log.i("메세지 추가",message.toString())
             notifyDataSetChanged()
             recyclerView.scrollToPosition(messages.size - 1)
         }
+
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_chat, parent, false)
@@ -150,14 +168,19 @@ class ChatActivity : AppCompatActivity() {
         inner class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val textViewMessage: TextView = view.findViewById(R.id.messageItem_textView_message)
             val textViewSender: TextView = view.findViewById(R.id.messageItem_textview_name)
-            // 기타 필요한 뷰 요소들...
         }
 
         override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
             val message = messages[position]
             holder.textViewMessage.text = message.message
             holder.textViewSender.text = message.sender
-            // Set other message properties...
+            if (message.sender == userName) {
+                // 뷰 자체를 180도 회전
+                holder.itemView.rotationY = 180f
+                // 내용물만 원래 방향으로 되돌리기 위해 다시 180도 회전
+                holder.textViewMessage.rotationY = 180f
+                holder.textViewSender.rotationY = 180f
+            }
         }
     }
 }
