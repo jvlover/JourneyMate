@@ -32,7 +32,7 @@ public class MateBridgeFindKafkaRes {
     @NoArgsConstructor
     public static class UserFindRes {
 
-        private Long id;
+        private String id;
 
         private String nickname;
 

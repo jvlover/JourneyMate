@@ -21,4 +21,6 @@ public interface ChecklistService {
     List<ChecklistModifyRes> modifyPersonalChecklist(ChecklistModifyPutReq checklistModifyPutReq);
 
     List<ChecklistFindRes> findChecklistByUserIdAndJourneyId(String userId, Long journeyId);
+
+    List<ChecklistFindRes> findChecklistByUserIdAndMateId(String userId, Long mateId);
 }
