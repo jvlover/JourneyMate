@@ -46,13 +46,16 @@ public class UserController {
 
     @PostMapping("/regist")
     @Transactional
-    public ResponseEntity<ResponseDto> socialLogin(
+    public ResponseEntity<ResponseDto> registUser(
         @RequestBody UserRegistPostReq userRegistPostReq) {
 
         log.info("UserController_socialLogin_start : " + userRegistPostReq);
 
-        // TODO: 회원 있으면 login 없으면 registUser
+        // Todo : 만약에 id로 검색했는데 유저 없으면 회원가입 있으면 로그인
+
         UserRegistRes res = userService.registUser(userRegistPostReq);
+
+//        userService.login(res.getId());
 
         log.info("UserController_socialLogin_end : " + res);
 
@@ -180,6 +183,7 @@ public class UserController {
 
         log.info("UserController_findTodayJourneyById_start : " + id);
 
+        // Todo : 이 부분 수정해야할수도 List가 아니라 JoruneyFindRes가 되어야한다??
         List<JourneyFindData> res = userService.findTodayJourneyById(id);
 
         log.info("UserController_findTodayJourneyById_end : " + res);
@@ -197,5 +201,15 @@ public class UserController {
         log.info("UserController_findDocsById_end : " + res);
 
         return new ResponseEntity<>(new ResponseDto("문서 조회 완료!", res), HttpStatus.OK);
+    }
+
+    @PutMapping("/mateBridge/{mateId}")
+    public void deleteMateBridge(@PathVariable Long mateId) {
+
+        log.info("UserController_deleteMateBridge_start : " + mateId);
+
+        mateBridgeService.deleteMateBridge(mateId);
+
+        log.info("UserController_deletedMateBridge_end : SUCCESS");
     }
 }

@@ -209,4 +209,18 @@ public class MateBridgeServiceImpl implements MateBridgeService {
         return res;
     }
 
+    @Override
+    public void deleteMateBridge(Long mateId) {
+        log.info("MateBridgeService_deleteMateBridge_start : " + mateId);
+
+        List<MateBridge> mateBridges = mateBridgeRepository.findByMateId(mateId);
+
+        for (MateBridge mateBridge : mateBridges) {
+            mateBridge.deleteBridge();
+        }
+
+        log.info("MateBridgeService_deleteMateBridge_start : SUCCESS");
+
+    }
+
 }

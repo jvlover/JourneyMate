@@ -1,11 +1,7 @@
 package com.journeymate.userservice.util;
 
 import java.nio.ByteBuffer;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
-@Component
-@Slf4j
 public class BytesHexChanger {
 
     private final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();

@@ -16,11 +16,11 @@ public interface UserService {
     // 이건 소셜로그인 좀 더 공부해보자
     UserRegistRes registUser(UserRegistPostReq userRegistPostReq);
 
+//    String login(String id);
+
     Boolean nicknameDuplicateCheck(String nickname);
 
     Boolean userCheck(String id);
-
-    Boolean login();
 
     UserFindRes findUserById(String id);
 
