@@ -72,7 +72,7 @@ public class Journey extends BaseEntity {
 
     public void deleteJourney() {
         this.updatedAt = LocalDateTime.now();
-        this.isDeleted = 0;
+        this.isDeleted = 1;
     }
 
     public void updateCategoryJourney() {
