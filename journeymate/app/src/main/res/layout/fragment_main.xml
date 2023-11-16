@@ -39,7 +39,7 @@
     </ViewSwitcher>
 
     <ImageButton
-        android:id="@+id/img2"
+        android:id="@+id/btnJourney"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:background="@android:color/transparent"
@@ -53,7 +53,7 @@
         app:layout_constraintVertical_bias="0.598" />
 
     <ImageButton
-        android:id="@+id/img1"
+        android:id="@+id/btnDocs"
         android:layout_width="190dp"
         android:layout_height="190dp"
         android:background="@android:color/transparent"
@@ -67,7 +67,7 @@
         app:layout_constraintVertical_bias="0.585" />
 
     <ImageButton
-        android:id="@+id/img3"
+        android:id="@+id/btnMate"
         android:layout_width="190dp"
         android:layout_height="170dp"
         android:background="@android:color/transparent"
@@ -88,11 +88,11 @@
         android:text="문서관리"
         android:textColor="@color/white"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/img1"
-        app:layout_constraintEnd_toEndOf="@+id/img1"
+        app:layout_constraintBottom_toBottomOf="@+id/btnDocs"
+        app:layout_constraintEnd_toEndOf="@+id/btnDocs"
         app:layout_constraintHorizontal_bias="0.173"
-        app:layout_constraintStart_toStartOf="@+id/img1"
-        app:layout_constraintTop_toTopOf="@+id/img1"
+        app:layout_constraintStart_toStartOf="@+id/btnDocs"
+        app:layout_constraintTop_toTopOf="@+id/btnDocs"
         app:layout_constraintVertical_bias="0.093" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -128,11 +128,11 @@
         android:text="일정관리"
         android:textColor="@color/white"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/img2"
-        app:layout_constraintEnd_toEndOf="@+id/img2"
+        app:layout_constraintBottom_toBottomOf="@+id/btnJourney"
+        app:layout_constraintEnd_toEndOf="@+id/btnJourney"
         app:layout_constraintHorizontal_bias="0.205"
-        app:layout_constraintStart_toStartOf="@+id/img2"
-        app:layout_constraintTop_toTopOf="@+id/img2"
+        app:layout_constraintStart_toStartOf="@+id/btnJourney"
+        app:layout_constraintTop_toTopOf="@+id/btnJourney"
         app:layout_constraintVertical_bias="0.084" />
 
     <TextView
@@ -143,15 +143,15 @@
         android:text="여행그룹"
         android:textColor="@color/white"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/img3"
-        app:layout_constraintEnd_toEndOf="@+id/img3"
+        app:layout_constraintBottom_toBottomOf="@+id/btnMate"
+        app:layout_constraintEnd_toEndOf="@+id/btnMate"
         app:layout_constraintHorizontal_bias="0.127"
-        app:layout_constraintStart_toStartOf="@+id/img3"
-        app:layout_constraintTop_toTopOf="@+id/img3"
+        app:layout_constraintStart_toStartOf="@+id/btnMate"
+        app:layout_constraintTop_toTopOf="@+id/btnMate"
         app:layout_constraintVertical_bias="0.043" />
 
-    <ImageView
-        android:id="@+id/imageView2"
+    <ImageButton
+        android:id="@+id/btnMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -167,10 +167,10 @@
         android:layout_height="102dp"
         android:layout_marginTop="47dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintEnd_toStartOf="@+id/imageView2"
+        app:layout_constraintEnd_toStartOf="@+id/btnMenu"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/img2"
+        app:layout_constraintTop_toBottomOf="@+id/btnJourney"
         app:layout_constraintVertical_bias="0.0" />
 
 

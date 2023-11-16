@@ -1,11 +1,11 @@
 package com.ssafy.journeymate
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-
 
 class ToolBarActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,11 +31,8 @@ class ToolBarActivity : AppCompatActivity() {
         val menuButton: ImageButton = findViewById(R.id.menuButton)
         menuButton.setOnClickListener {
             // 메뉴 버튼 클릭 시 수행할 액션
-            openMenu()
+            startActivity(Intent(this, PopupBarActivity::class.java))
         }
     }
-
-    private fun openMenu() {
-        // 메뉴 열기 로직 구현
-    }
 }
+

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -13,7 +14,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.ssafy.journeymate.databinding.ActivityMainBinding
 import com.ssafy.journeymate.mate.DocsWriteActivity
-
+import com.ssafy.journeymate.mate.MateListActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,7 +40,25 @@ class MainActivity : AppCompatActivity() {
 //        }
 //
 
-//        val intent = Intent(this, MateListActivity::class.java)
+//        val intent = Intent(this, DocsWriteActivity::class.java)
+//        startActivity(intent)
+        val popupBarButton: ImageButton = findViewById(R.id.btnMenu)
+        popupBarButton.setOnClickListener {
+            startActivity(Intent(this, PopupBarActivity::class.java))
+        }
+//        val DocsButton: ImageButton = findViewById(R.id.btnDocs)
+//        DocsButton.setOnClickListener {
+//            startActivity(Intent(this, PopupBarActivity::class.java))
+//        }
+//        val journeyButton: ImageButton = findViewById(R.id.btnJourney)
+//        journeyButton.setOnClickListener {
+//            startActivity(Intent(this, PopupBarActivity::class.java))
+//        }
+        val mateButton: ImageButton = findViewById(R.id.btnMate)
+        mateButton.setOnClickListener {
+            startActivity(Intent(this, MateListActivity::class.java))
+        }
+
         val intent = Intent(this, DocsWriteActivity::class.java)
 
         startActivity(intent)

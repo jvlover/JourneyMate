@@ -16,6 +16,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <include
+            android:id="@+id/mypage_toolbar"
+            layout="@layout/activity_tool_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="65dp"

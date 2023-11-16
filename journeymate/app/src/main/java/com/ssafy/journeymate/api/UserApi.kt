@@ -35,7 +35,7 @@ data class ModifyUserProfileData(
     val id: String,
     val nickname: String,
     val imgUrl: String,
-    val updatedAt: LocalDateTime
+    val updatedAt: String
 )
 
 data class RegistMateBridgeResponse(val message: String, val data: RegistMateBridgeData)
@@ -44,8 +44,8 @@ data class RegistMateBridgeData(
     val id: Long,
     val user: FindUserData,
     val mateId: Long,
-    val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime,
+    val createdAt: String,
+    val updatedAt: String,
     val isCreator: Boolean
 )
 
