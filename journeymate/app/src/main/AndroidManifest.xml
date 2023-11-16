@@ -18,13 +18,16 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".toolbar.ContentsToolbarActivity"
-            android:exported="false" />
-        <activity
-            android:name=".mate.DocsWriteActivity"
+            android:name=".checklist.ChecklistModifyActivity"
             android:exported="false" />
         <activity
             android:name=".ToolBarActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PopupBarActivity"
+            android:exported="false" />
+        <activity
+            android:name=".mate.DocsWriteActivity"
             android:exported="false" />
         <activity
             android:name=".mate.DocsListActivity"
@@ -47,9 +50,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="false"
-
             android:screenOrientation="portrait" />
-        
         <activity
             android:name=".user.LoginActivity"
             android:exported="true"
@@ -60,10 +61,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".user.LoginActivity"
-            android:exported="false"
-            android:label="@string/app_name"></activity>
         <activity
             android:name=".user.MyPageActivity"
             android:exported="false" />

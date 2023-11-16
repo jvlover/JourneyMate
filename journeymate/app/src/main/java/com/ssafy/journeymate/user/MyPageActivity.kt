@@ -5,11 +5,16 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.Toolbar
 import com.kakao.sdk.user.UserApiClient
+import com.ssafy.journeymate.PopupBarActivity
 import com.ssafy.journeymate.R
 import com.ssafy.journeymate.databinding.ActivityMyPageBinding
 import com.ssafy.journeymate.global.App
@@ -24,14 +29,32 @@ class MyPageActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityMyPageBinding.inflate(layoutInflater) }
 
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         var imageView: ImageView? = binding.imgProfile;
         var bitmap: Bitmap? = null
 
         binding.txtName.text = App.INSTANCE.nickname
+
+        val toolbarInclude = findViewById<View>(R.id.mypage_toolbar) as Toolbar
+
+        val toolbarTitleTextView = toolbarInclude.findViewById<TextView>(R.id.toolbarTitle)
+
+        toolbarTitleTextView.text = "마이페이지"
+
+        val backButton: ImageButton = findViewById(R.id.backButton)
+        backButton.setOnClickListener {
+            // 뒤로 가기 버튼 클릭 시 수행할 액션
+            onBackPressed()
+        }
+        val menuButton: ImageButton = findViewById(R.id.menuButton)
+        menuButton.setOnClickListener {
+            // 메뉴 버튼 클릭 시 수행할 액션
+            startActivity(Intent(this, PopupBarActivity::class.java))
+        }
+
 
         val uThread: Thread = object : Thread() {
             override fun run() {
