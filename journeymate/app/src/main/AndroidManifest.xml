@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.ssafy.journeymate">
+    <!-- 인터넷 사용 권한 설정 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:name=".global.App"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.JourneyMate"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="31">
+        <activity
+            android:name=".mate.DocsWriteActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ToolBarActivity"
+            android:exported="false" />
+        <activity
+            android:name=".mate.DocsListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".mate.MateContentsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".mate.MateDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".mate.MateListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".mate.MateRegistActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoadScreenActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".user.LoginActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".user.MyPageActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="oauth"
+                    android:scheme="kakao40596edef539ca00b83b69aa4ae58f12" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
