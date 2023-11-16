@@ -75,4 +75,14 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("com.google.maps.android:android-maps-utils:2.2.3")
 
+
+    // Stomp
+    implementation ("com.github.bishoybasily:stomp:2.0.5")
+    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+    implementation ("com.squareup.okhttp3:okhttp:3.2.0")
+
+//    implementation ("com.github.NaikSoftware:StompProtocolAndroid:1.6.6")
+    implementation ("org.java-websocket:Java-WebSocket:1.5.1")
+    implementation ("io.reactivex.rxjava2:rxjava:2.2.5")
+    implementation ("io.reactivex.rxjava2:rxandroid:2.1.0")
 }

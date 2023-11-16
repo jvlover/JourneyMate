@@ -55,6 +55,11 @@
             android:name=".mate.MateRegistActivity"
             android:exported="false" />
         <activity
+            android:name=".chat.ChatActivity"
+            android:exported="false" >
+
+        </activity>
+        <activity
             android:name=".LoadScreenActivity"
             android:exported="false" />
         <activity
