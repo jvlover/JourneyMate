@@ -2,13 +2,12 @@ package com.ssafy.journeymate.mate
 
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.ssafy.journeymate.R
 
@@ -36,6 +35,7 @@ class DocsWriteActivity : AppCompatActivity() {
         }
 
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -49,3 +49,4 @@ class DocsWriteActivity : AppCompatActivity() {
     }
 
 }
+

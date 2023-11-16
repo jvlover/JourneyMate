@@ -12,7 +12,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.ssafy.journeymate.databinding.ActivityMainBinding
-import com.ssafy.journeymate.user.MyPageActivity
+import com.ssafy.journeymate.mate.DocsWriteActivity
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,7 +38,10 @@ class MainActivity : AppCompatActivity() {
 //                .setAction("Action", null).show()
 //        }
 //
+
+//        val intent = Intent(this, MateListActivity::class.java)
         val intent = Intent(this, DocsWriteActivity::class.java)
+
         startActivity(intent)
     }
 

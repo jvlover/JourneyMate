@@ -7,14 +7,14 @@
     android:layout_height="match_parent"
     tools:context=".mate.MateDetailActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar3"
+    <include
+        android:id="@+id/mate_detail_toolbar"
+        layout="@layout/activity_tool_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        tools:ignore="MissingConstraints" />
+        android:layout_height="?attr/actionBarSize"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
 
     <TextView
         android:id="@+id/detail_mate_name"
@@ -26,9 +26,9 @@
         android:textSize="24dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.06"
+        app:layout_constraintHorizontal_bias="0.058"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar3"
+        app:layout_constraintTop_toBottomOf="@+id/mate_detail_toolbar"
         tools:ignore="MissingConstraints" />
 
     <TextView
@@ -52,7 +52,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginTop="115dp"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar3"
+        app:layout_constraintTop_toBottomOf="@+id/mate_detail_toolbar"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="126dp"
         tools:srcCompat="@tools:sample/avatars" />
@@ -64,7 +64,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="112dp"
         app:layout_constraintStart_toEndOf="@+id/user_profile_1"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar3"
+        app:layout_constraintTop_toBottomOf="@+id/mate_detail_toolbar"
         tools:ignore="MissingConstraints"
         tools:srcCompat="@tools:sample/avatars" />
 
@@ -77,7 +77,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/user_profile_2"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar3"
+        app:layout_constraintTop_toBottomOf="@+id/mate_detail_toolbar"
         tools:ignore="MissingConstraints"
         tools:srcCompat="@tools:sample/avatars" />
 
@@ -108,7 +108,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/destination_text_title"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar3"
+        app:layout_constraintTop_toBottomOf="@+id/mate_detail_toolbar"
         tools:ignore="MissingConstraints" />
 
     <TextView
@@ -247,17 +247,17 @@
         app:iconTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.137"
+        app:layout_constraintHorizontal_bias="0.145"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mate_group_contents_btn"
-        app:layout_constraintVertical_bias="0.894"
+        app:layout_constraintVertical_bias="1.0"
         app:rippleColor="@color/white" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/mate_group_modify"
         android:layout_width="150dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="28dp"
+        android:layout_marginBottom="24dp"
         android:background="@drawable/large_button"
         android:fontFamily="@font/pretendardregular"
         android:text="그룹 수정"
@@ -266,7 +266,7 @@
         app:iconTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.48"
+        app:layout_constraintHorizontal_bias="0.465"
         app:layout_constraintStart_toEndOf="@+id/mate_group_delete"
         app:rippleColor="@color/white" />
 
