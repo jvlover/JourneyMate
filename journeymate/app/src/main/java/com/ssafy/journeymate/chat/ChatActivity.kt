@@ -111,8 +111,16 @@ class ChatActivity : AppCompatActivity() {
             when(it.type) {
                 Event.Type.OPENED -> {
                     topic = stomp!!.join("${sub}/${mateId}")
-                        .subscribe()
-//                    topic.dispose()
+                        .subscribe{ message ->
+                            val jsonMessage = JSONObject(message)
+                            val arr = jsonMessage.getString("sender").split("님")
+                            val sender = arr[0]
+                            val text = jsonMessage.getString("message")
+                            val chatMessage = ChatMessage(sender, text)
+                            runOnUiThread {
+                                adapter.addMessage(chatMessage)
+                            }
+                        }
                     Log.i("연결","성공적")
 
                 }
@@ -143,7 +151,6 @@ class ChatActivity : AppCompatActivity() {
             // EditText 초기화
             findViewById<EditText>(R.id.messageActivity_editText).text.clear()
         }
-        adapter.addMessage(ChatMessage(userName, messageText))
     }
 
 
