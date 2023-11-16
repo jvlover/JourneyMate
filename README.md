@@ -48,6 +48,67 @@
 - 최주호: 풀스택 개발
 - 김민식: 풀스택 개발
 
+<table>
+  <tr>
+    <td align="center" width="500px">
+      <a href="https://github.com/Noopy94" target="_blank">
+        <img src="./img/member1_info.png" alt="이두현 프로필" />
+      </a>
+    </td>
+    <td align="center" width="500px">
+      <a href="https://github.com/jvlover" target="_blank">
+        <img src="./img/member2_info.png" alt="박민혁 프로필" />
+      </a>
+    </td>
+    <td align="center" width="500px">
+      <a href="https://github.com/mongsuokki" target="_blank">
+        <img src="./img/member5_info.png" alt="최주호 프로필" />
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/Noopy94" target="_blank">
+        이두현<br />(Front-end)
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/jvlover" target="_blank">
+        박민혁<br />(Front-end)
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/mongsuokki" target="_blank">
+        최주호<br />(Front-end)
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="500px">
+      <a href="https://github.com/fnejd" target="_blank">
+        <img src="./img/member4_info.png" alt="김도현 프로필" />
+      </a>
+    </td>
+    <td align="center" width="500px">
+      <a href="https://github.com/" target="_blank">
+        <img src="./img/member3_info.png" alt="김민범 프로필" />
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/fnejd" target="_blank">
+        김도현<br />(Back-end)
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/">
+        김민범<br />(Back-end)
+      </a>
+    </td>
+  </tr>
+</table>
+
 <!-- 자유 양식 -->
 
 ## 프로젝트 상세 설명
