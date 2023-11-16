@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
+@Transactional
 public class JourneyServiceImpl implements JourneyService {
 
     private JourneyRepository journeyRepository;
