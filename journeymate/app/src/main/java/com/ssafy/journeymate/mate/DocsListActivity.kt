@@ -1,7 +1,6 @@
 package com.ssafy.journeymate.mate
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,10 +12,10 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.squareup.picasso.Picasso
 import com.ssafy.journeymate.R
 import com.ssafy.journeymate.api.DocsListData
 import com.ssafy.journeymate.api.FindMateData
-import com.ssafy.journeymate.api.FindMateResponse
 import com.ssafy.journeymate.api.LoadDocsListInfoResponse
 import com.ssafy.journeymate.api.MateApi
 import retrofit2.Call
@@ -29,6 +28,9 @@ class DocsListActivity : AppCompatActivity() {
 
     private lateinit var retrofit: Retrofit
     private lateinit var mateApi: MateApi
+
+    var mateData: FindMateData? = null
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,10 +44,13 @@ class DocsListActivity : AppCompatActivity() {
         toolbarTitleTextView.text = "여행 문서 공유"
 
         // mateId 전역변수 꺼내오기
-        var mateId = 2L
+        mateData = intent.getSerializableExtra("mateData") as FindMateData
 
         val docsListLayout =
             findViewById<GridLayout>(R.id.mate_docs_list_result)
+
+        val groupName = findViewById<TextView>(R.id.docs_mate_name)
+        groupName.text = mateData!!.name
 
 
         retrofit = Retrofit.Builder()
@@ -55,7 +60,7 @@ class DocsListActivity : AppCompatActivity() {
 
         mateApi = retrofit.create(MateApi::class.java)
 
-        val callMateDocsListLoad = mateApi.loadDocsListInfo(mateId)
+        val callMateDocsListLoad = mateApi.loadDocsListInfo(mateData!!.mateId)
 
         callMateDocsListLoad.enqueue(object : Callback<LoadDocsListInfoResponse> {
             @RequiresApi(Build.VERSION_CODES.O)
@@ -99,11 +104,15 @@ class DocsListActivity : AppCompatActivity() {
         val docsImageButton = view.findViewById<ImageButton>(R.id.docs_image)
         docsImageButton.setImageResource(R.drawable.docs_list_style)
 
+        docsListData.imgFileInfo?.getOrNull(0)?.imgUrl?.let {
+            Picasso.get().load(it).into(docsImageButton)
+        }
+
         val docsTitle = view.findViewById<TextView>(R.id.docs_list_title)
         docsTitle.text = docsListData.title
 
         val docsCreatedDate = view.findViewById<TextView>(R.id.docs_list_created_Date)
-        docsCreatedDate.text = docsListData.createdDate
+        docsCreatedDate.text = docsListData.createdDate?.substringBefore("T")
 
         docsImageButton.setOnClickListener {
             // 클릭된 docsImageButton에 포함된 데이터를 Intent에 담아 다른 페이지로 전달

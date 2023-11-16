@@ -116,6 +116,8 @@ class MateListActivity : AppCompatActivity() {
                     mateList?.data?.forEachIndexed { index, findMateData ->
                         val mateView = createImageButton(findMateData)
 
+                        Log.i("index확인", "${index}, ${findMateData.name}")
+
                         val row = index / 2
                         val col = index % 2
                         val params = GridLayout.LayoutParams()
@@ -157,8 +159,8 @@ class MateListActivity : AppCompatActivity() {
         mateNameTextView.text = findMateData.name
 
         mateDestinationTextView.text = findMateData.destination
-        startDateTextView.text = findMateData.startDate.substringBefore("T")
-        endDateTextView.text = findMateData.endDate.substringBefore("T")
+        startDateTextView.text = findMateData.startDate?.substringBefore("T") ?: "N/A"
+        endDateTextView.text = findMateData.endDate?.substringBefore("T") ?: "N/A"
         mateIdTextView.text = findMateData.mateId.toString()
 
         mateInfoImageButton.setOnClickListener {

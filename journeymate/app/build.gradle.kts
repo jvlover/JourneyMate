@@ -64,6 +64,10 @@ dependencies {
     implementation("de.hdodenhof:circleimageview:3.1.0")
 
     // OkHttp
-    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation("com.squareup.okhttp3:okhttp:4.9.2")
+
+    // Picasso
+    implementation("com.squareup.picasso:picasso:2.71828")
+
 
 }

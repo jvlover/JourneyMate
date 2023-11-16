@@ -2,18 +2,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/layout_mate_docs_list_data"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:id="@+id/layout_mate_docs_list_data">
 
 
     <ImageButton
         android:id="@+id/docs_image"
-        android:layout_width="113dp"
-        android:layout_height="157dp"
+        android:layout_width="146dp"
+        android:layout_height="164dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/docs_list_style"
         android:padding="0dp"
         android:scaleType="centerCrop" />
@@ -26,11 +24,11 @@
         android:layout_alignStart="@+id/docs_image"
         android:layout_alignEnd="@+id/docs_image"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="53dp"
+        android:layout_marginTop="63dp"
         android:layout_marginEnd="2dp"
         android:text="문서 제목"
         android:textAlignment="center"
-        android:textSize="24dp"
+        android:textSize="21dp"
         android:textStyle="bold" />
 
     <TextView
@@ -42,6 +40,7 @@
         android:layout_alignEnd="@+id/docs_image"
         android:layout_marginStart="-1dp"
         android:layout_marginTop="-3dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginEnd="-1dp"
         android:text="2022.01.06"
         android:textAlignment="center"

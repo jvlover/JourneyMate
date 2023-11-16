@@ -13,7 +13,6 @@ import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import java.io.Serializable
-import java.time.LocalDateTime
 import java.util.Objects
 
 
@@ -65,7 +64,7 @@ data class DocsListData(
     val imgFileInfo: List<ImageFileInfo>
 )
 
-data class ImageFileInfo(val filename: String, val imgUrl: HttpUrl)
+data class ImageFileInfo(val filename: String, val imgUrl: String)
 
 data class LoadDocsDetailInfoResponse(val message: String, val data: DocsDetailData)
 

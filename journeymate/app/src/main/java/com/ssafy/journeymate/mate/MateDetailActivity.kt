@@ -13,12 +13,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.ssafy.journeymate.R
-import com.ssafy.journeymate.api.DeleteMateRequest
-import com.ssafy.journeymate.api.DeleteResponse
 import com.ssafy.journeymate.api.FindMateData
 import com.ssafy.journeymate.api.LoadMateInfoResponse
 import com.ssafy.journeymate.api.MateApi
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -82,7 +79,7 @@ class MateDetailActivity : AppCompatActivity() {
                     val destinationTextView = findViewById<TextView>(R.id.destination_text_result)
                     destinationTextView.text = responseData?.destination
 
-                    val startEndTextView = findViewById<TextView>(R.id.start_date_text_view)
+                    val startEndTextView = findViewById<TextView>(R.id.start_end_date_result)
 
                     if (startEndTextView != null && responseData != null) {
                         val startDate = responseData.startDate.substringBefore("T") ?: "N/A"
@@ -112,6 +109,16 @@ class MateDetailActivity : AppCompatActivity() {
                 }
                 .setNegativeButton("아니오", null)
                 .show()
+        }
+
+
+        val mateDocsListButton: Button = findViewById(R.id.mate_group_document_btn)
+
+        mateDocsListButton?.setOnClickListener {
+            val intent = Intent(this@MateDetailActivity, DocsListActivity::class.java)
+            // 전역 변수에 mateId추가
+            intent.putExtra("mateData", mateData)
+            startActivity(intent)
         }
     }
 
