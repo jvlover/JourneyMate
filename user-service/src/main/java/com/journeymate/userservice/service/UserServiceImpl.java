@@ -37,9 +37,9 @@ public class UserServiceImpl implements UserService {
     private final MateClient mateClient;
     private final JourneyClient journeyClient;
     private final CircuitBreakerFactory circuitBreakerFactory;
-
     private final BytesHexChanger bytesHexChanger = new BytesHexChanger();
     private final ModelMapper modelMapper = new ModelMapper();
+
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
@@ -70,6 +70,29 @@ public class UserServiceImpl implements UserService {
         return res;
     }
 
+//    @Override
+//    public String login(String id) {
+//
+//        log.info("UserService_login_start : " + id);
+//
+//        Date now = new Date();
+//
+//        String accessToken = JWT.create() // JWT 토큰을 생성하는 빌더 반환
+//            .withSubject(ACCESS_TOKEN_SUBJECT) // JWT의 Subject 지정 -> AccessToken이므로 AccessToken
+//            .withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod)) // 토큰 만료 시간 설정
+//            //추가적으로 식별자나, 이름 등의 정보를 더 추가하셔도 됩니다.
+//            //추가하실 경우 .withClaim(클래임 이름, 클래임 값) 으로 설정해주시면 됩니다
+//            .withClaim(ID_CLAIM, id)
+//            .sign(Algorithm.HMAC512(
+//                secretKey)); // HMAC512 알고리즘 사용, application-jwt.yml에서 지정한 secret 키로 암호화
+//
+//        // Todo : refreshToken 발급해서 redis에 넣어놓기
+//
+//        log.info("UserService_login_end : " + accessToken);
+//
+//        return accessToken;
+//    }
+
     @Override
     public Boolean nicknameDuplicateCheck(String nickname) {
 
@@ -93,11 +116,6 @@ public class UserServiceImpl implements UserService {
         log.info("UserService_userCheck_end : " + res);
 
         return res;
-    }
-
-    @Override
-    public Boolean login() {
-        return null;
     }
 
     @Override

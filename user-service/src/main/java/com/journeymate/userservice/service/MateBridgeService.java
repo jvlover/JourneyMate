@@ -14,4 +14,6 @@ public interface MateBridgeService {
     List<MateBridgeRegistRes> registMateBridge(MateBridgeRegistPostReq mateBridgeRegistPostReq);
 
     List<MateBridgeModifyRes> modifyMateBridge(MateBridgeModifyPutReq mateBridgeModifyPutReq);
+
+    void deleteMateBridge(Long mateId);
 }
