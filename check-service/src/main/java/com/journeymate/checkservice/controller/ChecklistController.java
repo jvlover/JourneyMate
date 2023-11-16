@@ -116,4 +116,19 @@ public class ChecklistController {
 
         return new ResponseEntity<>(new ResponseDto("체크리스트 반환 완료!", res), HttpStatus.OK);
     }
+
+    @GetMapping("/mate/{userId}/{mateId}")
+    public ResponseEntity<ResponseDto> findChecklistByUserIdAndMateId(@PathVariable String userId,
+        @PathVariable Long mateId) {
+
+        log.info("ChecklistController_findChecklistByUserIdAndMateyId_start : " + userId + " "
+            + mateId);
+
+        List<ChecklistFindRes> res = checklistService.findChecklistByUserIdAndMateId(userId,
+            mateId);
+
+        log.info("ChecklistController_findChecklistByUserIdAndMateId_end : " + res);
+
+        return new ResponseEntity<>(new ResponseDto("체크리스트 반환 완료!", res), HttpStatus.OK);
+    }
 }
