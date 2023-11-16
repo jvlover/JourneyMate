@@ -1,5 +1,6 @@
 package com.journeymate.checkservice.service;
 
+import com.journeymate.checkservice.client.JourneyClient;
 import com.journeymate.checkservice.client.UserClient;
 import com.journeymate.checkservice.dto.request.ChecklistKafkaReq;
 import com.journeymate.checkservice.dto.request.ChecklistKafkaReq.Item;
@@ -8,6 +9,8 @@ import com.journeymate.checkservice.dto.request.ChecklistModifyPutReq.PersonalIt
 import com.journeymate.checkservice.dto.response.ChecklistFindRes;
 import com.journeymate.checkservice.dto.response.ChecklistModifyRes;
 import com.journeymate.checkservice.dto.response.ChecklistRegistRes;
+import com.journeymate.checkservice.dto.response.JourneyFindRes;
+import com.journeymate.checkservice.dto.response.JourneyFindRes.JourneyFindData;
 import com.journeymate.checkservice.dto.response.MateBridgeFindKafkaRes.UserFindRes;
 import com.journeymate.checkservice.entity.Checklist;
 import com.journeymate.checkservice.exception.ChecklistNotFoundException;
@@ -29,6 +32,7 @@ public class ChecklistServiceImpl implements ChecklistService {
 
     private final ChecklistRepository checklistRepository;
     private final UserClient userClient;
+    private final JourneyClient journeyClient;
     private final CircuitBreakerFactory circuitBreakerFactory;
 
     private final BytesHexChanger bytesHexChanger = new BytesHexChanger();
@@ -36,11 +40,12 @@ public class ChecklistServiceImpl implements ChecklistService {
 
     @Autowired
     public ChecklistServiceImpl(ChecklistRepository checklistRepository, UserClient userClient,
-        CircuitBreakerFactory circuitBreakerFactory) {
+        JourneyClient journeyClient, CircuitBreakerFactory circuitBreakerFactory) {
 
         this.checklistRepository = checklistRepository;
 
         this.userClient = userClient;
+        this.journeyClient = journeyClient;
         this.circuitBreakerFactory = circuitBreakerFactory;
     }
 
@@ -283,4 +288,37 @@ public class ChecklistServiceImpl implements ChecklistService {
         return res;
     }
 
+    @Override
+    public List<ChecklistFindRes> findChecklistByUserIdAndMateId(String userId, Long mateId) {
+
+        log.info(
+            "ChecklistService_findChecklistByUserIdAndMateId_start : " + userId + " "
+                + mateId);
+
+        List<ChecklistFindRes> res = new ArrayList<>();
+        List<Checklist> checklists = new ArrayList<>();
+
+        JourneyFindRes journeyFindReses = journeyClient.findJourneyByMateId(mateId);
+
+        for (JourneyFindData journeyFinddata : journeyFindReses.getData()) {
+
+            checklists.addAll(checklistRepository.findChecklistByUserIdAndJourneyId(
+                bytesHexChanger.hexToBytes(userId),
+                journeyFinddata.getId()));
+
+        }
+
+        for (Checklist checklist : checklists) {
+
+            ChecklistFindRes checklistFindRes = modelMapper.map(checklist, ChecklistFindRes.class);
+
+            checklistFindRes.setUserId(bytesHexChanger.bytesToHex(checklist.getUserId()));
+
+            res.add(checklistFindRes);
+        }
+
+        log.info("ChecklistService_findChecklistByUserIdAndMateId_end : " + res);
+
+        return res;
+    }
 }
