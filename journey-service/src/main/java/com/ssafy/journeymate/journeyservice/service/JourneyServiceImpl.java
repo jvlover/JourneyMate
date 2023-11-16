@@ -10,6 +10,7 @@ import com.ssafy.journeymate.journeyservice.entity.Journey;
 import com.ssafy.journeymate.journeyservice.repository.JourneyRepository;
 import java.util.ArrayList;
 import java.util.List;
+import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.modelmapper.ModelMapper;
@@ -100,6 +101,7 @@ public class JourneyServiceImpl implements JourneyService {
         Journey journeyEntity = journeyRepository.findById(journeyId)
                 .orElseThrow(JourneyNotFoundException::new);
         journeyEntity.deleteJourney();
+        journeyRepository.save(journeyEntity);
         JourneyGetRes journeyGetRes = new ModelMapper().map(journeyEntity, JourneyGetRes.class);
 
         log.info("JourneyService_deleteJourney_end");
@@ -117,6 +119,7 @@ public class JourneyServiceImpl implements JourneyService {
         for (Journey journey : journeys) {
             if (journey.getIsDeleted() == 0) {
                 journey.deleteJourney();
+                journeyRepository.save(journey);
                 JourneyGetRes journeyGetRes = new ModelMapper().map(journey, JourneyGetRes.class);
                 journeyGetResponses.add(journeyGetRes);
             }
