@@ -44,7 +44,6 @@ class ChatActivity : AppCompatActivity() {
         .baseUrl(url) // 여기서 API의 기본 URL을 설정
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-
     private val chatApi: ChatApi = retrofit.create(ChatApi::class.java)
 
 
@@ -67,7 +66,7 @@ class ChatActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val responseDto = response.body()
                     responseDto?.data?.forEach { chatMessage ->
-                        adapter.addMessage(ChatMessage(chatMessage.sender, chatMessage.mateId, chatMessage.message))
+                        adapter.addMessage(ChatMessage(chatMessage.sender, chatMessage.message))
                     }
                 }
             }
@@ -99,7 +98,7 @@ class ChatActivity : AppCompatActivity() {
                     topic = stomp!!.join("${sub}/${mateId}")
                         .subscribe()
 //                    topic.dispose()
-                    Log.i("연결ㅁㄴ","성공적")
+                    Log.i("연결","성공적")
 
                 }
                 Event.Type.CLOSED -> {
@@ -134,7 +133,6 @@ class ChatActivity : AppCompatActivity() {
 
     inner class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerViewAdapter.MessageViewHolder>() {
         private val messages = ArrayList<ChatMessage>()
-
         fun addMessage(message: ChatMessage) {
             messages.add(message)
             notifyDataSetChanged()
@@ -146,17 +144,20 @@ class ChatActivity : AppCompatActivity() {
             return MessageViewHolder(view)
         }
 
-        override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
-            val message = messages[position]
-            holder.textView_message.text = message.message
-            // 추가적인 UI 설정...
-        }
 
         override fun getItemCount(): Int = messages.size
 
         inner class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val textView_message: TextView = view.findViewById(R.id.messageItem_textView_message)
+            val textViewMessage: TextView = view.findViewById(R.id.messageItem_textView_message)
+            val textViewSender: TextView = view.findViewById(R.id.messageItem_textview_name)
             // 기타 필요한 뷰 요소들...
+        }
+
+        override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
+            val message = messages[position]
+            holder.textViewMessage.text = message.message
+            holder.textViewSender.text = message.sender
+            // Set other message properties...
         }
     }
 }

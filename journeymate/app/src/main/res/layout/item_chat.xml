@@ -40,12 +40,6 @@
                 android:layout_marginTop="3dp"
                 android:text="메세지"
                 android:textColor="#000000" />
-            <TextView
-                android:id="@+id/messageItem_textView_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="시간"
-                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -32,11 +32,10 @@ data class ChatData(
     val timestamp: String
 )
 
-data class ChatMessage(val userId: String, val mateId: Long, val message: String) {
-//        fun toJson(): String {
-//            // 객체를 JSON 문자열로 변환하는 로직
-//        }
-}
+data class ChatMessage(
+    val sender: String,
+    val message: String
+)
 
 data class ResponseDto(
     val message: String,
@@ -54,10 +53,6 @@ interface ChatApi {
 
 }
 
-fun main(args : Array<String>) {
-
-
-}
 
 
 
