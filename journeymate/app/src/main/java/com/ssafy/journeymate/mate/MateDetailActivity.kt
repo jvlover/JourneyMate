@@ -16,6 +16,7 @@ import com.ssafy.journeymate.R
 import com.ssafy.journeymate.api.FindMateData
 import com.ssafy.journeymate.api.LoadMateInfoResponse
 import com.ssafy.journeymate.api.MateApi
+import com.ssafy.journeymate.checklist.ChecklistListActivity
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -117,6 +118,13 @@ class MateDetailActivity : AppCompatActivity() {
         mateDocsListButton?.setOnClickListener {
             val intent = Intent(this@MateDetailActivity, DocsListActivity::class.java)
             // 전역 변수에 mateId추가
+            intent.putExtra("mateData", mateData)
+            startActivity(intent)
+        }
+
+        val checklistButton: Button = findViewById(R.id.mate_group_check_list_btn)
+        checklistButton?.setOnClickListener {
+            val intent = Intent(this, ChecklistListActivity::class.java)
             intent.putExtra("mateData", mateData)
             startActivity(intent)
         }

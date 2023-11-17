@@ -20,7 +20,12 @@
         android:theme="@style/Theme.JourneyMate"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        <activity android:name=".checklist.ChecklistModifyActivity" />
+        <activity
+            android:name=".checklist.ChecklistModifyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".checklist.ChecklistListActivity"
+            android:exported="false" />
         <activity
             android:name=".journey.RegistJourneyActivity"
             android:exported="false"/>

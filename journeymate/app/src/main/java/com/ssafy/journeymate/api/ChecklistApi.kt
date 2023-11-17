@@ -32,7 +32,7 @@ data class LoadChecklistInfoData(
     val journeyId: Long,
     val name: String,
     val num: Int,
-    val isChecked: Boolean,
+    var isChecked: Boolean,
     val createdAt: String,
     val updatedAt: String
 )
@@ -46,6 +46,12 @@ interface ChecklistApi {
     fun loadAllChecklistInfo(
         @Path(value = "userId") userId: String,
         @Path(value = "journeyId") journeyId: Long
+    ): Call<LoadAllChecklistInfoResponse>
+
+    @GET("/check-service/mate/{userId}/{mateId}")
+    fun loadAllChecklistInfoByMateId(
+        @Path(value = "userId") userId: String,
+        @Path(value = "mateId") mateId: Long
     ): Call<LoadAllChecklistInfoResponse>
 
     @GET("/check-service/{id}")

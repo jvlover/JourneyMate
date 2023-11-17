@@ -4,11 +4,16 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.ssafy.journeymate.databinding.ActivityPopupBarBinding
 import com.ssafy.journeymate.global.App
+import com.ssafy.journeymate.mate.MateListActivity
 import com.ssafy.journeymate.user.MyPageActivity
 import java.io.IOException
 import java.io.InputStream
@@ -23,6 +28,23 @@ class PopupBarActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        val toolbarInclude = findViewById<View>(R.id.popup_toolbar) as Toolbar
+
+        val toolbarTitleTextView = toolbarInclude.findViewById<TextView>(R.id.toolbarTitle)
+
+        toolbarTitleTextView.text = "메뉴"
+
+        val backButton: ImageButton = findViewById(R.id.backButton)
+        backButton.setOnClickListener {
+            // 뒤로 가기 버튼 클릭 시 수행할 액션
+            onBackPressed()
+        }
+        val menuButton: ImageButton = findViewById(R.id.menuButton)
+        menuButton.setOnClickListener {
+            // 메뉴 버튼 클릭 시 수행할 액션
+            startActivity(Intent(this, PopupBarActivity::class.java))
+        }
 
         var imageView: ImageView? = binding.imgProfile;
         var bitmap: Bitmap? = null
@@ -57,7 +79,7 @@ class PopupBarActivity : AppCompatActivity() {
 
         val myGroupButton: Button = findViewById(R.id.btnMyGroup)
         myGroupButton.setOnClickListener {
-            startActivity(Intent(this, MyPageActivity::class.java))
+            startActivity(Intent(this, MateListActivity::class.java))
         }
 
         val myPageButton: Button = findViewById(R.id.btnMypage)
