@@ -79,12 +79,6 @@ interface JourneyApi {
 
 }
 
-data class responseDto(
-    val message: String,
-    val data: Any?
-)
-
-
 data class JourneyRegistPostReq(
     val mateId: Long,
     val categoryId: Long,
