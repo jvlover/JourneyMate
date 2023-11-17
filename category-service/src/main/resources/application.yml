@@ -1,0 +1,31 @@
+server:
+  port: 8700
+
+spring:
+  application:
+    name: category-service
+  config:
+    import: secret/application-secret.yml
+  zipkin:
+    base-url: http://k9a204.p.ssafy.io:8999
+    enabled: true
+  sleuth:
+    sampler:
+      probability: 1.0
+
+  #  rabbitmq:
+  #    host: 127.0.0.1
+  #    port: 15672
+  #    username: guest
+  #    password: guest
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    hostname: k9a204.p.ssafy.io
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://k9a204.p.ssafy.io:8761/eureka
+
