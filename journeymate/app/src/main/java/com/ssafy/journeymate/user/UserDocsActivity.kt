@@ -1,7 +1,6 @@
-package com.ssafy.journeymate.mate
+package com.ssafy.journeymate.user
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -15,65 +14,54 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.squareup.picasso.Picasso
 import com.ssafy.journeymate.R
-import com.ssafy.journeymate.api.DocsListData
-import com.ssafy.journeymate.api.FindMateData
-import com.ssafy.journeymate.api.LoadDocsListInfoResponse
-import com.ssafy.journeymate.api.MateApi
+import com.ssafy.journeymate.api.FindDocsData
+import com.ssafy.journeymate.api.FindDocsListResponse
+import com.ssafy.journeymate.api.UserApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class DocsListActivity : AppCompatActivity() {
+class UserDocsActivity : AppCompatActivity() {
 
     private lateinit var retrofit: Retrofit
-    private lateinit var mateApi: MateApi
+    private lateinit var userApi: UserApi
 
-    var mateData: FindMateData? = null
-
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_docs_list)
+        setContentView(R.layout.activity_user_docs)
 
-
-        val toolbarInclude = findViewById<View>(R.id.mate_docs_list_toolbar) as Toolbar
+        val toolbarInclude = findViewById<View>(R.id.user_docs_toolbar) as Toolbar
 
         val toolbarTitleTextView = toolbarInclude.findViewById<TextView>(R.id.toolbarTitle)
 
-        toolbarTitleTextView.text = "여행 문서 공유"
-
-        // mateId 전역변수 꺼내오기
-        mateData = intent.getSerializableExtra("mateData") as FindMateData
+        toolbarTitleTextView.text = "유저 문서 목록"
 
         val docsListLayout =
-            findViewById<GridLayout>(R.id.mate_docs_list_result)
-
-        val groupName = findViewById<TextView>(R.id.docs_mate_name)
-        groupName.text = mateData!!.name
-
+            findViewById<GridLayout>(R.id.user_docs_result)
 
         retrofit = Retrofit.Builder()
             .baseUrl("http://k9a204.p.ssafy.io:8000/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        mateApi = retrofit.create(MateApi::class.java)
+        userApi = retrofit.create(UserApi::class.java)
 
-        val callMateDocsListLoad = mateApi.loadDocsListInfo(mateData!!.mateId)
+        val callDocsListLoad = userApi.findDocsById("11ee7ebf5b8bb5c8aa4bcb99876bba64")
 
-        callMateDocsListLoad.enqueue(object : Callback<LoadDocsListInfoResponse> {
+        callDocsListLoad.enqueue(object : Callback<FindDocsListResponse> {
+
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(
-                call: Call<LoadDocsListInfoResponse>,
-                response: Response<LoadDocsListInfoResponse>
+                call: Call<FindDocsListResponse>,
+                response: Response<FindDocsListResponse>
             ) {
                 if (response.isSuccessful) {
-                    val docsList = response.body()
+                    val findDocsListResponse = response.body()
 
-                    docsList?.data?.docsInfoList?.forEachIndexed { index, docsListData ->
-                        val docsView = createImageButton(docsListData)
+                    findDocsListResponse?.data?.forEachIndexed { index, findDocsData ->
+                        val docsView = createImageButton(findDocsData)
 
                         val row = index / 2
                         val col = index % 2
@@ -86,50 +74,42 @@ class DocsListActivity : AppCompatActivity() {
 
                     Log.d("Response Body", response.toString())
                 } else {
-                    Log.e("MateListActivity", "Failed to fetch mate list: ${response.message()}")
+                    Log.e("API 오류", "유저 문서 가져오는 api 오류: ${response.message()}")
                 }
             }
 
-            override fun onFailure(call: Call<LoadDocsListInfoResponse>, t: Throwable) {
-                Log.e("MateListActivity", "Failed to fetch mate list", t)
+            override fun onFailure(call: Call<FindDocsListResponse>, t: Throwable) {
+                Log.e("API 오류", "유저 문서 가져오는 api 오류", t)
             }
         })
-
-
-        val writeButton = findViewById<ImageButton>(R.id.write_docs_button)
-        writeButton.setOnClickListener {
-            val intent = Intent(this@DocsListActivity, DocsWriteActivity::class.java)
-            // 전역 변수에 mateId추가
-            intent.putExtra("mateData", mateData)
-            startActivity(intent)
-        }
     }
 
     @SuppressLint("MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun createImageButton(docsListData: DocsListData): View {
+    private fun createImageButton(findDocsData: FindDocsData): View {
         val inflater = LayoutInflater.from(this)
         val view = inflater.inflate(R.layout.layout_mate_docs_data, null)
 
         val docsImageButton = view.findViewById<ImageButton>(R.id.docs_image)
         docsImageButton.setImageResource(R.drawable.docs_list_style)
 
-        docsListData.imgFileInfo?.getOrNull(0)?.imgUrl?.let {
+        findDocsData.imgFileInfo.let {
             Picasso.get().load(it).into(docsImageButton)
         }
 
         val docsTitle = view.findViewById<TextView>(R.id.docs_list_title)
-        docsTitle.text = docsListData.title
+        docsTitle.text = findDocsData.title
 
         val docsCreatedDate = view.findViewById<TextView>(R.id.docs_list_created_Date)
-        docsCreatedDate.text = docsListData.createdDate?.substringBefore("T")
+        docsCreatedDate.text = findDocsData.createdDate?.substringBefore("T")
 
         docsImageButton.setOnClickListener {
-//             클릭된 docsImageButton에 포함된 데이터를 Intent에 담아 다른 페이지로 전달
-//             DocsDetail로 이동으로 수정
-            val intent = Intent(this@DocsListActivity, DocsDetailActivity::class.java)
-            intent.putExtra("docsId", docsListData.docsId)
-            startActivity(intent)
+            // 클릭된 docsImageButton에 포함된 데이터를 Intent에 담아 다른 페이지로 전달
+            // DocsDetail로 이동으로 수정
+//                val intent = Intent(this@DocsListActivity, DocsDetailActivity::class.java)
+//                // 전역 변수에 mateId추가
+//                intent.putExtra("docsData", docsListData)
+//                startActivity(intent)
         }
 
         val params = GridLayout.LayoutParams()
@@ -141,4 +121,3 @@ class DocsListActivity : AppCompatActivity() {
         return view
     }
 }
-
