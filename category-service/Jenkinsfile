@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+    environment {
+        DOCKER = 'sudo docker'
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                checkout scm
+                echo 'Checkout Scm'
+            }
+        }
+
+        stage('Set Environment') {
+            steps {
+                echo "Copy require file to pipeline folder"
+                sh 'mkdir -p ./category-service/src/main/resources/secret'
+                sh 'cp /var/jenkins_home/util/category-service/application-secret.yml ./category-service/src/main/resources/secret/application-secret.yml'
+            }
+        }
+
+        stage('Build image') {
+            steps {
+                sh 'ls -al'
+                dir('category-service') {
+                    sh 'ls -al'
+                    sh 'chmod +x ./gradlew'
+                    sh './gradlew build'
+                    sh 'docker build -t category-service .'
+                }
+                echo 'Build image...'
+            }
+            post {
+                success {
+                    echo 'Build Success'
+                }
+                failure {
+                    echo 'Build Failed'
+                }
+            }
+        }
+
+        stage('Remove Previous image') {
+            steps {
+                script {
+                    try {
+                        sh 'docker stop journeymate-category-service'
+                        sh 'docker rm journeymate-category-service'
+                    } catch (e) {
+                        echo 'fail to stop and remove container'
+                    }
+                }
+            }
+        }
+        stage('Run New image') {
+            steps {
+                sh 'docker run --name journeymate-category-service -d -p 8700:8700 category-service'
+                echo 'Run New member image'
+            }
+        }
+    }
+}
