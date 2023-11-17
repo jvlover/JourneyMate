@@ -10,8 +10,8 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <RadioButton
-            android:id="@+id/radiobtnItem"
+        <CheckBox
+            android:id="@+id/checkbtnItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp" />
