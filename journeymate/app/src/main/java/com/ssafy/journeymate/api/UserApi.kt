@@ -144,7 +144,7 @@ interface UserApi {
 
 }
 
-data class RegistUserRequest(val name: String, val imgUrl: String)
+data class RegistUserRequest(val nickname: String, val imgUrl: String)
 
 data class ModifyUserProfileRequest(val id: String, val nickname: String, val imgUrl: String)
 
