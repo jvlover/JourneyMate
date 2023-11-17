@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@android:color/white" />
+    <corners android:radius="25dp" />
+    <stroke
+        android:color="@color/subBlue"
+        android:width="2dp" />
+
+    <!-- 그림자 효과 추가 -->
+    <padding
+        android:bottom="3dp"
+        android:left="1dp"
+        android:right="1dp"
+        android:top="1dp" />
+</shape>
