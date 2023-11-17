@@ -14,6 +14,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.ssafy.journeymate.databinding.ActivityMainBinding
 import com.ssafy.journeymate.mate.MateListActivity
+import com.ssafy.journeymate.user.UserDocsActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,10 +46,11 @@ class MainActivity : AppCompatActivity() {
         popupBarButton.setOnClickListener {
             startActivity(Intent(this, PopupBarActivity::class.java))
         }
-//        val DocsButton: ImageButton = findViewById(R.id.btnDocs)
-//        DocsButton.setOnClickListener {
-//            startActivity(Intent(this, PopupBarActivity::class.java))
-//        }
+        val DocsButton: ImageButton = findViewById(R.id.btnDocs)
+        DocsButton.setOnClickListener {
+            startActivity(Intent(this, UserDocsActivity::class.java))
+        }
+
 //        val journeyButton: ImageButton = findViewById(R.id.btnJourney)
 //        journeyButton.setOnClickListener {
 //            startActivity(Intent(this, PopupBarActivity::class.java))

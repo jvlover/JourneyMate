@@ -64,15 +64,13 @@ data class ModifyMateBridgeData(
     val isCreator: Boolean
 )
 
-data class FindDocsListResponse(val message: String, val data: FindDocsListData)
-
-data class FindDocsListData(val docsInfoList: List<FindDocsData>)
+data class FindDocsListResponse(val message: String, val data: List<FindDocsData>)
 
 data class FindDocsData(
     val title: String,
     val docsId: Long,
-    val createdData: LocalDateTime,
-    val imgFileInfo: List<FileRessponseDto>
+    val createdDate: String,
+    val imgFileInfo: String
 )
 
 data class FileRessponseDto(val filename: String, val imgUrl: String)
