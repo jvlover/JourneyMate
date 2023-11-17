@@ -13,7 +13,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.ssafy.journeymate.databinding.ActivityMainBinding
-import com.ssafy.journeymate.mate.DocsWriteActivity
 import com.ssafy.journeymate.mate.MateListActivity
 
 class MainActivity : AppCompatActivity() {
@@ -59,9 +58,8 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, MateListActivity::class.java))
         }
 
-        val intent = Intent(this, DocsWriteActivity::class.java)
-
-        startActivity(intent)
+//        val intent = Intent(this, MainActivity::class.java)
+//        startActivity(intent)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
