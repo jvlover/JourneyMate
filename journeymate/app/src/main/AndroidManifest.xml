@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.ssafy.journeymate">
+    >
     <!-- 인터넷 사용 권한 설정 -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".global.App"
@@ -23,6 +26,15 @@
         <activity
             android:name=".checklist.ChecklistListActivity"
             android:exported="false" />
+        <activity
+            android:name=".journey.RegistJourneyActivity"
+            android:exported="false"/>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCR8DkE9e-c9cU4oV3ur7dgd9sqQzna2vg" />
+
+        <activity android:name=".journey.JourneyMainActivity" />
         <activity
             android:name=".ToolBarActivity"
             android:exported="false" />
@@ -47,6 +59,11 @@
         <activity
             android:name=".mate.MateRegistActivity"
             android:exported="false" />
+        <activity
+            android:name=".chat.ChatActivity"
+            android:exported="false" >
+
+        </activity>
         <activity
             android:name=".LoadScreenActivity"
             android:exported="false" />
