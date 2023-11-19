@@ -17,7 +17,10 @@ import com.ssafy.journeymate.R
 import com.ssafy.journeymate.api.FindMateData
 import com.ssafy.journeymate.api.LoadMateInfoResponse
 import com.ssafy.journeymate.api.MateApi
+import com.ssafy.journeymate.chat.ChatActivity
 import com.ssafy.journeymate.checklist.ChecklistListActivity
+import com.ssafy.journeymate.global.App
+import com.ssafy.journeymate.journey.JourneyMainActivity
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -57,6 +60,7 @@ class MateDetailActivity : AppCompatActivity() {
         mateData = intent.getSerializableExtra("mateData") as FindMateData
 
         //Log.i("mateId 받아온 데이터 입니다", "${mateId} : 번호")
+        App.INSTANCE.mateId = mateData!!.mateId.toString()
 
         retrofit = Retrofit.Builder()
             .baseUrl("http://k9a204.p.ssafy.io:8000/")
@@ -135,48 +139,24 @@ class MateDetailActivity : AppCompatActivity() {
             intent.putExtra("mateData", mateData)
             startActivity(intent)
         }
+
+        val journeyButton : Button = findViewById(R.id.mate_group_journey_btn)
+        journeyButton?.setOnClickListener{
+            val intent = Intent(this, JourneyMainActivity::class.java)
+            intent.putExtra("mateData", mateData)
+            startActivity(intent)
+        }
+
+        val chatButton : Button = findViewById(R.id.mate_group_chat_btn)
+        chatButton?.setOnClickListener{
+            val intent = Intent(this, ChatActivity::class.java)
+            intent.putExtra("mateData", mateData)
+            startActivity(intent)
+        }
+
     }
 
     fun deleteMateData() {
-
-//        val retrofit = Retrofit.Builder()
-//            .baseUrl("http://k9a204.p.ssafy.io:8000/")
-//            .addConverterFactory(GsonConverterFactory.create())
-//            .build()
-//
-//        mateApi = retrofit.create(MateApi::class.java)
-//
-//
-//        val deleteMateRequest = mateData?.let {
-//            DeleteMateRequest(
-//                mateId = it.mateId,
-//                creator = "11ee7ebf5b8bb5c8aa4bcb99876bba64"
-//                // creator = App.Instance.id
-//            )
-//        }
-//
-//        if (deleteMateRequest != null) {
-//            mateApi.deleteMate(deleteMateRequest).enqueue(object : Callback<DeleteResponse> {
-//                override fun onResponse(
-//                    call: Call<DeleteResponse>,
-//                    response: Response<DeleteResponse>
-//                ) {
-//                    if (response.isSuccessful) {
-//                        // 성공적으로 삭제된 경우 처리
-//                        Log.d("MATE_DELETE", "메이트 삭제 완료")
-//                        val intent = Intent(this@MateDetailActivity, MateListActivity::class.java)
-//                        startActivity(intent)
-//                    } else {
-//                        // 실패했을 경우 처리
-//                        Log.d("MATE_DELETE", "메이트 삭제 실패.")
-//                    }
-//                }
-//
-//                override fun onFailure(call: Call<DeleteResponse>, t: Throwable) {
-//                    TODO("Not yet implemented")
-//                }
-//            })
-//        }
 
         val JSON = "application/json; charset=utf-8".toMediaType()
 
