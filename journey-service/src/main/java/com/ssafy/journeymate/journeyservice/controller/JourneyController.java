@@ -89,13 +89,13 @@ public class JourneyController {
         log.info("journey_registJourney_start: " + journeyRegistPostReq.toString());
 
         /* jpa */
-        journeyService.registJourney(journeyRegistPostReq);
+        JourneyGetRes journeyGetRes = journeyService.registJourney(journeyRegistPostReq);
         /* 카프카를 활용한 db 연동 */
 //        journeyProducer.insertJourney("test1", journeyRegistPostReq);
 
         log.info("journey_registJourney_end");
 
-        return new ResponseEntity<>(new ResponseDto("일정 등록 완료", null), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto("일정 등록 완료", journeyGetRes), HttpStatus.OK);
     }
 
     @GetMapping("/sendChecklist/{journeyId}")
