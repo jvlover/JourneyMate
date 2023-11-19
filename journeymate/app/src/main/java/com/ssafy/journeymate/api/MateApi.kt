@@ -45,7 +45,7 @@ data class ContentData(
     val creatorId: String,
     val contentId: Long,
     val createdDate: String,
-    val imgUrl: HttpUrl,
+    val imgUrl: String,
     val fileName: String,
     val type: Boolean
 )
@@ -111,7 +111,7 @@ interface MateApi {
     @Multipart
     @POST("/mate-service/contents")
     fun registContent(
-        @Body registContentsRequest: RegistContentsRequest,
+        @PartMap partMap: Map<String, @JvmSuppressWildcards RequestBody>,
         @Part imgFile: List<MultipartBody.Part>
     ): Call<RegistContentInfoResponse>
 
@@ -126,10 +126,6 @@ interface MateApi {
 
     @GET("/mate-service/docs/{docsId}")
     fun loadDocsDetailInfo(@Path(value = "docsId") docsId: Long): Call<LoadDocsDetailInfoResponse>
-
-//    @Multipart
-//    @POST("/mate-service/docs")
-//    fun registDocs(@Body registDocsRequest: RegistDocsRequest, @Part imgFile: List<MultipartBody.Part>): Call<RegistDocsResponse>
 
     @Multipart
     @POST("/mate-service/docs")

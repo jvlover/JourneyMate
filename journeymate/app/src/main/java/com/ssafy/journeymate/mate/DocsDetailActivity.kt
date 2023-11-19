@@ -61,7 +61,7 @@ class DocsDetailActivity : AppCompatActivity() {
                     txtDocsDetailName.text = docsDetailData?.title
 
                     val txtDocsDetailDate = findViewById<TextView>(R.id.txt_docs_detail_date)
-                    txtDocsDetailDate.text = docsDetailData?.createdDate
+                    txtDocsDetailDate.text = docsDetailData?.createdDate?.substringBefore("T") ?: "N/A"
 
                     val txtDocsDetailContent = findViewById<TextView>(R.id.txt_docs_detail_content)
                     txtDocsDetailContent.text = docsDetailData?.content

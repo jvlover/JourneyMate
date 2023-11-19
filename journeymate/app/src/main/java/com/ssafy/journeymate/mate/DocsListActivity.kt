@@ -14,6 +14,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.squareup.picasso.Picasso
+import com.ssafy.journeymate.PopupBarActivity
 import com.ssafy.journeymate.R
 import com.ssafy.journeymate.api.DocsListData
 import com.ssafy.journeymate.api.FindMateData
@@ -48,6 +49,12 @@ class DocsListActivity : AppCompatActivity() {
         backButton.setOnClickListener {
             // 뒤로 가기 버튼 클릭
             onBackPressed()
+        }
+
+        val menuButton: ImageButton = findViewById(R.id.menuButton)
+        menuButton.setOnClickListener {
+            // 메뉴 버튼 클릭 시 수행할 액션
+            startActivity(Intent(this, PopupBarActivity::class.java))
         }
 
         // mateId 전역변수 꺼내오기
@@ -108,6 +115,7 @@ class DocsListActivity : AppCompatActivity() {
             // 전역 변수에 mateId추가
             intent.putExtra("mateData", mateData)
             startActivity(intent)
+            finish()
         }
     }
 
