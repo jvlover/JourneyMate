@@ -21,9 +21,12 @@ import androidx.navigation.ui.AppBarConfiguration
 import com.google.android.gms.maps.model.LatLng
 import com.ssafy.journeymate.R
 import com.ssafy.journeymate.api.JourneyApi
+import com.ssafy.journeymate.api.JourneyGetRes
 import com.ssafy.journeymate.api.JourneyRegistPostReq
 import com.ssafy.journeymate.api.registJourneyResponse
+import com.ssafy.journeymate.api.sendChecklistResponse
 import com.ssafy.journeymate.databinding.ActivityRegistJourneyBinding
+import com.ssafy.journeymate.global.App
 import com.ssafy.journeymate.util.OnMapClickListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -108,7 +111,7 @@ class RegistJourneyActivity : AppCompatActivity(), OnMapClickListener {
 
                 /* registJourney api 보내기 */
                 var journeyRegistPostReq = JourneyRegistPostReq(
-                    1L,
+                    App.INSTANCE.mateId.toLong(),
                     selectedCategory,
                     "${editTitleInput.text}",
                     day,
@@ -116,7 +119,9 @@ class RegistJourneyActivity : AppCompatActivity(), OnMapClickListener {
                     currentLatLag.latitude,
                     currentLatLag.longitude
                 )
+
                 registJourneyAPI(journeyRegistPostReq)
+
 
             } catch (e: NumberFormatException) {
                 // 숫자로 변환할 수 없는 경우 예외처리
@@ -248,8 +253,14 @@ class RegistJourneyActivity : AppCompatActivity(), OnMapClickListener {
                 ) {
                     if (response.isSuccessful) {
 
-                        val journeyData = response.body()?.data
+                        val journeyData: JourneyGetRes = response.body()!!.data
                         Log.i("registJourneyAPI 성공", journeyData.toString())
+
+                        /* kafka api 전달 */
+                        Log.i("Kafka전달 확인1", "$journeyData.id");
+                        val journeyId = journeyData.id.toLong()
+                        Log.i("Kafka전달 확인2", "$journeyId")
+                        sendChecklistAPI(journeyId)
 
                         val message = "일정이 등록되었습니다.."
                         Toast.makeText(this@RegistJourneyActivity, message, Toast.LENGTH_SHORT)
@@ -269,6 +280,43 @@ class RegistJourneyActivity : AppCompatActivity(), OnMapClickListener {
             })
 
         return true
+
+    }
+
+
+    private fun sendChecklistAPI(journeyId:Long){
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://k9a204.p.ssafy.io:8000/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        journeyApi = retrofit.create(JourneyApi::class.java)
+
+        journeyApi.sendChecklist(journeyId)
+            .enqueue(object : Callback<sendChecklistResponse> {
+                override fun onResponse(
+                    call: Call<sendChecklistResponse>,
+                    response: Response<sendChecklistResponse>
+                ) {
+                    if (response.isSuccessful) {
+
+                        val journeyData = response.body()!!.data
+                        Log.i("sendChecklistAPI 성공", journeyData.toString())
+
+                        val message = "체크 리스트 목록 전달 완료"
+
+                    } else {
+                        val errorMessage = response.errorBody()?.string()
+                        Log.e("sendChecklistAPI 에러", "에러 발생: $errorMessage")
+                    }
+                }
+
+                override fun onFailure(call: Call<sendChecklistResponse>, t: Throwable) {
+                    Log.e("sendChecklistAPI 실패", "에러 발생: ${t.message}")
+                }
+
+            })
 
     }
 
