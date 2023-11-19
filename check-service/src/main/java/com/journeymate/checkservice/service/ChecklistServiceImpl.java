@@ -310,9 +310,13 @@ public class ChecklistServiceImpl implements ChecklistService {
 
         }
 
+        log.info("ChecklistService_findChecklistByUserIdAndMateId : " + checklists);
+
         for (Checklist checklist : checklists) {
 
             ChecklistFindRes checklistFindRes = modelMapper.map(checklist, ChecklistFindRes.class);
+
+            log.info("ChecklistService_findChecklistByUserIdAndMateId : " + checklistFindRes);
 
             checklistFindRes.setUserId(bytesHexChanger.bytesToHex(checklist.getUserId()));
 
