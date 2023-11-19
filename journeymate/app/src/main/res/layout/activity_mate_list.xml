@@ -18,14 +18,12 @@
         tools:layout_editor_absoluteX="0dp" />
 
 
-
-
     <TextView
         android:id="@+id/user_nickname"
         android:layout_width="97dp"
         android:layout_height="35dp"
         android:layout_marginStart="80dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="60dp"
         android:textColor="#3396F4"
         android:textSize="21dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -60,7 +58,7 @@
         app:layout_constraintTop_toBottomOf="@+id/user_nickname"
         tools:ignore="MissingConstraints" />
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/user_profile"
         android:layout_width="70dp"
         android:layout_height="70dp"
@@ -78,6 +76,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_margin="10dp"
         app:layout_constraintBottom_toTopOf="@+id/move_to_mate_regist"
         app:layout_constraintTop_toBottomOf="@+id/mate_list">
 

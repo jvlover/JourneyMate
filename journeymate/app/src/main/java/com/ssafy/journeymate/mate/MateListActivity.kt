@@ -17,6 +17,7 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.ssafy.journeymate.PopupBarActivity
 import com.ssafy.journeymate.R
 import com.ssafy.journeymate.api.FindMateData
 import com.ssafy.journeymate.api.FindMateResponse
@@ -56,6 +57,12 @@ class MateListActivity : AppCompatActivity() {
         backButton.setOnClickListener {
             // 뒤로 가기 버튼 클릭
             onBackPressed()
+        }
+
+        val menuButton: ImageButton = findViewById(R.id.menuButton)
+        menuButton.setOnClickListener {
+            // 메뉴 버튼 클릭 시 수행할 액션
+            startActivity(Intent(this, PopupBarActivity::class.java))
         }
 
         // userId 변경 필요
@@ -154,6 +161,7 @@ class MateListActivity : AppCompatActivity() {
         goToRegistBtn?.setOnClickListener{
             val intent = Intent(this@MateListActivity, MateRegistActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
 
