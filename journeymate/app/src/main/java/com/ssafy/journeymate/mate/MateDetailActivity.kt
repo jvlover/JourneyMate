@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -44,6 +45,12 @@ class MateDetailActivity : AppCompatActivity() {
         val toolbarTitleTextView = toolbarInclude.findViewById<TextView>(R.id.toolbarTitle)
 
         toolbarTitleTextView.text = "여행 그룹 상세"
+
+        val backButton: ImageButton = findViewById(R.id.backButton)
+        backButton.setOnClickListener {
+            // 뒤로 가기 버튼 클릭
+            onBackPressed()
+        }
 
 
         // mateId 변경 필요

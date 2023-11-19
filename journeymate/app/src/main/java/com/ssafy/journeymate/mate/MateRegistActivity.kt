@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -29,6 +30,7 @@ import com.ssafy.journeymate.api.MateApi
 import com.ssafy.journeymate.api.RegistMateRequest
 import com.ssafy.journeymate.api.RegistMateResponse
 import com.ssafy.journeymate.api.UserApi
+import com.ssafy.journeymate.global.App
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -63,8 +65,8 @@ class MateRegistActivity : AppCompatActivity() {
     // 드롭다운
     private lateinit var mateEditTextAdapter: ArrayAdapter<String>
 
-    val loggedInUserId = "11ee7ebf5b8bb5c8aa4bcb99876bba64"
-    val loggedInUserNickname = "travel"
+    val loggedInUserId = App.INSTANCE.id
+    val loggedInUserNickname = App.INSTANCE.nickname
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,6 +78,12 @@ class MateRegistActivity : AppCompatActivity() {
         val toolbarTitleTextView = toolbarInclude.findViewById<TextView>(R.id.toolbarTitle)
 
         toolbarTitleTextView.text = "여행 그룹 생성"
+
+        val backButton: ImageButton = findViewById(R.id.backButton)
+        backButton.setOnClickListener {
+            // 뒤로 가기 버튼 클릭
+            onBackPressed()
+        }
 
 
         // 시작 날짜, 끝 날짜
@@ -113,7 +121,6 @@ class MateRegistActivity : AppCompatActivity() {
 
 
         // 지금 로그인된 회원은 무조건 추가
-        // addTextToLayout(App.INSTANCE.nickname, App.INSTANCE.id)
         addTextToLayout(loggedInUserNickname, loggedInUserId)
 
         // 멤버 추가

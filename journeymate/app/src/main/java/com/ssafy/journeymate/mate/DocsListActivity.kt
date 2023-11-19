@@ -44,6 +44,12 @@ class DocsListActivity : AppCompatActivity() {
 
         toolbarTitleTextView.text = "여행 문서 공유"
 
+        val backButton: ImageButton = findViewById(R.id.backButton)
+        backButton.setOnClickListener {
+            // 뒤로 가기 버튼 클릭
+            onBackPressed()
+        }
+
         // mateId 전역변수 꺼내오기
         mateData = intent.getSerializableExtra("mateData") as FindMateData
 

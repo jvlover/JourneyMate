@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.GridView
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -19,6 +20,12 @@ class MateContentsActivity : AppCompatActivity() {
         val toolbarTitleTextView = toolbarInclude.findViewById<TextView>(R.id.toolbarTitle)
 
         toolbarTitleTextView.text = "여행 콘텐츠"
+
+        val backButton: ImageButton = findViewById(R.id.backButton)
+        backButton.setOnClickListener {
+            // 뒤로 가기 버튼 클릭
+            onBackPressed()
+        }
 
 //        val gridView = findViewById<GridView>(R.id.gridView)
 //        // gridView에 이미지 어댑터 설정해야 함
