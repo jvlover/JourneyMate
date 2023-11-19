@@ -12,6 +12,7 @@ import com.kakao.sdk.auth.model.Prompt
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
+import com.kakao.sdk.common.util.Utility
 import com.kakao.sdk.user.UserApiClient
 import com.ssafy.journeymate.LoadScreenActivity
 import com.ssafy.journeymate.MainActivity

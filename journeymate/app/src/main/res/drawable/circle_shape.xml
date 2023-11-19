@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#00000000"/> <!-- 배경색을 투명하게 설정 -->
+    <corners android:radius="35dp"/> <!-- 반지름을 ImageView의 절반 크기로 설정 -->
+</shape>

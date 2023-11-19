@@ -3,6 +3,7 @@ package com.ssafy.journeymate.api
 
 import okhttp3.HttpUrl
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -11,6 +12,7 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
+import retrofit2.http.PartMap
 import retrofit2.http.Path
 import java.io.Serializable
 import java.util.Objects
@@ -125,8 +127,16 @@ interface MateApi {
     @GET("/mate-service/docs/{docsId}")
     fun loadDocsDetailInfo(@Path(value = "docsId") docsId: Long): Call<LoadDocsDetailInfoResponse>
 
+//    @Multipart
+//    @POST("/mate-service/docs")
+//    fun registDocs(@Body registDocsRequest: RegistDocsRequest, @Part imgFile: List<MultipartBody.Part>): Call<RegistDocsResponse>
+
+    @Multipart
     @POST("/mate-service/docs")
-    fun registDocs(@Body registDocsRequest: RegistDocsRequest): Call<RegistDocsResponse>
+    fun registDocs(
+        @PartMap partMap: Map<String, @JvmSuppressWildcards RequestBody>,
+        @Part imgFile: List<MultipartBody.Part>
+    ): Call<RegistDocsResponse>
 
     @Multipart
     @PUT("/mate-service/docs")

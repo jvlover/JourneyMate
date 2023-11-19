@@ -17,15 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="0dp" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/windowBackground"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_nav_menu1" />
+
 
 
     <TextView
@@ -76,6 +68,8 @@
         android:layout_marginEnd="100dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
+        android:background="@drawable/circle_shape"
+        android:scaleType="centerCrop"
         app:layout_constraintStart_toEndOf="@+id/to_user"
         app:layout_constraintTop_toBottomOf="@+id/mate_list_toolbar"
         tools:srcCompat="@tools:sample/avatars" />
@@ -84,7 +78,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintBottom_toTopOf="@+id/move_to_mate_regist"
         app:layout_constraintTop_toBottomOf="@+id/mate_list">
 
         <GridLayout
@@ -94,6 +88,25 @@
             android:columnCount="2"
             android:orientation="horizontal" />
     </ScrollView>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/move_to_mate_regist"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/large_button"
+        android:fontFamily="@font/pretendardregular"
+        android:text="그룹 등록"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        app:iconTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mate_group_contents_btn"
+        app:layout_constraintVertical_bias="1.0"
+        app:rippleColor="@color/white" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
