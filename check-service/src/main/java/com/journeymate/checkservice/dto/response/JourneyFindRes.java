@@ -16,8 +16,11 @@ public class JourneyFindRes {
     public static class JourneyFindData {
 
         private Long id;
+        private Long mateId;
+        private Long categoryId;
         private String title;
-        private String imgUrl;
+        private Integer day;
+        private Integer sequence;
         private double xcoordinate;
         private double ycoordinate;
 
