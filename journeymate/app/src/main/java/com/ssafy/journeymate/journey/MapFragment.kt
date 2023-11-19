@@ -77,7 +77,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private fun updateMarkers() {
         mMap?.let { map ->
-            if (markers == null) {
+            if (markers == null || markers!!.isEmpty()) {
                 markers = listOf(
                     MarkerData(
                         xcoordinate = 37.503325,
@@ -85,17 +85,24 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         title = "기본위치",
                     )
                 )
-            } else {
-                markers!!.forEach { markerData ->
-                    map.addMarker(
-                        MarkerOptions()
-                            .position(LatLng(markerData.xcoordinate, markerData.ycoordinate))
-                            .title(markerData.title)
-                    )
+                val startMarker = LatLng(markers!![0].xcoordinate, markers!![0].ycoordinate)
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(startMarker, 11f))
+
+            }
+
+            markers?.let { markerList ->
+                if (markerList.isNotEmpty()) {
+                    markerList.forEach { markerData ->
+                        map.addMarker(
+                            MarkerOptions()
+                                .position(LatLng(markerData.xcoordinate, markerData.ycoordinate))
+                                .title(markerData.title)
+                        )
+                    }
+                    val startMarker = LatLng(markerList[0].xcoordinate, markerList[0].ycoordinate)
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(startMarker, 11f))
                 }
             }
-            val startMarker = LatLng(markers!!.get(0).xcoordinate, markers!!.get(0).ycoordinate)
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(startMarker, 11f))
         }
     }
 

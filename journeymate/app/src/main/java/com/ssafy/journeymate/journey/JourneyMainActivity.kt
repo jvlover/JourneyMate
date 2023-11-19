@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -14,6 +15,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.ssafy.journeymate.R
 import com.ssafy.journeymate.api.JourneyApi
@@ -22,6 +24,7 @@ import com.ssafy.journeymate.api.LoadMateInfoResponse
 import com.ssafy.journeymate.api.MateApi
 import com.ssafy.journeymate.api.MateGroupData
 import com.ssafy.journeymate.api.getMateJourneysResponse
+import com.ssafy.journeymate.global.App
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -70,19 +73,22 @@ class JourneyMainActivity : AppCompatActivity() {
 
         val moveToMateButton = findViewById<ImageButton>(R.id.movetomatebutton)
         moveToMateButton.setOnClickListener {
-////            var intent = Intent(this, RegistJourneyActivity::class.java)
-//            startActivity(intent)
+            onBackPressed()
         }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         /* 전역변수로 mateId 받을거임 */
         CoroutineScope(Dispatchers.Main).launch {
-            val mateInfoResult = getMateInfoFromAPI(1)
+            val mateInfoResult = getMateInfoFromAPI(App.INSTANCE.mateId.toLong())
             // mateInfo 호출 결과를 확인한 후에 getJourneysFromAPI 호출
             if (mateInfoResult != null) {
-                getJourneysFromAPI(1)
+                getJourneysFromAPI(App.INSTANCE.mateId.toLong())
             }
         }
-
     }
 
 
@@ -144,6 +150,7 @@ class JourneyMainActivity : AppCompatActivity() {
         return "$year.$month.$day"
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun addDaysAndFormatDate(inputDate: String, daysToAdd: Int): String {
         // String을 LocalDateTime으로 변환
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
@@ -167,6 +174,7 @@ class JourneyMainActivity : AppCompatActivity() {
         journeyApi = retrofit.create(JourneyApi::class.java)
 
         journeyApi.getMateJourneys(mateId).enqueue(object : Callback<getMateJourneysResponse> {
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(
                 call: Call<getMateJourneysResponse>,
                 response: Response<getMateJourneysResponse>
@@ -179,6 +187,7 @@ class JourneyMainActivity : AppCompatActivity() {
                         journeys = journeysData
                         Log.i("성공", "${journeys.toString()}")
                         Log.i("사이즈 가져오기", "${journeys.size}")
+                        scrollView.removeAllViews()
 
                         val bundle = Bundle()
                         bundle.putSerializable("journeys", journeys as Serializable)
@@ -213,6 +222,7 @@ class JourneyMainActivity : AppCompatActivity() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun createJourneyScrollView(journeyMainLayout: LinearLayout) {
 
         Log.i("스크롤 만들기 확인", "${journeys.size}")
@@ -220,6 +230,17 @@ class JourneyMainActivity : AppCompatActivity() {
 
         val typeface: Typeface? = resources.getFont(R.font.pretendardregular)
         var previousColor: Int? = null
+
+        if (!::mateInfo.isInitialized) {
+            CoroutineScope(Dispatchers.Main).launch {
+                val mateInfoResult = getMateInfoFromAPI(App.INSTANCE.mateId.toLong())
+                // mateInfo 호출 결과를 확인한 후에 getJourneysFromAPI 호출
+                if (mateInfoResult != null) {
+                    getJourneysFromAPI(App.INSTANCE.mateId.toLong())
+                }
+            }
+            return
+        }
 
         for (i in 0 until journeys.size) {
             // 첫 번째 줄

@@ -22,6 +22,7 @@ import com.ssafy.journeymate.R
 import com.ssafy.journeymate.api.JourneyApi
 import com.ssafy.journeymate.api.JourneyGetRes
 import com.ssafy.journeymate.api.getMateJourneysResponse
+import com.ssafy.journeymate.global.App
 import com.ssafy.journeymate.util.OnMapClickListener
 import retrofit2.Call
 import retrofit2.Callback
@@ -72,7 +73,7 @@ class RegistMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMapClickLi
 
     private fun updateMarkers() {
         mMap?.let { map ->
-            if (markers == null) {
+            if (markers == null || markers!!.isEmpty()) {
                 markers = listOf(
                     MapFragment.MarkerData(
                         xcoordinate = 37.503325,
@@ -80,24 +81,31 @@ class RegistMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMapClickLi
                         title = "기본위치",
                     )
                 )
-            } else {
-                markers!!.forEach { markerData ->
-                    map.addMarker(
-                        MarkerOptions()
-                            .position(LatLng(markerData.xcoordinate, markerData.ycoordinate))
-                            .title(markerData.title)
-                    )
+                val startMarker = LatLng(markers!![0].xcoordinate, markers!![0].ycoordinate)
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(startMarker, 11f))
+
+            }
+
+            markers?.let { markerList ->
+                if (markerList.isNotEmpty()) {
+                    markerList.forEach { markerData ->
+                        map.addMarker(
+                            MarkerOptions()
+                                .position(LatLng(markerData.xcoordinate, markerData.ycoordinate))
+                                .title(markerData.title)
+                        )
+                    }
+                    val startMarker = LatLng(markerList[0].xcoordinate, markerList[0].ycoordinate)
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(startMarker, 11f))
                 }
             }
-            val startMarker = LatLng(markers!!.get(0).xcoordinate, markers!!.get(0).ycoordinate)
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(startMarker, 11f))
         }
     }
 
     //지도 객체를 사용할 수 있을 때 자동으로 호출되는 함수
     override fun onMapReady(map: GoogleMap) {
         mMap = map
-        getJourneysFromAPI(1)
+        getJourneysFromAPI(App.INSTANCE.mateId.toLong())
         mMap?.setOnMapClickListener(this)
     }
 

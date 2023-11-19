@@ -26,7 +26,7 @@ data class sendChecklistResponse(
 
 data class registJourneyResponse(
     val message: String,
-    val data: Any? = null
+    val data: JourneyGetRes
 )
 
 data class updateJourneyResponse(
@@ -97,6 +97,7 @@ data class JourneyModifyPutReq(
     val xcoordinate: Double,
     val ycoordinate: Double
 )
+
 
 data class JourneyDeletePutReq(
     val journeyId: Long

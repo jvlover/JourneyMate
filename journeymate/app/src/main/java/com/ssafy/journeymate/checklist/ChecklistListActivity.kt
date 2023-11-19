@@ -18,6 +18,7 @@ import com.ssafy.journeymate.api.FindMateData
 import com.ssafy.journeymate.api.LoadAllChecklistInfoResponse
 import com.ssafy.journeymate.api.LoadChecklistInfoData
 import com.ssafy.journeymate.databinding.ActivityChecklistListBinding
+import com.ssafy.journeymate.global.App
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -37,8 +38,8 @@ class ChecklistListActivity : AppCompatActivity() {
 
         val checklistLayout = findViewById<LinearLayout>(R.id.checklist_layout)
         val mateData = intent.getSerializableExtra("mateData") as FindMateData
-        val userId = "11ee7ebf5b8bb5c8aa4bcb99876bba64"
-//        val userId = App.INSTANCE.id
+//        val userId = "11ee7ebf5b8bb5c8aa4bcb99876bba64"
+        val userId = App.INSTANCE.id
 
         retrofit = Retrofit.Builder()
             .baseUrl("http://k9a204.p.ssafy.io:8000/")
