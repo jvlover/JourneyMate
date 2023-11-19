@@ -1,5 +1,6 @@
 package com.ssafy.journeymate.chat
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -56,6 +57,7 @@ class ChatActivity : AppCompatActivity() {
     private val chatApi: ChatApi = retrofit.create(ChatApi::class.java)
 
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
@@ -71,6 +73,12 @@ class ChatActivity : AppCompatActivity() {
         mateId = mateData!!.mateId.toString()
         chatTitle = mateData!!.name
         chatTitleView.text = chatTitle
+
+        val backButton: ImageButton = findViewById(R.id.backButton)
+        backButton.setOnClickListener {
+            // 뒤로 가기 버튼 클릭
+            onBackPressed()
+        }
 
         // Retrofit을 사용하여 데이터 요청
         val call: Call<ResponseDto> = chatApi.loadComment(mateId)
@@ -184,6 +192,9 @@ class ChatActivity : AppCompatActivity() {
             val message = messages[position]
             holder.textViewMessage.text = message.message
             holder.textViewSender.text = message.sender
+            holder.itemView.rotationY = 0f
+            holder.textViewMessage.rotationY = 0f
+            holder.textViewSender.rotationY = 0f
             if (message.sender == userName) {
                 // 뷰 자체를 180도 회전
                 holder.itemView.rotationY = 180f
