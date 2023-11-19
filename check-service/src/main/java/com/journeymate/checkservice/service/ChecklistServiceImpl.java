@@ -300,6 +300,8 @@ public class ChecklistServiceImpl implements ChecklistService {
 
         JourneyFindRes journeyFindReses = journeyClient.findJourneyByMateId(mateId);
 
+        log.info("ChecklistService_findChecklistByUserIdAndMateId : " + journeyFindReses);
+
         for (JourneyFindData journeyFinddata : journeyFindReses.getData()) {
 
             checklists.addAll(checklistRepository.findChecklistByUserIdAndJourneyId(
