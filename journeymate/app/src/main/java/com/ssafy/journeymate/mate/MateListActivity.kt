@@ -161,6 +161,7 @@ class MateListActivity : AppCompatActivity() {
         goToRegistBtn?.setOnClickListener{
             val intent = Intent(this@MateListActivity, MateRegistActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
 

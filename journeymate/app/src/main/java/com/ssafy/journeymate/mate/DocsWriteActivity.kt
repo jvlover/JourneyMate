@@ -95,7 +95,10 @@ class DocsWriteActivity : AppCompatActivity() {
                 put("title", RequestBody.create("text/plain".toMediaTypeOrNull(), title))
                 put("content", RequestBody.create("text/plain".toMediaTypeOrNull(), content))
                 put("userId", RequestBody.create("text/plain".toMediaTypeOrNull(), userId))
-                put("mateId", RequestBody.create("text/plain".toMediaTypeOrNull(), mateId.toString()))
+                put(
+                    "mateId",
+                    RequestBody.create("text/plain".toMediaTypeOrNull(), mateId.toString())
+                )
             }
 
             val imagePart = selectedImageUri?.let { uri ->
@@ -111,13 +114,17 @@ class DocsWriteActivity : AppCompatActivity() {
 
             val call = mateApi.registDocs(requestMap, listOfNotNull(imagePart))
             call.enqueue(object : Callback<RegistDocsResponse> {
-                override fun onResponse(call: Call<RegistDocsResponse>, response: Response<RegistDocsResponse>) {
+                override fun onResponse(
+                    call: Call<RegistDocsResponse>,
+                    response: Response<RegistDocsResponse>
+                ) {
                     if (response.isSuccessful) {
                         Log.d("DOCS_WRITE", "문서 작성 완료")
                         val intent = Intent(this@DocsWriteActivity, DocsListActivity::class.java)
                         // 전역 변수에 mateId추가
                         intent.putExtra("mateData", mateData)
                         startActivity(intent)
+                        finish()
                     } else {
                         Log.d("DOCS_WRITE", "문서 작성 실패!!")
                     }
@@ -127,11 +134,7 @@ class DocsWriteActivity : AppCompatActivity() {
                     Log.d("DOCS_WRITE", "문서 작성 요청 실패: ${t.message}")
                 }
             })
-
-
-
         }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

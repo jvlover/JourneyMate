@@ -115,6 +115,7 @@ class DocsListActivity : AppCompatActivity() {
             // 전역 변수에 mateId추가
             intent.putExtra("mateData", mateData)
             startActivity(intent)
+            finish()
         }
     }
 
