@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,7 +16,9 @@ import com.gmail.bishoybasily.stomp.lib.StompClient
 import com.ssafy.journeymate.R
 import com.ssafy.journeymate.api.ChatApi
 import com.ssafy.journeymate.api.ChatMessage
+import com.ssafy.journeymate.api.FindMateData
 import com.ssafy.journeymate.api.ResponseDto
+import com.ssafy.journeymate.global.App
 import io.reactivex.disposables.Disposable
 import okhttp3.OkHttpClient
 import org.json.JSONObject
@@ -26,11 +27,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.Scanner
-import java.util.StringTokenizer
 import java.util.concurrent.TimeUnit
-import java.util.logging.Level
-import java.util.logging.Logger
 
 class ChatActivity : AppCompatActivity() {
 
@@ -39,11 +36,13 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var adapter: RecyclerViewAdapter
     private var stomp: StompClient? = null
     var url = "http://k9a204.p.ssafy.io:8000/"
+
+    var mateData: FindMateData? = null
     
     
     // 전역 변수 들어가야할 목록
-    private var mateId : Long = 8;          // 채팅방 아이디고 이거에 따라서 받아오는 채팅방이 달라져요
-    private var userName : String = "박민혁" // 이거 수정하면 보내는 사람이 달라져요
+    private var mateId : String = App.INSTANCE.mateId         // 채팅방 아이디고 이거에 따라서 받아오는 채팅방이 달라져요
+    private var userName : String = App.INSTANCE.nickname // 이거 수정하면 보내는 사람이 달라져요
                                             // 만약 이 이름과 채팅 보낸 사람이 다르면 좌측 같으면 우측에서 나와요
     private var chatTitle : String = "채팅방 이름"       // 이거 수정하면 위의 채팅방 타이틀이 바뀌어요
     var stompUrl = "ws://k9a204.p.ssafy.io:8000/chat-service"
@@ -63,11 +62,15 @@ class ChatActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.messageActivity_recyclerview)
         chatTitleView = findViewById(R.id.messageActivity_textView_topName)
-        chatTitleView.text = chatTitle
+
         adapter = RecyclerViewAdapter()
         recyclerView.adapter = adapter
 
-        val mateId: Long = 8
+        mateData = intent.getSerializableExtra("mateData") as FindMateData
+
+        mateId = mateData!!.mateId.toString()
+        chatTitle = mateData!!.name
+        chatTitleView.text = chatTitle
 
         // Retrofit을 사용하여 데이터 요청
         val call: Call<ResponseDto> = chatApi.loadComment(mateId)
@@ -142,10 +145,10 @@ class ChatActivity : AppCompatActivity() {
         if (messageText.isNotEmpty()) {
             var data = JSONObject()
             data.put("type","TALK")
-            data.put("mateId",8)
+            data.put("mateId",mateId)
             data.put("sender",userName)
             data.put("message",messageText)
-            data.put("userCount",8)
+            mateData?.users?.let { data.put("userCount", it.size) }
             stomp?.send("${pub}", data.toString())?.subscribe()
             Log.i("성공", data.toString())
             // EditText 초기화

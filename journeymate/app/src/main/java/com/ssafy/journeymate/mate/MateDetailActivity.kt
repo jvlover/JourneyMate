@@ -84,8 +84,13 @@ class MateDetailActivity : AppCompatActivity() {
                     mateNameTextView.text = responseData?.name
 
                     // userProfile의 nickname 수만큼 프로필 필요
-                    val mateDetailActivity = findViewById<ConstraintLayout>(R.id.mate_detail_layout)
-                    val inflater = LayoutInflater.from(this@MateDetailActivity)
+                    val users: MutableList<String>? = responseData?.users
+
+                    val userProfilesTextView = findViewById<TextView>(R.id.user_profile)
+
+                    val userNames = users?.joinToString(separator = ", ")
+
+                    userProfilesTextView.text = userNames
 
 
                     val destinationTextView = findViewById<TextView>(R.id.destination_text_result)
@@ -109,7 +114,13 @@ class MateDetailActivity : AppCompatActivity() {
             }
         })
 
-
+        val mateContentButton :Button = findViewById(R.id.mate_group_contents_btn)
+        mateContentButton?.setOnClickListener {
+            val intent = Intent(this@MateDetailActivity, MateContentsActivity::class.java)
+            // 전역 변수에 mateId추가
+            intent.putExtra("mateData", mateData)
+            startActivity(intent)
+        }
         val mateDeleteButton: Button = findViewById(R.id.mate_group_delete)
 
         mateDeleteButton?.setOnClickListener {
