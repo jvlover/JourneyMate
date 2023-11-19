@@ -304,19 +304,24 @@ public class ChecklistServiceImpl implements ChecklistService {
 
         for (JourneyFindData journeyFinddata : journeyFindReses.getData()) {
 
+            log.info("ChecklistService_findChecklistByUserIdAndMateId : " + journeyFinddata);
+            
+            log.info("ChecklistService_findChecklistByUserIdAndMateId : "
+                + checklistRepository.findChecklistByUserIdAndJourneyId(
+                bytesHexChanger.hexToBytes(userId),
+                journeyFinddata.getId()));
+
             checklists.addAll(checklistRepository.findChecklistByUserIdAndJourneyId(
                 bytesHexChanger.hexToBytes(userId),
                 journeyFinddata.getId()));
 
-        }
+            log.info("ChecklistService_findChecklistByUserIdAndMateId : " + checklists);
 
-        log.info("ChecklistService_findChecklistByUserIdAndMateId : " + checklists);
+        }
 
         for (Checklist checklist : checklists) {
 
             ChecklistFindRes checklistFindRes = modelMapper.map(checklist, ChecklistFindRes.class);
-
-            log.info("ChecklistService_findChecklistByUserIdAndMateId : " + checklistFindRes);
 
             checklistFindRes.setUserId(bytesHexChanger.bytesToHex(checklist.getUserId()));
 
