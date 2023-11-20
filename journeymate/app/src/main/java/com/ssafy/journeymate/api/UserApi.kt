@@ -70,7 +70,12 @@ data class FindDocsData(
     val title: String,
     val docsId: Long,
     val createdDate: String,
-    val imgFileInfo: String
+    val imgFileInfo: List<FileResponseDto>
+)
+
+data class FileResponseDto(
+    val filename: String,
+    val imgUrl: String
 )
 
 data class FileRessponseDto(val filename: String, val imgUrl: String)

@@ -1,6 +1,7 @@
 package com.ssafy.journeymate.user
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,10 +14,12 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.squareup.picasso.Picasso
+import com.ssafy.journeymate.PopupBarActivity
 import com.ssafy.journeymate.R
 import com.ssafy.journeymate.api.FindDocsData
 import com.ssafy.journeymate.api.FindDocsListResponse
 import com.ssafy.journeymate.api.UserApi
+import com.ssafy.journeymate.global.App
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -38,6 +41,18 @@ class UserDocsActivity : AppCompatActivity() {
 
         toolbarTitleTextView.text = "유저 문서 목록"
 
+        val backButton: ImageButton = findViewById(R.id.backButton)
+        backButton.setOnClickListener {
+            // 뒤로 가기 버튼 클릭
+            onBackPressed()
+        }
+
+        val menuButton: ImageButton = findViewById(R.id.menuButton)
+        menuButton.setOnClickListener {
+            // 메뉴 버튼 클릭 시 수행할 액션
+            startActivity(Intent(this, PopupBarActivity::class.java))
+        }
+        
         val docsListLayout =
             findViewById<GridLayout>(R.id.user_docs_result)
 
@@ -48,7 +63,7 @@ class UserDocsActivity : AppCompatActivity() {
 
         userApi = retrofit.create(UserApi::class.java)
 
-        val callDocsListLoad = userApi.findDocsById("11ee7ebf5b8bb5c8aa4bcb99876bba64")
+        val callDocsListLoad = userApi.findDocsById(App.INSTANCE.id)
 
         callDocsListLoad.enqueue(object : Callback<FindDocsListResponse> {
 
@@ -93,7 +108,7 @@ class UserDocsActivity : AppCompatActivity() {
         val docsImageButton = view.findViewById<ImageButton>(R.id.docs_image)
         docsImageButton.setImageResource(R.drawable.docs_list_style)
 
-        findDocsData.imgFileInfo.let {
+        findDocsData.imgFileInfo?.getOrNull(0)?.imgUrl.let {
             Picasso.get().load(it).into(docsImageButton)
         }
 
