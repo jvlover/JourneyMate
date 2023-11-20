@@ -157,8 +157,8 @@ class MateListActivity : AppCompatActivity() {
             }
         })
 
-        val goToRegistBtn : Button = findViewById(R.id.move_to_mate_regist)
-        goToRegistBtn?.setOnClickListener{
+        val goToRegistBtn: Button = findViewById(R.id.move_to_mate_regist)
+        goToRegistBtn?.setOnClickListener {
             val intent = Intent(this@MateListActivity, MateRegistActivity::class.java)
             startActivity(intent)
             finish()

@@ -38,7 +38,7 @@ class ChecklistListActivity : AppCompatActivity() {
 
         val checklistLayout = findViewById<LinearLayout>(R.id.checklist_layout)
         val mateData = intent.getSerializableExtra("mateData") as FindMateData
-//        val userId = "11ee7ebf5b8bb5c8aa4bcb99876bba64"
+//        val userId = "11ee86e2ade87e5593af792b5a90af12"
         val userId = App.INSTANCE.id
 
         retrofit = Retrofit.Builder()

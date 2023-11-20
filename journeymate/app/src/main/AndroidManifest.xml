@@ -27,9 +27,6 @@
             android:name=".mate.DocsDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".checklist.ChecklistModifyActivity"
-            android:exported="false" />
-        <activity
             android:name=".checklist.ChecklistListActivity"
             android:exported="false" />
         <activity
