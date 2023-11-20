@@ -39,7 +39,7 @@
         app:layout_constraintHorizontal_bias="0.834"
         app:layout_constraintStart_toEndOf="@+id/mate_content_group_name"
         app:layout_constraintTop_toBottomOf="@+id/mate_contents_toolbar"
-        android:onClick="onAddImageClicked"/>
+        android:onClick="onAddImageClicked" />
 
     <View
         android:id="@+id/view_underline"
@@ -59,7 +59,6 @@
         android:numColumns="3"
         android:padding="4dp"
         android:verticalSpacing="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view_underline" />
 
