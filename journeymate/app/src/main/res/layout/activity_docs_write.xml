@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:fontFamily="@font/pretendardregular"
     tools:context=".mate.DocsWriteActivity">
 
     <include
@@ -99,7 +101,6 @@
     <!--        android:layout_height="wrap_content">-->
 
     <!--    </com.google.android.material.textfield.TextInputLayout>-->
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

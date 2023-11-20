@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".mate.MateContentsActivity">
 
     <include
@@ -38,7 +39,7 @@
         app:layout_constraintHorizontal_bias="0.834"
         app:layout_constraintStart_toEndOf="@+id/mate_content_group_name"
         app:layout_constraintTop_toBottomOf="@+id/mate_contents_toolbar"
-        android:onClick="onAddImageClicked"/>
+        android:onClick="onAddImageClicked" />
 
     <View
         android:id="@+id/view_underline"
@@ -54,14 +55,11 @@
         android:id="@+id/gallery_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:columnWidth="100dp"
         android:horizontalSpacing="4dp"
-        android:numColumns="auto_fit"
+        android:numColumns="3"
         android:padding="4dp"
         android:verticalSpacing="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view_underline" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

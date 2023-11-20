@@ -13,6 +13,7 @@ import android.widget.BaseAdapter
 import android.widget.GridView
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
@@ -127,7 +128,12 @@ class MateContentsActivity : AppCompatActivity() {
                 Log.d("CONTENTS", "콘텐츠 불러오기 성공")
                 val contentDatas : List<ContentData>? = response.body()?.data?.contentInfo// API 응답에서 이미지 URL 리스트 추출
 
-                val imgUrls = contentDatas?.map { it.imgUrl.toString() }
+                Log.d("LOAD_CONTENTS", "contentDatas: $contentDatas")
+
+                val imgUrls = contentDatas?.map { it.imgUrl }
+
+                Log.d("LOAD_CONTENTS", "imgUrls: $imgUrls")
+
                 if (imgUrls != null) {
                     updateGridView(imgUrls)
                 }
@@ -200,9 +206,10 @@ class ImageAdapter(private val context: Context, private var imageUrls: List<Str
         if (convertView == null) {
             // 새 ImageView 생성
             imageView = ImageView(context)
-            imageView.layoutParams = AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            imageView.adjustViewBounds = true
-            imageView.scaleType = ImageView.ScaleType.FIT_CENTER
+            val display = context.getResources().getDisplayMetrics()
+            imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+            imageView.layoutParams = LinearLayout.LayoutParams(display.widthPixels/3,display.widthPixels/3)
+
         } else {
             imageView = convertView as ImageView
         }
@@ -211,6 +218,7 @@ class ImageAdapter(private val context: Context, private var imageUrls: List<Str
         Glide.with(context)
             .load(imageUrls[position])
             .into(imageView)
+
 
         return imageView
     }
