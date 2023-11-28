@@ -43,26 +43,6 @@
 
 <!-- 자유 양식 -->
 
-## 프로젝트 UI/기능
-
-- 로그인 후 자신의 일정 관리 접속(Mate-service)   
-![GIF 1](./img/gif1.gif)  
-
-- 여행 그룹 생성(Mate-service)  
-![GIF 2](./img/gif2.gif)  
-
-- 여행 그룹 문서 관리(Mate-service)  
-![GIF 3](./img/gif3.gif)
-
-- 여행 그룹 사진 관리(Mate-service)  
-![GIF 4](./img/gif4.gif)    
-
-- 여행 그룹 내 채팅 서비스(Chat-service)  
-![GIF 5](./img/gif5.gif)
-
-- 여행 일정 등록 및 관리, GoogleMap 사용(Journey-service)  
-![GIF 6](./img/gif6.gif)  
-
 ## 팀 소개
 
 - 김도현: 팀장, 풀스택 개발
@@ -149,4 +129,34 @@
 
 ### ERD
 
-![ERD](./img/JOURNEYMATE_ERD.png)
+![ERD](./img/A204_ERD.png)
+
+### 프로젝트 UI/기능
+
+| <span style="font-size:20px;">메인 페이지</span> | <span style="font-size:20px;">여행 그룹 목록</span> | <span style="font-size:20px;">여행 그룹 상세</span> |
+| ------------------------------------------------ | --------------------------------------------------- | --------------------------------------------------- |
+| <img src="./img/메인화면.gif" height="600">      | <img src="./img/여행그룹목록.gif" height="600">     | <img src="./img/여행그룹상세.gif" height="600">     |
+
+| <span style="font-size:20px;">여행 그룹 생성</span> | <span style="font-size:20px;">그룹 채팅방</span> |     |
+| --------------------------------------------------- | ------------------------------------------------ | --- |
+| <img src="./img/여행그룹생성.gif" height="600">     | <img src="./img/채팅.gif" height="600">          |     |
+
+| <span style="font-size:20px;">여행 콘텐츠</span> | <span style="font-size:20px;">여행 문서 작성</span> | <span style="font-size:20px;">여행 문서 상세</span> |
+| ------------------------------------------------ | --------------------------------------------------- | --------------------------------------------------- |
+| <img src="./img/여행콘텐츠.gif" height="600">    | <img src="./img/여행문서작성.gif" height="600">     | <img src="./img/여행문서상세.gif" height="600">     |
+
+| <span style="font-size:20px;">일정 메인 페이지</span> | <span style="font-size:20px;">일정 추가</span> | <span style="font-size:20px;">일정 등록 완료</span> |
+| ----------------------------------------------------- | ---------------------------------------------- | --------------------------------------------------- |
+| <img src="./img/일정메인페이지.gif" height="600">     | <img src="./img/일정추가.gif" height="600">    | <img src="./img/일정등록완료.gif" height="600">     |
+
+| <span style="font-size:20px;">체크리스트</span> |     |     |
+| ----------------------------------------------- | --- | --- |
+| <img src="./img//체크리스트.gif" height="600">  |     |     |
+
+### API 명세서
+
+[JourneyMate API 명세서](https://cake-skateboard-823.notion.site/API-a209a41b60b64599925b2a2c98159ffc)
+
+### 기능 명세서
+
+[JourneyMate 기능 명세서](https://docs.google.com/spreadsheets/d/1xafhgGG8eBu-HciSq4Jfq-ehUdOdTwvoe_Hxo9D68Es/edit#gid=0)
