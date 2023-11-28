@@ -305,7 +305,7 @@ public class ChecklistServiceImpl implements ChecklistService {
         for (JourneyFindData journeyFinddata : journeyFindReses.getData()) {
 
             log.info("ChecklistService_findChecklistByUserIdAndMateId : " + journeyFinddata);
-            
+
             log.info("ChecklistService_findChecklistByUserIdAndMateId : "
                 + checklistRepository.findChecklistByUserIdAndJourneyId(
                 bytesHexChanger.hexToBytes(userId),

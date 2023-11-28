@@ -106,7 +106,7 @@ public class KafkaConsumer {
 
         log.info("Kafka_message_service+type : " + type);
 
-        ChecklistKafkaReq checklistKafkaReq = new ChecklistKafkaReq(journeyId, mateId,
+        ChecklistKafkaReq checklistKafkaReq = new ChecklistKafkaReq(mateId, journeyId,
             items);
 
         if (type.equals("REGIST")) {
